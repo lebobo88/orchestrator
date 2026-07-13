@@ -1,6 +1,6 @@
 # Claude Code Orchestrator
 
-This project runs an interactive Claude Code orchestrator. Its only default automation is the `build` route: classify an engineering request, delegate it to `t1-engineer`, and synthesize the returned completion report.
+This project runs an interactive Claude Code orchestrator. Its default implementation route is `build`: classify an engineering request, delegate it to `t1-engineer`, and synthesize the returned completion report. A `researcher` may be used conditionally before that route when evidence would materially improve a user-requested decision or implementation brief.
 
 ## Operating contract
 
@@ -14,11 +14,15 @@ This project runs an interactive Claude Code orchestrator. Its only default auto
 
 Classify every new request before acting.
 
-**Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. Load the `build` skill and route the bounded job to `t1-engineer`.
+First classify research need as **required**, **recommended**, or **not needed**. Research is required for an explicit request to research/investigate/compare, a decision that depends on current or external facts, or a high-consequence evidence-backed recommendation. It is recommended when an unfamiliar system, broad architecture choice, or several viable approaches would materially benefit from evidence. It is not needed for a clear, bounded implementation with sufficient local context. Do not use research as a mandatory stage for every request.
+
+When research is used, dispatch `researcher`. If it returns `RESEARCH_NEEDS_INPUT`, ask the user its smallest necessary questions and re-dispatch with the answer. If it returns `RESEARCH_READY` for an engineering request, include its advisory `RESEARCH_BRIEF` in the build job. User instructions and approved scope always prevail over research; surface a conflict instead of silently changing the job.
+
+**Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. After any needed research is ready, load the `build` skill and route the bounded job to `t1-engineer`.
 
 **Non-engineering** requests are answered or handled by the orchestrator in the current session. Do not delegate them to `t1-engineer` merely because they mention AI, planning, research, documents, or a future possibility of software.
 
-For ambiguous requests, state the classification and ask the one question needed to resolve it. A user can force the route with `/build`.
+For ambiguous requests, state the classification and ask the one question needed to resolve it. A user can force the build route with `/build` or force research with `/research`.
 
 Use the examples and decision rules in `docs/BUILD-CONTRACT.md`. Intent matters more than an exact keyword: “let's make an app,” “design a frontend,” and “turn this API sketch into a working service” are engineering; “summarize this design,” “compare frameworks,” and “draft a product brief” are not implementation requests unless the user also asks to produce or change a technical artifact.
 

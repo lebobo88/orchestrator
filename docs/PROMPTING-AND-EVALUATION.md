@@ -34,10 +34,11 @@ Avoid prescribing an imagined file-level solution before the engineer has inspec
 Each engineering job is evaluated against the acceptance checks in its `ENGINEERING_JOB` envelope.
 
 1. **Precondition:** the target, constraints, and check are clear enough to begin.
-2. **Implementation:** T1 makes the minimal coherent change.
-3. **Verification:** T1 runs the strongest practical deterministic check; for UI, add a visual/browser check when available.
-4. **Evidence review:** the orchestrator rejects a handoff that lacks changed paths or check results.
-5. **Outcome:** report done with evidence, or blocked with the smallest next decision.
+2. **RED:** T1 writes/runs the focused test before production code. A behavior change must demonstrate the expected failure; a pure refactor establishes a characterization baseline.
+3. **GREEN + refactor:** T1 makes the minimal change to pass the test, then improves code only while the test stays green.
+4. **Verification:** T1 runs the focused test plus the strongest practical deterministic check; for UI, add a visual/browser check when available.
+5. **Evidence review:** the orchestrator rejects a handoff that lacks changed paths, TDD evidence, or check results.
+6. **Outcome:** report done with evidence, or blocked with the smallest next decision.
 
 Build behavior is covered by the scenarios in `tests/build-classification-cases.json`; the offline validator checks that those scenarios, the handoff gate, and the native configuration remain present. A live evaluation should be run in a disposable repository with a real interactive Claude Code session before any policy-sensitive deployment.
 

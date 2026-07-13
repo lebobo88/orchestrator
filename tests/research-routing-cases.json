@@ -1,0 +1,22 @@
+[
+  {
+    "input": "Research current authentication-library tradeoffs for this service and recommend a direction.",
+    "expected": "required"
+  },
+  {
+    "input": "Compare the two database vendors for our regulated data-retention requirements.",
+    "expected": "required"
+  },
+  {
+    "input": "We need to design a new event-driven platform but do not know which architecture fits our existing system.",
+    "expected": "recommended"
+  },
+  {
+    "input": "Fix the typo in the validation message and add a regression test.",
+    "expected": "not-needed"
+  },
+  {
+    "input": "Build the already-specified CSV parser with the acceptance tests in this repository.",
+    "expected": "not-needed"
+  }
+]

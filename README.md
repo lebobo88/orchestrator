@@ -1,5 +1,9 @@
 # Claude Code Orchestrator
 
+An interactive Claude Code orchestrator with a test-driven T1 engineering route and an optional, evidence-first researcher. Research is dispatched only when the user requests it or it materially improves a decision; completed research is advisory and never overrides the user’s approved implementation scope.
+
+Use `/build <request>` to force the engineering route or `/research <question>` to force a foreground research pass. For normal requests, the orchestrator classifies both engineering intent and research need.
+
 A Claude Code-native, interactive orchestration foundation. Its default workflow is intentionally small:
 
 `user request → classify engineering intent → t1-engineer → JOB_DONE/JOB_BLOCKED → orchestrator report`

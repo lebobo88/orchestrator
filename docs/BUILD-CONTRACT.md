@@ -34,15 +34,19 @@ outcome: <observable result>
 scope: <included behavior/files if known>
 non_goals: <what this job must not do>
 references: <@files, URLs, designs, errors, existing patterns>
+research_context: <optional RESEARCH_BRIEF from researcher; advisory only; explicit user requirements prevail>
 constraints: <stack, compatibility, security, performance, no-touch boundaries>
 acceptance_checks: <specific tests/build/typecheck/visual checks and expected result>
+tdd: required — test first, RED → GREEN → REFACTOR
 risk: low | medium | high
 commit_authority: no | yes, with requested message/branch
 assumptions: <only assumptions safe enough to proceed>
 END_ENGINEERING_JOB
 ```
 
-For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. For an unfamiliar, cross-file, security-sensitive, data-changing, or UI request, give the engineer enough context to explore first and to choose the appropriate verification.
+For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. For an unfamiliar, cross-file, security-sensitive, data-changing, or UI request, give the engineer enough context to explore first and to choose the appropriate verification.
+
+When a `research_context` is present, it must be a completed `RESEARCH_BRIEF` as defined by `docs/RESEARCH-CONTRACT.md`. It is evidence for implementation, not a replacement for the user's request or an authorization to add scope. The orchestrator must resolve any conflict between research and explicit user requirements before the T1 handoff.
 
 ## Handoff acceptance gate
 
@@ -51,10 +55,11 @@ The orchestrator may report `JOB_DONE` only after the engineer provides all of:
 1. Outcome stated in observable terms.
 2. Changed file paths with purposes.
 3. Exact verification command(s) and result(s), or an explicit reason verification could not run.
-4. Intentional behavior changes and remaining risks/limits.
-5. A commit hash only when a commit was authorized and made.
+4. TDD evidence: test file, RED result before production code, GREEN result after it; for a pure refactor, characterization-test baseline and post-change result.
+5. Intentional behavior changes and remaining risks/limits.
+6. A commit hash only when a commit was authorized and made.
 
-Missing evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. A true blocker is returned as `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
+Missing TDD or verification evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. If no usable test harness can be established before implementation, the job is `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
 
 ## Isolation and escalation
 

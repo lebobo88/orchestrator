@@ -7,11 +7,14 @@ $required = @(
     '.agents/README.md',
     '.claude/agents/orchestrator.md',
     '.claude/agents/t1-engineer.md',
+    '.claude/agents/researcher.md',
     '.claude/skills/build/SKILL.md',
+    '.claude/skills/research/SKILL.md',
     '.claude/skills/claude-operations/SKILL.md',
     '.claude/skills/workflow-author/SKILL.md',
     '.claude/skills/workflow-author/templates/dynamic-workflow-template.js',
     'docs/BUILD-CONTRACT.md',
+    'docs/RESEARCH-CONTRACT.md',
     'docs/PROMPTING-AND-EVALUATION.md',
     'docs/ARCHITECTURE-ADAPTATION.md',
     'docs/KNOWN-UNKNOWNS.md',
@@ -19,6 +22,7 @@ $required = @(
     'docs/CAPABILITY-MAP.md',
     'docs/CUSTOM-WORKFLOWS.md',
     'tests/build-classification-cases.json',
+    'tests/research-routing-cases.json',
     '.gitignore',
     'README.md'
 )
@@ -47,25 +51,47 @@ if ($LASTEXITCODE -ne 0 -or -not $head) {
 
 $orchestrator = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/orchestrator.md')
 $engineer = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/t1-engineer.md')
+$researcher = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/researcher.md')
 $build = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/build/SKILL.md')
+$researchSkill = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research/SKILL.md')
 $operations = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/claude-operations/SKILL.md')
 $workflowTemplate = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/workflow-author/templates/dynamic-workflow-template.js')
 $contract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/BUILD-CONTRACT.md')
+$researchContract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/RESEARCH-CONTRACT.md')
 $prompting = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/PROMPTING-AND-EVALUATION.md')
 $unknowns = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/KNOWN-UNKNOWNS.md')
 $audit = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/COMPLETION-AUDIT.md')
 $cases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/build-classification-cases.json') | ConvertFrom-Json
+$researchCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-routing-cases.json') | ConvertFrom-Json
 
 if ($orchestrator -notmatch 't1-engineer') { throw 'Orchestrator must delegate to t1-engineer.' }
+if ($orchestrator -notmatch 'researcher') { throw 'Orchestrator must conditionally delegate to researcher.' }
 if ($engineer -notmatch '### JOB_DONE') { throw 'T1 engineer must expose a JOB_DONE handoff.' }
 if ($engineer -notmatch '### JOB_BLOCKED') { throw 'T1 engineer must expose a JOB_BLOCKED handoff.' }
 if ($engineer -notmatch 'schema-valid JSON') { throw 'T1 engineer must support schema-bound Dynamic Workflow handoffs.' }
+if ($engineer -notmatch 'Mandatory TDD loop') { throw 'T1 engineer must require a test-driven development loop.' }
+if ($engineer -notmatch 'RED') { throw 'T1 engineer must require evidence of the failing test before implementation.' }
+if ($engineer -notmatch 'GREEN') { throw 'T1 engineer must require evidence of the passing test after implementation.' }
+if ($engineer -notmatch 'research_context') { throw 'T1 engineer must preserve research as advisory context.' }
+if ($researcher -notmatch '### RESEARCH_READY') { throw 'Researcher must expose a RESEARCH_READY handoff.' }
+if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }
+if ($researcher -notmatch 'RESEARCH_BRIEF') { throw 'Researcher must return a portable research brief.' }
+if ($researcher -match 'tools:.*(Write|Edit|Bash)') { throw 'Researcher must remain evidence-only and not modify the project.' }
+if ($researcher -match 'AskUserQuestion') { throw 'Researcher must use the orchestrator relay for user clarification.' }
 if ($build -notmatch 'intentionally not a Claude Code Dynamic Workflow') { throw 'Build must remain an interactive default, not a dynamic workflow.' }
+if ($build -notmatch 'research_context') { throw 'Build must support a completed advisory research brief.' }
+if ($researchSkill -notmatch 'disable-model-invocation: true') { throw 'Research slash command must remain user-forced.' }
 if ($operations -notmatch 'Channels require') { throw 'Operations skill must cover external event Channels.' }
 if ($operations -notmatch 'Claude Agent SDK') { throw 'Operations skill must cover the approved programmatic path.' }
 if ($workflowTemplate -notmatch 'agentType: .t1-engineer.') { throw 'Dynamic workflow template must delegate through t1-engineer.' }
+if ($workflowTemplate -notmatch 'tdd: required') { throw 'Dynamic workflow template must preserve the mandatory TDD contract.' }
 if ($contract -notmatch 'ENGINEERING_JOB') { throw 'Build contract must define the engineering job envelope.' }
 if ($contract -notmatch 'Handoff acceptance gate') { throw 'Build contract must define completion evidence.' }
+if ($contract -notmatch 'tdd: required') { throw 'Build contract must make TDD mandatory for implementation jobs.' }
+if ($contract -notmatch 'research_context') { throw 'Build contract must define advisory research context.' }
+if ($researchContract -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Research contract must define interactive clarification relay.' }
+if ($researchContract -notmatch 'not needed') { throw 'Research contract must keep research conditional.' }
+if ($researchContract -notmatch 'Explicit user requirements') { throw 'Research contract must preserve user authority.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
 if ($unknowns -notmatch 'worktree') { throw 'Known-unknowns documentation must address worktree configuration hygiene.' }
 if ($audit -notmatch 'No CLI print subprocesses') { throw 'Completion audit must cover the interactive-only constraint.' }
@@ -76,6 +102,12 @@ foreach ($route in $expectedRoutes) {
     if (-not ($cases.expected -contains $route)) { throw "Classification cases must cover '$route'." }
 }
 if ($cases.Count -lt 7) { throw 'Classification test cases are unexpectedly incomplete.' }
+
+$expectedResearchRoutes = @('required', 'recommended', 'not-needed')
+foreach ($route in $expectedResearchRoutes) {
+    if (-not ($researchCases.expected -contains $route)) { throw "Research routing cases must cover '$route'." }
+}
+if ($researchCases.Count -lt 5) { throw 'Research routing cases are unexpectedly incomplete.' }
 
 $allText = Get-ChildItem -Path $root -Recurse -File | Where-Object { $_.FullName -notmatch '\\tests\\validate\.ps1$' } | Get-Content -Raw
 if ($allText -match '(?m)^\s*claude\s+-p\b') { throw 'The orchestrator must not contain a Claude print-mode invocation.' }

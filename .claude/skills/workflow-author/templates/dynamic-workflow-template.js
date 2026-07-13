@@ -36,7 +36,7 @@ if (!input || typeof input !== 'object' || !input.request || !input.target) {
 
 phase('Implement')
 const result = await agent(
-  `ENGINEERING_JOB\nrequest: ${input.request}\ntarget: ${input.target}\nacceptance_checks: ${input.acceptance_checks || 'Inspect and run the strongest practical verification.'}\ncommit_authority: no\nEND_ENGINEERING_JOB\nBecause this is a Dynamic Workflow, return only the schema-valid JSON status, summary, and verification fields.`,
+  `ENGINEERING_JOB\nrequest: ${input.request}\ntarget: ${input.target}\nacceptance_checks: ${input.acceptance_checks || 'Inspect and run the strongest practical verification.'}\ntdd: required — test first, RED → GREEN → REFACTOR\ncommit_authority: no\nEND_ENGINEERING_JOB\nBecause this is a Dynamic Workflow, return only the schema-valid JSON status, summary, and verification fields.`,
   { agentType: 't1-engineer', phase: 'Implement', label: 't1-engineer', schema: RESULT_SCHEMA }
 )
 
