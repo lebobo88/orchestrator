@@ -12,7 +12,7 @@ This audit maps the requested outcome to current evidence. It is deliberately co
 | Skills and subagents | Local filesystem definitions are present in standard `.claude` locations. | Implemented; interactive load needs a first session. |
 | Agent teams | Feature environment flag is set, default team model is Sonnet, and explicit-approval operating rules are present. | Configured; live use depends on provider/org availability. |
 | Dynamic Workflows | `/workflow-author` and a schema-aware typed-agent template are present; default build does not use it. | Toolbox implemented; no user-specific workflow intentionally pre-created. |
-| Worktree isolation | Git repository initialized, `.gitignore` has the worktree path, and native invocation is documented. | Pending initial baseline commit before live worktree validation. |
+| Worktree isolation | Git repository has baseline commit `cf9ec39`; `.gitignore` has the worktree path; a temporary isolated worktree was created from `HEAD`, checked for `CLAUDE.md`, and removed successfully. | Implemented and live Git-validated. |
 | MCP, plugins, hooks, Channels, scheduling, goals, sessions, Agent SDK | `claude-operations` and `CAPABILITY-MAP.md` choose native primitives and document safe activation/limits. | Available as explicit opt-ins; external setup requires a concrete user decision. |
 | `.git` and `.agents` inside project | Both folders are present; `.git` initializes successfully; `.agents/README.md` defines scope. | Implemented. |
 
@@ -23,7 +23,8 @@ pwsh -NoProfile -File .\tests\validate.ps1  # passed
 node --check .\.claude\skills\workflow-author\templates\dynamic-workflow-template.js  # passed
 claude --version  # 2.1.207
 claude doctor  # no installation issues
-git fsck --no-reflogs  # valid repository; reports unborn main because no baseline commit exists
+git worktree add --detach .claude/worktrees/orchestrator-validation HEAD  # created successfully
+git worktree remove --force .claude/worktrees/orchestrator-validation  # removed successfully
 ```
 
 See `KNOWN-UNKNOWNS.md` for activation prerequisites and the decisions that cannot be safely guessed.

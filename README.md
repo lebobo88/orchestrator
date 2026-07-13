@@ -44,7 +44,7 @@ Agent teams, worktrees, MCP, plugins, hooks, sessions, channels, schedules, and 
 
 ## Activation notes
 
-The repository contains both `.git` and `.agents`. Before using native Git worktrees in this scaffold, create an authorized baseline commit so Git has a `HEAD` to branch from. Review [KNOWN-UNKNOWNS.md](docs/KNOWN-UNKNOWNS.md) before activating any external integration, and use [COMPLETION-AUDIT.md](docs/COMPLETION-AUDIT.md) to see what is proven versus awaiting an environment-specific decision.
+The repository contains both `.git` and `.agents`; its baseline commit supports native Git worktrees. Review [KNOWN-UNKNOWNS.md](docs/KNOWN-UNKNOWNS.md) before activating any external integration, and use [COMPLETION-AUDIT.md](docs/COMPLETION-AUDIT.md) to see what is proven versus awaiting an environment-specific decision.
 
 ## Validate the foundation
 

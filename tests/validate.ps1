@@ -40,6 +40,11 @@ if (-not (Test-Path -LiteralPath (Join-Path $root '.git/HEAD'))) {
     throw 'The orchestrator folder must be initialized as a Git repository for native worktrees.'
 }
 
+$head = git -C $root rev-parse --verify HEAD 2>$null
+if ($LASTEXITCODE -ne 0 -or -not $head) {
+    throw 'The orchestrator repository needs a baseline commit before native worktrees can be used.'
+}
+
 $orchestrator = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/orchestrator.md')
 $engineer = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/t1-engineer.md')
 $build = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/build/SKILL.md')
@@ -62,8 +67,9 @@ if ($workflowTemplate -notmatch 'agentType: .t1-engineer.') { throw 'Dynamic wor
 if ($contract -notmatch 'ENGINEERING_JOB') { throw 'Build contract must define the engineering job envelope.' }
 if ($contract -notmatch 'Handoff acceptance gate') { throw 'Build contract must define completion evidence.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
-if ($unknowns -notmatch 'Baseline Git commit') { throw 'Known-unknowns documentation must disclose the worktree prerequisite.' }
+if ($unknowns -notmatch 'worktree') { throw 'Known-unknowns documentation must address worktree configuration hygiene.' }
 if ($audit -notmatch 'No CLI print subprocesses') { throw 'Completion audit must cover the interactive-only constraint.' }
+if ($audit -notmatch 'live Git-validated') { throw 'Completion audit must record the successful native worktree validation.' }
 
 $expectedRoutes = @('engineering', 'non-engineering', 'ambiguous')
 foreach ($route in $expectedRoutes) {

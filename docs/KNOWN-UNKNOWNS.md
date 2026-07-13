@@ -4,9 +4,8 @@ The orchestrator is deliberately configured as a local, interactive Claude Code 
 
 ## Required before first real use
 
-1. **Baseline Git commit:** this repository is initialized but has no `HEAD` commit yet. Native Git worktrees require a base commit. The user must authorize the initial local commit before `claude --worktree <name>` can be proven end-to-end here.
-2. **Claude authentication/provider:** the active account, model availability, organization policy, and permission mode determine which features Claude Code can actually use. Verify from an interactive session with `/doctor`, `/context`, `/mcp`, and `/hooks`.
-3. **Target repository:** this scaffold runs where Claude starts. To orchestrate another repository, merge its `CLAUDE.md` and `.claude` settings carefully rather than overwriting its existing project policy.
+1. **Claude authentication/provider:** the active account, model availability, organization policy, and permission mode determine which features Claude Code can actually use. Verify from an interactive session with `/doctor`, `/context`, `/mcp`, and `/hooks`.
+2. **Target repository:** this scaffold runs where Claude starts. To orchestrate another repository, merge its `CLAUDE.md` and `.claude` settings carefully rather than overwriting its existing project policy.
 
 ## Feature-specific decisions
 
