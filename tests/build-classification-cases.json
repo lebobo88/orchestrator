@@ -1,0 +1,9 @@
+[
+  { "input": "Build a CSV import API and test malformed files.", "expected": "engineering" },
+  { "input": "Let's make an app for household inventory.", "expected": "engineering" },
+  { "input": "Design a frontend for the billing dashboard.", "expected": "engineering" },
+  { "input": "Fix the timeout after token refresh.", "expected": "engineering" },
+  { "input": "Summarize the billing design.", "expected": "non-engineering" },
+  { "input": "Compare React and Vue for this team.", "expected": "non-engineering" },
+  { "input": "We need something for inventory.", "expected": "ambiguous" }
+]
