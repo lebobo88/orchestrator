@@ -27,7 +27,7 @@
     "profile": "UI",
     "request": "Wire the account-settings form, including loading and validation errors.",
     "required_skills": ["t1-tdd-test-design", "t1-ui-wiring-verification"],
-    "required_evidence": ["executable UI test", "state coverage", "accessibility review"]
+    "required_evidence": ["executable UI test", "state coverage", "accessibility review", "no native dialog API scan"]
   },
   {
     "profile": "integration",

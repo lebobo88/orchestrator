@@ -1,0 +1,20 @@
+[
+  {
+    "name": "web-app-confirmation",
+    "request": "Build a browser settings page that confirms account deletion.",
+    "required_skills": ["t1-tdd-test-design", "t1-ui-wiring-verification"],
+    "required_evidence": ["app-owned confirmation modal", "confirm and cancel behavior", "no native dialog API scan"]
+  },
+  {
+    "name": "tauri-webview-validation",
+    "request": "Implement validation feedback in a Tauri frontend form.",
+    "required_skills": ["t1-tdd-test-design", "t1-ui-wiring-verification"],
+    "required_evidence": ["inline or app-modal feedback", "keyboard and focus behavior", "no native dialog API scan"]
+  },
+  {
+    "name": "browser-ui-research",
+    "request": "Research the accessibility and automation risks in this browser-based dashboard.",
+    "required_skills": ["researcher-core", "research-browser-ui-safety"],
+    "required_evidence": ["browser_ui_dialog_policy", "existing dialog inventory", "validation measures"]
+  }
+]

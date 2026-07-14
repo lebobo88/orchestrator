@@ -21,6 +21,7 @@ $required = @(
     '.claude/skills/t1-ui-wiring-verification/SKILL.md',
     '.claude/skills/t1-security-reliability/SKILL.md',
     '.claude/skills/researcher-core/SKILL.md',
+    '.claude/skills/research-browser-ui-safety/SKILL.md',
     '.claude/skills/scribe-core/SKILL.md',
     '.claude/skills/scribe-technical-documentation/SKILL.md',
     '.claude/skills/scribe-specification-and-planning/SKILL.md',
@@ -53,6 +54,7 @@ $required = @(
     'tests/t1-engineer-evaluation-cases.json',
     'tests/writing-routing-cases.json',
     'tests/scribe-evaluation-cases.json',
+    'tests/browser-ui-policy-cases.json',
     'tests/test-research-hooks.ps1',
     '.gitignore',
     'README.md'
@@ -93,6 +95,7 @@ $t1Security = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-
 $researcher = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/researcher.md')
 $scribe = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/scribe.md')
 $researcherCore = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/researcher-core/SKILL.md')
+$researchBrowserUi = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-browser-ui-safety/SKILL.md')
 $scribeCore = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/scribe-core/SKILL.md')
 $scribeTechnical = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/scribe-technical-documentation/SKILL.md')
 $scribePlanning = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/scribe-specification-and-planning/SKILL.md')
@@ -121,12 +124,14 @@ $researchEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests
 $t1EvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/t1-engineer-evaluation-cases.json') | ConvertFrom-Json
 $writingCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/writing-routing-cases.json') | ConvertFrom-Json
 $scribeEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/scribe-evaluation-cases.json') | ConvertFrom-Json
+$browserUiCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/browser-ui-policy-cases.json') | ConvertFrom-Json
 
 if ($orchestrator -notmatch 't1-engineer') { throw 'Orchestrator must delegate to t1-engineer.' }
 if ($orchestrator -notmatch 'researcher') { throw 'Orchestrator must conditionally delegate to researcher.' }
 if ($orchestrator -notmatch 'scribe') { throw 'Orchestrator must route non-code writing to Scribe.' }
 if ($orchestrator -notmatch 'TASK_RECEIPT') { throw 'Orchestrator must retain compact team receipts.' }
 if ($orchestrator -notmatch 'DOCUMENTATION_HANDOFF') { throw 'Orchestrator must support direct T1 to Scribe handoffs.' }
+if ($orchestrator -notmatch 'Browser UI invariant') { throw 'Orchestrator must enforce the browser UI invariant.' }
 if ($engineer -notmatch '### JOB_DONE') { throw 'T1 engineer must expose a JOB_DONE handoff.' }
 if ($engineer -notmatch '### JOB_BLOCKED') { throw 'T1 engineer must expose a JOB_BLOCKED handoff.' }
 if ($engineer -notmatch 'tools: Read, Write, Edit, Glob, Grep, Bash, Skill') { throw 'T1 engineer must preserve its core tools and add only Skill.' }
@@ -143,20 +148,23 @@ if ($engineer -notmatch 'Research needed') { throw 'T1 engineer must escalate ma
 if ($engineer -notmatch 'Quality review') { throw 'T1 engineer must report the full quality review.' }
 if ($engineer -notmatch 'DOCUMENTATION_HANDOFF') { throw 'T1 engineer must prepare a direct documentation handoff.' }
 if ($engineer -notmatch 'TASK_RECEIPT') { throw 'T1 engineer must preserve the compact team receipt protocol.' }
+if ($engineer -notmatch 'native `alert`') { throw 'T1 engineer must prohibit native browser dialogs.' }
 if ($t1Core -notmatch 'Production priorities') { throw 'T1 core skill must preserve production-first priorities.' }
 if ($t1Core -notmatch 'Research escalation') { throw 'T1 core skill must retain the researcher boundary.' }
+if ($t1Core -notmatch 'Native `alert`') { throw 'T1 core must prohibit native browser dialogs.' }
 if ($t1Tdd -notmatch 'RED') { throw 'T1 test-design skill must preserve TDD evidence.' }
 if ($t1RouteTracing -notmatch 'entry point') { throw 'T1 route-tracing skill must trace behavior boundaries.' }
 if ($t1Refactor -notmatch 'characterization') { throw 'T1 refactor skill must require characterization evidence.' }
 if ($t1Performance -notmatch 'baseline') { throw 'T1 performance skill must require a baseline.' }
 if ($t1Api -notmatch 'idempotency') { throw 'T1 API skill must handle integration reliability.' }
 if ($t1Ui -notmatch 'accessibility') { throw 'T1 UI skill must include accessibility verification.' }
+if ($t1Ui -notmatch 'Browser UI invariant') { throw 'T1 UI skill must enforce modal-only browser dialog behavior.' }
 if ($t1Security -notmatch 'trust boundaries') { throw 'T1 security skill must identify trust boundaries.' }
 if ($researcher -notmatch '### RESEARCH_EVIDENCE_READY') { throw 'Researcher must expose a RESEARCH_EVIDENCE_READY handoff.' }
 if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }
 if ($researcher -notmatch 'RESEARCH_EVIDENCE') { throw 'Researcher must return a source-ledger evidence packet.' }
 if ($researcher -notmatch 'tools: Read, Glob, Grep, WebFetch, WebSearch, Bash, Skill') { throw 'Researcher must remain read-only and preserve its research tools.' }
-if ($researcher -notmatch 'model: sonnet') { throw 'Researcher must preserve the configured Sonnet model.' }
+if ($researcher -notmatch 'model: opus') { throw 'Researcher must preserve the configured Opus model.' }
 if ($researcher -notmatch 'permissionMode: default') { throw 'Researcher must preserve the default permission mode.' }
 if ($researcher -notmatch 'maxTurns: 120') { throw 'Researcher must preserve the bounded turn limit.' }
 if ($researcher -notmatch 'researcher-core') { throw 'Researcher must preload the core research playbook.' }
@@ -170,6 +178,9 @@ if ($researcherCore -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Researcher core m
 if ($researcherCore -notmatch 'Before any web research') { throw 'Researcher core must check existing reports before external research.' }
 if ($researcherCore -notmatch 'What, So what, and Now what') { throw 'Researcher core must require grounded synthesis.' }
 if ($researcherCore -notmatch 'RESEARCH_EVIDENCE') { throw 'Researcher core must require evidence packets.' }
+if ($researcher -notmatch 'research-browser-ui-safety') { throw 'Researcher must load browser UI safety guidance when applicable.' }
+if ($researcherCore -notmatch 'browser_ui_dialog_policy') { throw 'Researcher core must require browser UI dialog evidence.' }
+if ($researchBrowserUi -notmatch 'beforeunload') { throw 'Browser UI research skill must prohibit native browser dialogs.' }
 if ($scribe -notmatch '### DOC_DONE') { throw 'Scribe must expose a DOC_DONE handoff.' }
 if ($scribe -notmatch '### DOC_BLOCKED') { throw 'Scribe must expose a DOC_BLOCKED handoff.' }
 if ($scribe -notmatch 'tools: Read, Write, Edit, Glob, Grep, Bash, Skill') { throw 'Scribe must have scoped document authoring tools.' }
@@ -178,6 +189,7 @@ if ($scribe -notmatch 'TASK_RECEIPT') { throw 'Scribe must return compact team r
 if ($scribeCore -notmatch 'DOCUMENT_JOB') { throw 'Scribe core must enforce the document contract.' }
 if ($scribeCore -notmatch 'em dashes') { throw 'Scribe core must enforce anti-tell style rules.' }
 if ($scribeTechnical -notmatch 'verified') { throw 'Technical-documentation skill must require verified evidence.' }
+if ($scribeTechnical -notmatch 'no-native-dialog') { throw 'Technical documentation skill must preserve browser UI dialog policy.' }
 if ($scribePlanning -notmatch 'acceptance') { throw 'Planning skill must cover acceptance checks.' }
 if ($scribeResearch -notmatch 'RESEARCH_EVIDENCE') { throw 'Research-briefing skill must consume Researcher evidence.' }
 if ($scribeEditorial -notmatch 'accessible Markdown') { throw 'Editorial skill must cover accessible Markdown.' }
@@ -199,6 +211,7 @@ if ($contract -notmatch 'ENGINEERING_JOB') { throw 'Build contract must define t
 if ($contract -notmatch 'Handoff acceptance gate') { throw 'Build contract must define completion evidence.' }
 if ($contract -notmatch 'tdd: required') { throw 'Build contract must make TDD mandatory for implementation jobs.' }
 if ($contract -notmatch 'research_context') { throw 'Build contract must define advisory research context.' }
+if ($contract -notmatch 'browser_ui_dialog_policy') { throw 'Build contract must require browser UI dialog policy evidence.' }
 if ($documentContract -notmatch 'DOCUMENT_JOB') { throw 'Document contract must define the document job envelope.' }
 if ($documentContract -notmatch 'TASK_RECEIPT') { throw 'Document contract must define compact team receipts.' }
 if ($documentContract -notmatch 'RESEARCH_EVIDENCE') { throw 'Document contract must define direct research evidence.' }
@@ -215,6 +228,7 @@ if ($researchHarness -notmatch 'skills_used') { throw 'Research harness must rec
 if ($researchHarness -notmatch 'updates them in place') { throw 'Research harness must define in-place report updates.' }
 if ($researchHarness -notmatch 'Scribe') { throw 'Research harness must route report authorship to Scribe.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
+if ($prompting -notmatch 'no-native-dialog') { throw 'Prompting policy must include the browser UI invariant.' }
 if ($unknowns -notmatch 'worktree') { throw 'Known-unknowns documentation must address worktree configuration hygiene.' }
 if ($audit -notmatch 'No CLI print subprocesses') { throw 'Completion audit must cover the interactive-only constraint.' }
 if ($audit -notmatch 'live Git-validated') { throw 'Completion audit must record the successful native worktree validation.' }
@@ -259,6 +273,13 @@ if ($writingCases.Count -lt 6) { throw 'Writing routing cases are unexpectedly i
 foreach ($case in $scribeEvaluationCases) {
     if (-not $case.document_type -or -not $case.request -or $case.required_skills.Count -lt 2 -or $case.required_evidence.Count -lt 2) {
         throw "Scribe evaluation case '$($case.document_type)' lacks a usable rubric."
+    }
+}
+
+if ($browserUiCases.Count -lt 3) { throw 'Browser UI policy cases are unexpectedly incomplete.' }
+foreach ($case in $browserUiCases) {
+    if (-not $case.name -or -not $case.request -or $case.required_skills.Count -lt 2 -or $case.required_evidence.Count -lt 3) {
+        throw "Browser UI policy case '$($case.name)' lacks a usable rubric."
     }
 }
 

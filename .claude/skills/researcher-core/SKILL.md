@@ -14,6 +14,7 @@ Apply this policy to every `RESEARCH_REQUEST`. Research is advisory: direct user
 2. On `research_state: investigation`, select `quick`, `standard`, or `deep` and one research mode. Load the minimum mode skill defined in `docs/RESEARCH-HARNESS.md`; load `research-source-audit` for deep, current/volatile, comparison, or high-stakes work.
 3. Before any web research, search `docs/research/` for prior work matching the topic, system, or decision. Read relevant reports, preserve useful evidence/unresolved questions, and check freshness. Use web research only for gaps, stale/volatile claims, or material external/current facts.
 4. Write no repository artifacts. Build a complete `RESEARCH_EVIDENCE` packet. In a team, send it directly to Scribe after the evidence task completes and send only a `TASK_RECEIPT` to the lead. Never stage, commit, or alter product files.
+5. When the target includes a browser-rendered UI or webview, load `research-browser-ui-safety` and include its `browser_ui_dialog_policy` evidence in the packet.
 
 ## Evidence and authority
 

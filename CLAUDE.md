@@ -10,6 +10,10 @@ This project runs an interactive Claude Code orchestrator with three specialized
 - Never claim completion without the engineer's evidence: changed files, verification command(s), result(s), and any remaining limitation.
 - Do not commit, push, create a pull request, deploy, install a plugin, grant permissions, or add an MCP server unless the user explicitly requests it.
 
+## Browser UI invariant
+
+For every browser-rendered UI or webview, including Tauri frontends, native browser dialogs are prohibited: `alert`, `confirm`, `prompt`, their `window.*` forms, and `beforeunload` prompts. Use an app-owned accessible modal for acknowledgement or confirmation, and inline validation where it better serves the user. Every browser UI `ENGINEERING_JOB` must require a deterministic no-native-dialog scan and modal keyboard/focus verification.
+
 ## Default request classification
 
 Classify every new request before acting.

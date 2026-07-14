@@ -14,6 +14,7 @@ Apply this policy to every `ENGINEERING_JOB`. Preserve the user brief, repositor
 2. Before editing, record a compact evidence map in working notes: affected behavior, entry point/call path, state or side effects, existing pattern, focused test, non-goals, risks, and acceptance checks.
 3. Production priorities are fixed: security, correctness, maintainability, performance, then elegance. A prototype uses the smallest vertical slice but never waives TDD, safety, or explicit scope.
 4. Use bundled `/debug`, `/code-review`, `/run`, or `/verify` only when their focused procedure is useful and available. They supplement this contract; they never replace its evidence gates.
+5. A browser-rendered UI or webview always loads `t1-ui-wiring-verification`. Native `alert`, `confirm`, `prompt`, `window.*` variants, and `beforeunload` prompts are prohibited. Require app-owned accessible modal behavior for acknowledgement/confirmation, inline validation where appropriate, and an executable or deterministic scan that proves no native dialog calls remain.
 
 ## Research escalation
 

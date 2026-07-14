@@ -42,6 +42,8 @@ Or force the engineering workflow:
 
 The orchestrator sends a bounded foreground job to T1 for code or Scribe for documents, then reports completion evidence. It asks for clarification only when a missing decision is material.
 
+For every browser-rendered UI or webview, T1 must use app-owned accessible modals or inline validation instead of native browser dialogs. The build contract requires a focused no-native-dialog scan and modal keyboard/focus evidence.
+
 ## Use it with another repository
 
 Claude Code loads project instructions from the directory where it starts. Copy this project's `CLAUDE.md` and `.claude/` directory into the target repository (review and merge its existing `CLAUDE.md`/settings first), then run interactive `claude` from that repository. Do not overwrite an existing target repository configuration blindly.

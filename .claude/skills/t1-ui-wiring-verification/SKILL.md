@@ -11,3 +11,4 @@ user-invocable: false
 3. Preserve semantic controls, keyboard operation, focus behavior, labels, accessible names, contrast/design-system conventions, and responsive constraints when applicable.
 4. Write an executable behavioral UI test first. Add visual/browser verification only when repository tooling supports it; it supplements rather than replaces the test.
 5. Verify the final flow against the stated acceptance check and report any environment/browser limitation rather than claiming visual success.
+6. Browser UI invariant: do not use native `alert`, `confirm`, `prompt`, `window.*` variants, or `beforeunload`. Use an app-owned modal for acknowledgement/confirmation. It must have a semantic dialog role, accessible name and description, focus placement/restoration, Escape and explicit cancel behavior, keyboard operation, and deterministic testability. Verify the final source with a focused scan that finds no native dialog invocation.

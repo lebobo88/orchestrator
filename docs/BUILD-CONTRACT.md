@@ -37,6 +37,7 @@ references: <@files, URLs, designs, errors, existing patterns>
 research_context: <optional RESEARCH_EVIDENCE packet or source references sent directly by Researcher; advisory only; explicit user requirements prevail>
 constraints: <stack, compatibility, security, performance, no-touch boundaries>
 acceptance_checks: <specific tests/build/typecheck/visual checks and expected result>
+browser_ui_dialog_policy: required for browser-rendered UI or webview work — prohibit native alert/confirm/prompt/window variants/beforeunload; require app-owned modal or inline validation, keyboard/focus behavior, and no-native-dialog scan
 tdd: required — test first, RED → GREEN → REFACTOR
 task_profile: auto | feature | debug | performance | refactor | UI | integration | prototype
 quality_review: required — correctness, security, maintainability, performance, compatibility, tests, docs/operator, UI if applicable
@@ -47,7 +48,7 @@ assumptions: <only assumptions safe enough to proceed>
 END_ENGINEERING_JOB
 ```
 
-For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. T1 selects the task profile when `auto`, loads the minimum relevant internal playbooks, and completes the required full quality review before `JOB_DONE`. For an unfamiliar, cross-file, security-sensitive, data-changing, or UI request, give the engineer enough context to explore first and to choose the appropriate verification.
+For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. T1 selects the task profile when `auto`, loads the minimum relevant internal playbooks, and completes the required full quality review before `JOB_DONE`. For a browser-rendered UI or webview, `t1-ui-wiring-verification` and `browser_ui_dialog_policy` are mandatory even if the primary profile is not `UI`.
 
 When a `research_context` is present, it is a completed `RESEARCH_EVIDENCE` packet as defined by `docs/RESEARCH-CONTRACT.md`. In a team, Researcher sends it directly to T1. It is evidence for implementation, not a replacement for the user's request or an authorization to add scope. The orchestrator must resolve any conflict between research and explicit user requirements before the T1 handoff.
 
@@ -63,6 +64,7 @@ The orchestrator may report `JOB_DONE` only after the engineer provides all of:
 6. A commit hash only when a commit was authorized and made.
 7. Task profile/skill evidence and the full quality-review result, with every lens evidenced or marked `not applicable`.
 8. `DOCUMENTATION_HANDOFF` when standalone documentation is required. In a team, the full handoff goes directly to Scribe; the orchestrator retains only a compact receipt.
+9. For browser UI work, modal/inline-feedback behavior, keyboard/focus evidence, and the exact no-native-dialog scan command/result.
 
 Missing TDD or verification evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. If no usable test harness can be established before implementation, the job is `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
 

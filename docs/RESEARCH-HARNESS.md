@@ -41,6 +41,7 @@ Select one mode for every report, then load the minimum matching specialist skil
 | Root cause | `researcher-core`, `research-root-cause`; source audit when external/current evidence matters | Symptoms, competing hypotheses, causal confidence, prevention, validation. |
 | Product-market, technical documentation, QA, other | `researcher-core`; source audit for deep/current/disputed work | Existing relevant concise template from `prompt_Advanced_Prompt_Templates.md`. |
 | High-stakes overlay | Add `research-high-stakes` and `research-source-audit` to the selected mode | Informational, jurisdiction/context-bounded result with professional review gate. |
+| Browser UI overlay | Add `research-browser-ui-safety` to the selected mode when the target is browser-rendered or a webview | Native-dialog inventory, accessible modal/inline-feedback guidance, automation impact, and validation measures. |
 
 ## Evidence and reasoning standards
 
