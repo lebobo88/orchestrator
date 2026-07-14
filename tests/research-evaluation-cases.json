@@ -5,6 +5,7 @@
     "expected_profile": "deep",
     "expected_mode": "architecture",
     "required_skills": ["researcher-core", "research-architecture", "research-source-audit"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": [
       "Repository & Dependency Topology",
       "Architectural Views & Paradigms",
@@ -22,6 +23,7 @@
     "expected_profile": "deep",
     "expected_mode": "strategic-general",
     "required_skills": ["researcher-core", "research-strategic-general", "research-source-audit"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": [
       "COMPREHENSIVE MARKET ANALYSIS",
       "COMPETITIVE LANDSCAPE",
@@ -38,6 +40,7 @@
     "expected_profile": "standard",
     "expected_mode": "comparison",
     "required_skills": ["researcher-core", "research-comparison", "research-source-audit"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": ["Decision matrix", "Options and tradeoffs", "Confidence"]
   },
   {
@@ -46,6 +49,7 @@
     "expected_profile": "standard",
     "expected_mode": "root-cause",
     "required_skills": ["researcher-core", "research-root-cause"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": ["Observed symptoms", "Competing hypotheses", "Root cause", "Validation plan"]
   },
   {
@@ -54,6 +58,7 @@
     "expected_profile": "standard",
     "expected_mode": "other",
     "required_skills": ["researcher-core", "research-source-audit"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": ["Source ledger", "freshness", "Assumptions, unknowns, and contradictions"]
   },
   {
@@ -62,6 +67,7 @@
     "expected_profile": "deep",
     "expected_mode": "strategic-general",
     "required_skills": ["researcher-core", "research-strategic-general", "research-source-audit", "research-high-stakes"],
+    "required_handoff": "RESEARCH_EVIDENCE",
     "required_report_sections": ["Professional review required before action.", "Source ledger", "jurisdiction"]
   },
   {

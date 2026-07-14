@@ -1,6 +1,6 @@
 # Claude Code capability map
 
-This is an operating map, not a mandate to turn every request into a multi-agent system. The orchestrator defaults to one interactive lead and one foreground `t1-engineer`.
+This is an operating map, not a mandate to turn every request into a multi-agent system. The orchestrator defaults to one interactive lead and one foreground T1 or Scribe worker.
 
 ## Native session control
 
@@ -13,13 +13,14 @@ This is an operating map, not a mandate to turn every request into a multi-agent
 
 | Need | Native choice | Orchestrator policy |
 | --- | --- | --- |
-| One bounded implementation task | `t1-engineer` subagent | Default build route; foreground and interactive. |
-| Independent agents that must communicate | Agent team | Explicit approval only; experimental feature is enabled in project settings. |
+| One bounded implementation task | `t1-engineer` subagent | Default code route; foreground and interactive. |
+| One standalone non-code document | `scribe` subagent | Default document route; Scribe is the sole document author. |
+| Specialist evidence needed by Scribe | Temporary agent team | Direct Researcher/T1-to-Scribe packet, shared dependency, and compact lead receipt only. |
 | Separate files/branches for parallel work | `EnterWorktree` or `claude --worktree <name>` | Explicit isolation only; worktrees branch from local `HEAD` in this project. |
 | Reusable fixed multi-stage pipeline | Dynamic Workflow | Create only through `/workflow-author`; not the build default. |
 | Many separate sessions to monitor | `claude agents` / Agent view | User-operated, not silently created by the orchestrator. |
 
-Agent teams require Claude Code v2.1.32+. They should have 2–5 independent roles with a clear shared-task benefit. They have a shared task list and mailbox; normal subagents instead return only to the caller. Teams do not replace worktrees when parallel jobs may edit the same files.
+Agent teams require Claude Code v2.1.32+. They should have 2–5 independent roles with a clear shared-task benefit. They have a shared task list and mailbox; normal subagents instead return only to the caller. Use them only for cross-agent document work, end them after the task, and partition writable paths because teams do not replace worktrees.
 
 For worktrees, run `claude` once in the repository to accept workspace trust, then use `claude --worktree <name>`. Put `.claude/worktrees/` in the target repository's `.gitignore`. A `.worktreeinclude` file can copy gitignored local configuration that the worktree genuinely needs; never use it to casually distribute secrets.
 
@@ -35,7 +36,7 @@ Plugins can package skills, agents, hooks, and MCP. They are a last resort here:
 
 ## Hooks, events, and schedules
 
-- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane. `researcher` is the one local exception: its subagent-scoped `PreToolUse` hooks enforce a read-only command allowlist and Markdown writes only below `docs/research/`.
+- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane. Researcher has a read-only inspection allowlist; Scribe has a scoped text-document write guard.
 - Channels are research-preview MCP servers that push allowlisted external events into an *open* Claude Code session. They require explicit per-session opt-in and should never grant an untrusted sender permission-relay authority.
 - `/loop` is session-scoped polling. It runs only while the session is open, restored only on resume while unexpired, and recurring loops expire after seven days.
 - Use Desktop scheduled tasks for local-file automation on an awake machine. Use Routines or CI scheduling for durable remote scheduling. A scheduled task should use a worktree when it may modify a Git repository.

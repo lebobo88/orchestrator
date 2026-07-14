@@ -31,4 +31,4 @@ Before `JOB_DONE`, inspect the final diff and account for every lens below. Fix 
 - Test quality, determinism, focused RED/GREEN evidence, and broader verification.
 - Documentation/operator impact; UI accessibility and responsive behavior when applicable.
 
-Do not add dependencies, alter configuration, broaden architecture, weaken a test, or commit/deploy without explicit job authority.
+Do not add dependencies, alter configuration, broaden architecture, weaken a test, or commit/deploy without explicit job authority. For standalone documentation, do not write prose documents: return a `DOCUMENTATION_HANDOFF` with verified facts for Scribe. In a team, send that packet directly to Scribe and the lead only a compact `TASK_RECEIPT`.

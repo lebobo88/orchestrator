@@ -11,7 +11,7 @@ The orchestrator is deliberately configured as a local, interactive Claude Code 
 
 | Capability | Decision still needed | Why it matters |
 | --- | --- | --- |
-| Agent teams | Which tasks justify 2–5 collaborating roles? | Teams are experimental, cost more, and should not replace a single T1 job. |
+| Agent teams | Whether the installed provider permits live teammate messaging for a specific task | Cross-agent document work uses temporary Researcher/T1-to-Scribe teams with direct packets, compact lead receipts, and non-overlapping paths; teams remain experimental and cost more. |
 | Dynamic Workflows | First named pipeline, input contract, and failure/approval behavior | The template is available, but no business workflow should be invented without a use case. |
 | MCP | Exact service, OAuth/scopes, data classification, and project vs user scope | An MCP configuration changes external data/tool access. |
 | Plugins | Named trusted source and capability gap local `.claude` files cannot fill | Plugins package executable behavior and are intentionally avoided by default. |

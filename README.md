@@ -1,14 +1,18 @@
 # Claude Code Orchestrator
 
-An interactive Claude Code orchestrator with a test-driven T1 engineering route and an optional adaptive research harness. Research is dispatched only when the user requests it or it materially improves a decision; it begins with a targeted intake, writes a cited report under `docs/research/`, and remains advisory to approved implementation scope.
+An interactive Claude Code orchestrator with a test-driven T1 engineering route, evidence-first Researcher, and dedicated Scribe. Scribe writes all non-code documents. When Researcher or T1 must supply evidence, a temporary agent team lets them message Scribe directly while the orchestrator retains only compact task receipts.
 
 Use `/build <request>` to force the engineering route or `/research <question>` to force a foreground research pass. For normal requests, the orchestrator classifies both engineering intent and research need.
 
 A Claude Code-native, interactive orchestration foundation. Its default workflow is intentionally small:
 
-`user request → classify engineering intent → t1-engineer → JOB_DONE/JOB_BLOCKED → orchestrator report`
+`user request → classify → T1 code or Scribe document → compact receipt → orchestrator report`
 
-It does not use Claude CLI print mode, plugins, MCP, Agent SDK code, dynamic workflows, agent teams, or worktrees for an ordinary build request.
+For a cross-agent document task:
+
+`Researcher/T1 → direct evidence packet → Scribe → DOC_DONE → compact lead receipt`
+
+It does not use Claude CLI print mode, plugins, MCP, Agent SDK code, dynamic workflows, persistent teams, or worktrees for an ordinary request. Agent teams are task-scoped for direct specialist-to-Scribe communication only.
 
 ## Start an interactive session
 
@@ -36,7 +40,7 @@ Or force the engineering workflow:
 /build design a responsive frontend for a recipe planner and verify the production build
 ```
 
-The orchestrator sends a bounded foreground job to `t1-engineer`, waits for it, and reports completion evidence. It asks for clarification only when a missing decision is material.
+The orchestrator sends a bounded foreground job to T1 for code or Scribe for documents, then reports completion evidence. It asks for clarification only when a missing decision is material.
 
 ## Use it with another repository
 

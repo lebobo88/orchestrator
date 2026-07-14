@@ -10,11 +10,11 @@ argument-hint: "<engineering request>"
 This is the default workflow for engineering requests. It is intentionally not a Claude Code Dynamic Workflow: it runs in the interactive orchestrator session, preserves human approval, and dispatches exactly one T1 engineer unless the user explicitly requests a different operating mode.
 
 1. Classify the current request as engineering using `docs/BUILD-CONTRACT.md`. If it is not engineering, say so and return to the orchestrator; do not dispatch `t1-engineer`.
-2. If the orchestrator supplied a completed `RESEARCH_BRIEF`, include it as advisory `research_context` in the `ENGINEERING_JOB` envelope. Do not start research from this skill and do not use research to add product scope or override explicit user requirements.
+2. If research is required, use a temporary Researcher/T1 team and have Researcher send completed `RESEARCH_EVIDENCE` directly to T1 as advisory `research_context`. Do not use research to add product scope or override explicit user requirements.
 3. Create an `ENGINEERING_JOB` envelope: outcome, target directory, scope, non-goals, references, constraints, acceptance checks, task profile (`auto` unless known), risk level, and commit authority. Reuse the user's words; do not add product scope.
 4. If a missing answer materially changes implementation, ask one concise question. Otherwise state a safe bounded assumption in the envelope.
-5. Delegate one foreground job to `t1-engineer`. Include the complete envelope and require its `JOB_DONE` / `JOB_BLOCKED` report.
+5. Delegate one foreground job to `t1-engineer`. Include the complete envelope and require its `JOB_DONE` / `JOB_BLOCKED` report. If the job needs a README or other standalone document, create a temporary T1/Scribe team with separate file ownership; T1 sends its verified `DOCUMENTATION_HANDOFF` directly to Scribe.
 6. Do not start an agent team, a dynamic workflow, a worktree, or an SDK program by default. These are explicit alternatives, not hidden implementation details.
-7. On `JOB_DONE`, check that the report includes changed paths, TDD evidence, verification, and quality-review evidence. If any is absent, request completion evidence rather than declaring success. Summarize the evidence to the user. On `JOB_BLOCKED` with `Research needed`, route the request through `researcher`; otherwise surface the smallest question or approval needed.
+7. On `JOB_DONE`, check that the report includes changed paths, TDD evidence, verification, quality-review evidence, and a documentation handoff when documentation is needed. Retain only the compact receipt for a team document stage. On `JOB_BLOCKED` with `Research needed`, route the request through Researcher; otherwise surface the smallest question or approval needed.
 
 For `/build $ARGUMENTS`, treat `$ARGUMENTS` as the request. When auto-invoked, use the current user request.

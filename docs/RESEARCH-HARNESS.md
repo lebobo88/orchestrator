@@ -10,7 +10,7 @@ The orchestrator sends a `RESEARCH_REQUEST` and the researcher first returns `RE
 2. Scope, constraints, supplied evidence, boundaries, and exclusions.
 3. Depth, freshness, source priorities, and desired output emphasis.
 
-On the follow-up, the orchestrator includes the answers, any prior report path, and the original request. Before external research, researcher searches `docs/research/` for relevant prior reports, evaluates their source freshness and unresolved questions, then reuses or updates the matching report where appropriate. It uses web research only for gaps, stale/volatile claims, or material external/current facts. Researcher then persists the report and returns `RESEARCH_READY`. No ordinary research route uses a Dynamic Workflow, background job, or `claude -p` subprocess.
+On the follow-up, the orchestrator includes the answers, any prior report path, and the original request. Before external research, Researcher searches `docs/research/` for relevant prior reports and evaluates their source freshness and unresolved questions. It uses web research only for gaps, stale/volatile claims, or material external/current facts. Researcher sends its completed `RESEARCH_EVIDENCE` packet directly to Scribe in a temporary team; Scribe persists the report and returns `DOC_DONE`. No ordinary research route uses a Dynamic Workflow, background job, or `claude -p` subprocess.
 
 ```text
 RESEARCH_REQUEST
@@ -51,9 +51,9 @@ Select one mode for every report, then load the minimum matching specialist skil
 5. For every material conclusion, give **What** happened/is true, **So what** it means for the stated decision, and **Now what** should be validated or decided next.
 6. Recommendations are advisory. They preserve explicit user constraints and list any required approval before a downstream engineer can act.
 
-## Report lifecycle
+## Evidence and report lifecycle
 
-Completed reports live at `docs/research/<topic-slug>.md` and update in place. Each report includes:
+Researcher never writes a report. It returns a complete source ledger in `RESEARCH_EVIDENCE`. Scribe writes completed reports at `docs/research/<topic-slug>.md` and updates them in place. Each report includes:
 
 ```yaml
 ---
@@ -62,13 +62,13 @@ slug: <topic-slug>
 profile: quick | standard | deep
 mode: <selected mode>
 status: ready | blocked
-skills_used: <researcher-core and selected specialist skills>
+skills_used: <researcher-core, selected specialist skills, and scribe-research-briefing>
 created: <ISO-8601 date>
 updated: <ISO-8601 date>
 ---
 ```
 
-The report then contains the selected mode structure, a `## Source ledger`, `## Assumptions, unknowns, and contradictions`, `## Validation measures`, `## Adjacent research`, and `## Change log`. Researcher may create or edit only this directory. It never stages, commits, or changes product code/configuration.
+The report contains the selected mode structure, a `## Source ledger`, `## Assumptions, unknowns, and contradictions`, `## Validation measures`, `## Adjacent research`, and `## Change log`. Scribe may write only approved textual document paths. Researcher never stages, commits, or changes product code/configuration.
 
 ## High-stakes guardrails
 
@@ -76,4 +76,4 @@ Legal, medical, financial, safety, privacy, or security-sensitive reports are in
 
 ## Handoff
 
-The full report is for the user. `RESEARCH_BRIEF` is a compact reference for the orchestrator and optional `research_context` in an `ENGINEERING_JOB`. It must include report path, profile/mode, compact sourced evidence, implications, preserved constraints, unknowns/contradictions, approvals needed, validation measures, and limits. Research never overrides the user or authorizes scope changes.
+The full report is for the user. `RESEARCH_EVIDENCE` is the complete direct packet for Scribe or another approved specialist. It includes topic, profile/mode, claim/source/confidence entries, full source ledger, implications, preserved constraints, unknowns/contradictions, approvals needed, validation measures, and limits. The lead receives only `TASK_RECEIPT`. Research never overrides the user or authorizes scope changes.

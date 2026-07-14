@@ -1,0 +1,8 @@
+[
+  { "input": "Draft a README for the verified local CLI.", "expected": "writing" },
+  { "input": "Write an implementation plan from these approved requirements.", "expected": "writing" },
+  { "input": "Research current OAuth requirements and produce a cited briefing.", "expected": "research-backed-writing" },
+  { "input": "Fix the validation typo and update the README.", "expected": "engineering-with-documentation" },
+  { "input": "What does this existing function return?", "expected": "advisory" },
+  { "input": "We need something for onboarding.", "expected": "ambiguous" }
+]

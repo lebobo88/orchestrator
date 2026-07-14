@@ -1,0 +1,26 @@
+[
+  {
+    "document_type": "readme",
+    "request": "Write a README for the verified local CLI.",
+    "required_skills": ["scribe-core", "scribe-technical-documentation"],
+    "required_evidence": ["verified commands", "audience fit", "link and path review"]
+  },
+  {
+    "document_type": "plan",
+    "request": "Turn the approved requirements into an implementation plan.",
+    "required_skills": ["scribe-core", "scribe-specification-and-planning"],
+    "required_evidence": ["scope and non-goals", "assumptions", "acceptance checks"]
+  },
+  {
+    "document_type": "research-report",
+    "request": "Create a cited research report from a Researcher evidence packet.",
+    "required_skills": ["scribe-core", "scribe-research-briefing"],
+    "required_evidence": ["source ledger", "confidence and unknowns", "citation preservation"]
+  },
+  {
+    "document_type": "editorial",
+    "request": "Rewrite this operator guide for clarity without changing supported meaning.",
+    "required_skills": ["scribe-core", "scribe-editorial-quality"],
+    "required_evidence": ["terminology consistency", "anti-tell review", "accessible Markdown"]
+  }
+]

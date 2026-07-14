@@ -4,13 +4,14 @@ This audit maps the requested outcome to current evidence. It is deliberately co
 
 | Requested result | Current evidence | Status |
 | --- | --- | --- |
-| Native interactive Claude Code orchestrator | `.claude/settings.json` selects `orchestrator`; `CLAUDE.md` and `.claude/agents/orchestrator.md` establish an interactive-only operating contract. `claude --version` reports 2.1.207 and `claude doctor` passes. | Ready to start interactively. |
+| Native interactive Claude Code orchestrator | `.claude/settings.json` selects `orchestrator`; `CLAUDE.md` and `.claude/agents/orchestrator.md` establish an interactive-only operating contract. `claude --version` reports 2.1.208 and `claude doctor` passes. | Ready to start interactively. |
 | Default `build` workflow | `.claude/skills/build/SKILL.md`, `BUILD-CONTRACT.md`, and seven classification fixtures cover engineering/non-engineering/ambiguous intent. | Implemented and statically checked. |
 | Route engineering work to T1 and return completion | The orchestrator delegates one foreground `t1-engineer`; the agent requires `JOB_DONE`/`JOB_BLOCKED`; the build contract gates completion evidence. | Implemented and statically checked. |
-| Conditional evidence-first research | The orchestrator categorizes research as required/recommended/not needed, dispatches `researcher` only when appropriate, relays its clarification questions through the interactive session, and sends only an advisory `RESEARCH_BRIEF` to T1. | Implemented and statically checked. |
-| Adaptive persisted research harness | `researcher` now requires targeted intake, selects quick/standard/deep profiles and a mode-specific output, writes cited reports only under `docs/research/`, and returns a compact advisory handoff. Read-only inspection and report-write boundaries are guarded by subagent hooks. | Implemented and offline-validated; native interactive smoke test remains environment-dependent. |
+| Conditional evidence-first research | The orchestrator categorizes research as required/recommended/not needed, relays only Researcher's clarification answers, and uses direct `RESEARCH_EVIDENCE` packets for consuming teammates. | Implemented and statically checked. |
+| Adaptive research and Scribe report harness | Researcher requires targeted intake, selects quick/standard/deep profiles and a mode-specific source ledger, and writes no artifacts. Scribe authors cited reports under `docs/research/`; Researcher has a read-only inspection hook and Scribe has a document-write boundary. | Implemented and offline-validated; native interactive smoke test remains environment-dependent. |
 | Researcher progressive-disclosure skills | Researcher preloads a compact core policy and loads architecture, strategic/general, comparison, root-cause, source-audit, and high-stakes playbooks by selected mode without expanding its authority. | Implemented and statically checked; native interactive mode-selection smoke tests remain environment-dependent. |
 | T1 capability skills | T1 preloads a production-first core playbook and can load focused TDD, route-tracing, refactor, performance, API/integration, UI, and security/reliability skills without gaining web or orchestration authority. | Implemented and statically checked; native interactive task-profile smoke tests remain environment-dependent. |
+| Dedicated Scribe and direct document handoffs | Scribe owns all non-code textual deliverables; Researcher returns source-ledger evidence and T1 returns verified documentation facts directly to Scribe in task-scoped teams. The lead retains compact receipts only. | Implemented and statically checked; native interactive peer-messaging smoke tests remain environment-dependent. |
 | No CLI print subprocesses | Root instructions, agents, skills, template, and validator prohibit `claude -p` invocations. | Statically checked. |
 | Prompting, verification, hallucination safeguards | `PROMPTING-AND-EVALUATION.md`, job envelope, acceptance gate, and T1 instructions require grounded outcome/constraints/evidence. | Implemented and statically checked. |
 | Skills and subagents | Local filesystem definitions are present in standard `.claude` locations. | Implemented; interactive load needs a first session. |
@@ -25,7 +26,7 @@ This audit maps the requested outcome to current evidence. It is deliberately co
 ```text
 pwsh -NoProfile -File .\tests\validate.ps1  # passed
 node --check .\.claude\skills\workflow-author\templates\dynamic-workflow-template.js  # passed
-claude --version  # 2.1.207
+claude --version  # 2.1.208
 claude doctor  # no installation issues
 git worktree add --detach .claude/worktrees/orchestrator-validation HEAD  # created successfully
 git worktree remove --force .claude/worktrees/orchestrator-validation  # removed successfully

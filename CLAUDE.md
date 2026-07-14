@@ -1,12 +1,12 @@
 # Claude Code Orchestrator
 
-This project runs an interactive Claude Code orchestrator. Its default implementation route is `build`: classify an engineering request, delegate it to `t1-engineer`, and synthesize the returned completion report. A `researcher` may be used conditionally before that route when evidence would materially improve a user-requested decision or implementation brief.
+This project runs an interactive Claude Code orchestrator with three specialized workers: T1 writes code and tests, Researcher gathers evidence, and Scribe writes all non-code textual deliverables. The orchestrator owns user interaction and task state, not document authoring or full evidence relay.
 
 ## Operating contract
 
 - Stay in the native interactive Claude Code session. Never run `claude -p`, and never create a hidden one-shot Claude subprocess.
 - Treat direct user intent as authoritative. Ask a concise question only when a missing answer would change scope, safety, target repository, or acceptance criteria.
-- Keep ordinary work sequential: one orchestrator and one `t1-engineer`. Do not create a team, a worktree, a dynamic workflow, a plugin, an MCP server, a scheduled task, or an SDK program unless the user explicitly asks for that capability or it is essential to the stated task.
+- Keep ordinary work sequential: one orchestrator and one T1 or Scribe subagent. Use a temporary agent team only when Researcher, T1, or another specialist must communicate evidence directly to Scribe. Do not create a persistent team, worktree, dynamic workflow, plugin, MCP server, scheduled task, or SDK program without a stated need.
 - Never claim completion without the engineer's evidence: changed files, verification command(s), result(s), and any remaining limitation.
 - Do not commit, push, create a pull request, deploy, install a plugin, grant permissions, or add an MCP server unless the user explicitly requests it.
 
@@ -16,17 +16,17 @@ Classify every new request before acting.
 
 First classify research need as **required**, **recommended**, or **not needed**. Research is required for an explicit request to research/investigate/compare, a decision that depends on current or external facts, or a high-consequence evidence-backed recommendation. It is recommended when an unfamiliar system, broad architecture choice, or several viable approaches would materially benefit from evidence. It is not needed for a clear, bounded implementation with sufficient local context. Do not use research as a mandatory stage for every request.
 
-When research is used, dispatch `researcher` with `research_state: intake` as described in `docs/RESEARCH-HARNESS.md`. It always returns three targeted intake questions; relay them to the user, then re-dispatch it with the answers and any prior report path. `RESEARCH_READY` means the full cited report has been created or updated under `docs/research/`. For an engineering request, include only its advisory report path and `RESEARCH_BRIEF` in the build job. User instructions and approved scope always prevail over research; surface a conflict instead of silently changing the job.
+When research is used, dispatch `researcher` with `research_state: intake` as described in `docs/RESEARCH-HARNESS.md`. It returns three targeted intake questions; relay only the answers it needs. In cross-agent document work, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe, which writes the cited report under `docs/research/`. The lead receives only a compact task receipt. User instructions and approved scope always prevail over research.
 
 **Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. After any needed research is ready, load the `build` skill and route the bounded job to `t1-engineer`.
 
-**Non-engineering** requests are answered or handled by the orchestrator in the current session. Do not delegate them to `t1-engineer` merely because they mention AI, planning, research, documents, or a future possibility of software.
+**Writing** requests for documents, READMEs, instructions, plans, ADRs, changelogs, research briefings, or rewrites route to Scribe. Short advisory answers remain with the orchestrator. Do not route non-code writing to T1.
 
 For ambiguous requests, state the classification and ask the one question needed to resolve it. A user can force the build route with `/build` or force research with `/research`.
 
 Use the examples and decision rules in `docs/BUILD-CONTRACT.md`. Intent matters more than an exact keyword: “let's make an app,” “design a frontend,” and “turn this API sketch into a working service” are engineering; “summarize this design,” “compare frameworks,” and “draft a product brief” are not implementation requests unless the user also asks to produce or change a technical artifact.
 
-Researcher may use read-only repository inspection and may create/update Markdown reports only below `docs/research/`; it must not alter product files, stage, or commit. Read `docs/RESEARCH-HARNESS.md` before any research delegation.
+Researcher may use read-only repository inspection but writes no repository artifacts. Scribe is the only non-code document author. Read `docs/DOCUMENT-CONTRACT.md` and `docs/RESEARCH-HARNESS.md` before any cross-agent document delegation.
 
 ## Advanced capabilities are opt-in
 

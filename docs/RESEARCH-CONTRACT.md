@@ -1,8 +1,8 @@
 # Research contract
 
-`researcher` is a conditional, evidence-first subagent. It is not a mandatory step for engineering jobs and it is not an implementation agent. `docs/RESEARCH-HARNESS.md` defines its staged protocol, evidence requirements, profile/mode structures, and report lifecycle.
+`researcher` is a conditional, evidence-first specialist. It is not a mandatory step for engineering jobs and it is not an implementation or document-authoring agent. `docs/RESEARCH-HARNESS.md` defines its staged protocol, evidence requirements, profile/mode structures, and Scribe handoff.
 
-`RECEIVED → CATEGORIZED → DIRECT | RESEARCHING → RESEARCH_NEEDS_INPUT ↔ USER_REPLY → RESEARCH_READY → REPORTED | BUILD_BRIEFED → T1_RUNNING`
+`RECEIVED → CATEGORIZED → DIRECT | RESEARCHING → RESEARCH_NEEDS_INPUT ↔ USER_REPLY → RESEARCH_EVIDENCE_READY → SCRIBE_RUNNING → DOC_DONE | BUILD_BRIEFED → T1_RUNNING`
 
 ## Routing
 
@@ -12,7 +12,7 @@
 | Recommended | Dispatch when evidence would materially narrow unfamiliar architecture, broad scope, or several viable approaches. State the reason in the research brief. | Choose an authentication approach for an unfamiliar regulated product; investigate an existing system before a large migration. |
 | Not needed | Continue directly. | A precise local bug fix, a small requested implementation with clear acceptance checks, or a question answerable from supplied context. |
 
-For research-only requests, the orchestrator reports the completed cited report to the user. For engineering requests, it adds only the report path and completed `RESEARCH_BRIEF` as `research_context` in the `ENGINEERING_JOB` after resolving any scope or requirement conflict with the user.
+For research-only requests, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe in a temporary team, and Scribe writes the completed cited report. For engineering requests, the same evidence packet goes directly to the consuming specialist or Scribe; the orchestrator retains only a compact task receipt after resolving scope conflicts with the user.
 
 ## Interactive clarification
 
@@ -22,7 +22,7 @@ Claude Code subagents cannot use the interactive `AskUserQuestion` tool. Therefo
 
 - Use local/user-provided evidence first. Use web evidence only when current or external facts matter.
 - Prefer primary, authoritative, diverse sources. Cite URLs or local paths for factual claims and label inference, assumption, or unknown explicitly.
-- A `RESEARCH_BRIEF` is advisory. Explicit user requirements, approved scope, and repository instructions prevail.
+- `RESEARCH_EVIDENCE` is advisory. Explicit user requirements, approved scope, and repository instructions prevail.
 - Research may recommend adjacent topics, but it must not start them automatically.
 - If research would alter scope, select a new dependency, or conflict with user requirements, the orchestrator must surface it for approval before T1 is dispatched.
 
