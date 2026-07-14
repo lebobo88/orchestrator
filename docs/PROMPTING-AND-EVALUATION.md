@@ -16,7 +16,7 @@ Avoid prescribing an imagined file-level solution before the engineer has inspec
 ## Reasoning and model policy
 
 - The orchestrator uses `inherit` so the operator retains control of the interactive model.
-- `t1-engineer` uses `sonnet` as the default implementation workhorse. Escalate a specific job's model only when the user requests it or the task is unusually high-stakes and the installed/provider policy permits it.
+- `t1-engineer` uses `haiku` as the configured bounded implementation worker. Keep its scope, TDD evidence, task-specific playbooks, and verification gates strong rather than treating model selection as a substitute for evidence.
 - Do not select a model solely because it is more capable. Match the model to scope, cost, latency, and consequence, then retain verification gates.
 - Explore before modifying unfamiliar or broad code; plan before a multi-file or design-uncertain change; implement directly when the intended diff is genuinely obvious and small.
 - Do not ask the model to fabricate unavailable facts, test results, access, or completion. State uncertainty and request/inspect the relevant source.
@@ -38,7 +38,8 @@ Each engineering job is evaluated against the acceptance checks in its `ENGINEER
 3. **GREEN + refactor:** T1 makes the minimal change to pass the test, then improves code only while the test stays green.
 4. **Verification:** T1 runs the focused test plus the strongest practical deterministic check; for UI, add a visual/browser check when available.
 5. **Evidence review:** the orchestrator rejects a handoff that lacks changed paths, TDD evidence, or check results.
-6. **Outcome:** report done with evidence, or blocked with the smallest next decision.
+6. **Full quality review:** T1 accounts for correctness/failure paths, security/privacy, maintainability, performance, compatibility/data safety, tests, documentation/operator impact, and UI accessibility where applicable.
+7. **Outcome:** report done with evidence, or blocked with the smallest next decision. Current/external documentation needs are returned as a structured research escalation to the orchestrator rather than guessed or browsed by T1.
 
 Build behavior is covered by the scenarios in `tests/build-classification-cases.json`; the offline validator checks that those scenarios, the handoff gate, and the native configuration remain present. A live evaluation should be run in a disposable repository with a real interactive Claude Code session before any policy-sensitive deployment.
 

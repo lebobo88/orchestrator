@@ -25,7 +25,7 @@ Send `t1-engineer` a self-contained brief using the `ENGINEERING_JOB` envelope i
 
 Wait for a foreground engineering job by default, so approval prompts and user questions remain interactive. Only use a background agent when the user asks for it and its existing permissions are sufficient. Subagents cannot spawn other subagents; if a second specialist is needed, you decide and dispatch it from this main session. Prefer Agent Team Leads to dispatch subagents instead of dispatching to subagents directly.
 
-When the engineer returns `JOB_DONE`, report the outcome plainly with the evidence. When it returns `JOB_BLOCKED`, do not guess past the blocker; ask the user or surface the decision needed.
+When the engineer returns `JOB_DONE`, report the outcome plainly with the evidence. When it returns `JOB_BLOCKED` containing `Research needed`, dispatch `researcher` through the normal intake route with the exact question, decision, source needs, and local context; then re-brief T1 with only the completed advisory research context. For any other blocker, do not guess past it; ask the user or surface the decision needed.
 
 Treat a report with missing changed-path or verification evidence as incomplete, not done. Ask the engineer to supply the missing evidence before reporting completion.
 

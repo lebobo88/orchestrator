@@ -1,0 +1,50 @@
+[
+  {
+    "profile": "feature",
+    "request": "Add a bounded account-preferences feature using existing repository patterns.",
+    "required_skills": ["t1-tdd-test-design"],
+    "required_evidence": ["focused RED/GREEN test", "error path", "full quality review"]
+  },
+  {
+    "profile": "debug",
+    "request": "Fix checkout failure after token refresh using the observed stack trace.",
+    "required_skills": ["t1-tdd-test-design", "t1-route-tracing"],
+    "required_evidence": ["reproduction", "root-cause hypothesis", "regression test"]
+  },
+  {
+    "profile": "performance",
+    "request": "Reduce the reported list-query latency without changing behavior.",
+    "required_skills": ["t1-tdd-test-design", "t1-performance-evidence"],
+    "required_evidence": ["baseline metric", "before/after comparison", "regression limit"]
+  },
+  {
+    "profile": "refactor",
+    "request": "Refactor duplicated mapper logic while preserving all behavior.",
+    "required_skills": ["t1-tdd-test-design", "t1-refactor-safety"],
+    "required_evidence": ["characterization baseline", "invariants", "compatibility proof"]
+  },
+  {
+    "profile": "UI",
+    "request": "Wire the account-settings form, including loading and validation errors.",
+    "required_skills": ["t1-tdd-test-design", "t1-ui-wiring-verification"],
+    "required_evidence": ["executable UI test", "state coverage", "accessibility review"]
+  },
+  {
+    "profile": "integration",
+    "request": "Add an idempotent payment-provider callback endpoint.",
+    "required_skills": ["t1-tdd-test-design", "t1-api-integration-contracts", "t1-security-reliability"],
+    "required_evidence": ["contract tests", "auth/validation", "retry or duplicate-delivery behavior"]
+  },
+  {
+    "profile": "prototype",
+    "request": "Build the smallest usable inventory capture flow without adding unapproved dependencies.",
+    "required_skills": ["t1-tdd-test-design"],
+    "required_evidence": ["vertical slice", "TDD", "explicit technical debt or none"]
+  },
+  {
+    "profile": "research-escalation",
+    "request": "Implement against a current vendor API whose documentation is not present locally.",
+    "required_skills": ["t1-core"],
+    "required_evidence": ["JOB_BLOCKED", "Research needed", "precise question and freshness"]
+  }
+]

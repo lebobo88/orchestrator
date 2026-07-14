@@ -11,6 +11,14 @@ $required = @(
     '.claude/hooks/validate-researcher-bash.ps1',
     '.claude/hooks/validate-researcher-write.ps1',
     '.claude/skills/build/SKILL.md',
+    '.claude/skills/t1-core/SKILL.md',
+    '.claude/skills/t1-tdd-test-design/SKILL.md',
+    '.claude/skills/t1-route-tracing/SKILL.md',
+    '.claude/skills/t1-refactor-safety/SKILL.md',
+    '.claude/skills/t1-performance-evidence/SKILL.md',
+    '.claude/skills/t1-api-integration-contracts/SKILL.md',
+    '.claude/skills/t1-ui-wiring-verification/SKILL.md',
+    '.claude/skills/t1-security-reliability/SKILL.md',
     '.claude/skills/research/SKILL.md',
     '.claude/skills/claude-operations/SKILL.md',
     '.claude/skills/workflow-author/SKILL.md',
@@ -28,6 +36,7 @@ $required = @(
     'tests/build-classification-cases.json',
     'tests/research-routing-cases.json',
     'tests/research-evaluation-cases.json',
+    'tests/t1-engineer-evaluation-cases.json',
     'tests/test-research-hooks.ps1',
     '.gitignore',
     'README.md'
@@ -57,6 +66,14 @@ if ($LASTEXITCODE -ne 0 -or -not $head) {
 
 $orchestrator = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/orchestrator.md')
 $engineer = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/t1-engineer.md')
+$t1Core = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-core/SKILL.md')
+$t1Tdd = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-tdd-test-design/SKILL.md')
+$t1RouteTracing = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-route-tracing/SKILL.md')
+$t1Refactor = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-refactor-safety/SKILL.md')
+$t1Performance = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-performance-evidence/SKILL.md')
+$t1Api = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-api-integration-contracts/SKILL.md')
+$t1Ui = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-ui-wiring-verification/SKILL.md')
+$t1Security = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-security-reliability/SKILL.md')
 $researcher = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/researcher.md')
 $researchHarness = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/RESEARCH-HARNESS.md')
 $build = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/build/SKILL.md')
@@ -71,16 +88,33 @@ $audit = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/COMPLETION-AUDIT.m
 $cases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/build-classification-cases.json') | ConvertFrom-Json
 $researchCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-routing-cases.json') | ConvertFrom-Json
 $researchEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-evaluation-cases.json') | ConvertFrom-Json
+$t1EvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/t1-engineer-evaluation-cases.json') | ConvertFrom-Json
 
 if ($orchestrator -notmatch 't1-engineer') { throw 'Orchestrator must delegate to t1-engineer.' }
 if ($orchestrator -notmatch 'researcher') { throw 'Orchestrator must conditionally delegate to researcher.' }
 if ($engineer -notmatch '### JOB_DONE') { throw 'T1 engineer must expose a JOB_DONE handoff.' }
 if ($engineer -notmatch '### JOB_BLOCKED') { throw 'T1 engineer must expose a JOB_BLOCKED handoff.' }
+if ($engineer -notmatch 'tools: Read, Write, Edit, Glob, Grep, Bash, Skill') { throw 'T1 engineer must preserve its core tools and add only Skill.' }
+if ($engineer -notmatch 'model: haiku') { throw 'T1 engineer must preserve the configured Haiku model.' }
+if ($engineer -notmatch 'maxTurns: 80') { throw 'T1 engineer must preserve the bounded turn limit.' }
+if ($engineer -notmatch 't1-core') { throw 'T1 engineer must preload the core engineering playbook.' }
+if ($engineer -notmatch 'Task profile and skills') { throw 'T1 engineer must select task-specific playbooks.' }
 if ($engineer -notmatch 'schema-valid JSON') { throw 'T1 engineer must support schema-bound Dynamic Workflow handoffs.' }
 if ($engineer -notmatch 'Mandatory TDD loop') { throw 'T1 engineer must require a test-driven development loop.' }
 if ($engineer -notmatch 'RED') { throw 'T1 engineer must require evidence of the failing test before implementation.' }
 if ($engineer -notmatch 'GREEN') { throw 'T1 engineer must require evidence of the passing test after implementation.' }
 if ($engineer -notmatch 'research_context') { throw 'T1 engineer must preserve research as advisory context.' }
+if ($engineer -notmatch 'Research needed') { throw 'T1 engineer must escalate material external documentation research.' }
+if ($engineer -notmatch 'Quality review') { throw 'T1 engineer must report the full quality review.' }
+if ($t1Core -notmatch 'Production priorities') { throw 'T1 core skill must preserve production-first priorities.' }
+if ($t1Core -notmatch 'Research escalation') { throw 'T1 core skill must retain the researcher boundary.' }
+if ($t1Tdd -notmatch 'RED') { throw 'T1 test-design skill must preserve TDD evidence.' }
+if ($t1RouteTracing -notmatch 'entry point') { throw 'T1 route-tracing skill must trace behavior boundaries.' }
+if ($t1Refactor -notmatch 'characterization') { throw 'T1 refactor skill must require characterization evidence.' }
+if ($t1Performance -notmatch 'baseline') { throw 'T1 performance skill must require a baseline.' }
+if ($t1Api -notmatch 'idempotency') { throw 'T1 API skill must handle integration reliability.' }
+if ($t1Ui -notmatch 'accessibility') { throw 'T1 UI skill must include accessibility verification.' }
+if ($t1Security -notmatch 'trust boundaries') { throw 'T1 security skill must identify trust boundaries.' }
 if ($researcher -notmatch '### RESEARCH_READY') { throw 'Researcher must expose a RESEARCH_READY handoff.' }
 if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }
 if ($researcher -notmatch 'RESEARCH_BRIEF') { throw 'Researcher must return a portable research brief.' }
@@ -91,6 +125,7 @@ if ($researcher -notmatch 'validate-researcher-write') { throw 'Researcher repor
 if ($researcher -match 'AskUserQuestion') { throw 'Researcher must use the orchestrator relay for user clarification.' }
 if ($researcher -notmatch 'Intake first') { throw 'Researcher must require the targeted intake before investigation.' }
 if ($researcher -notmatch 'docs/research') { throw 'Researcher must persist reports in the approved location.' }
+if ($researcher -notmatch 'Before any web research') { throw 'Researcher must check existing reports before external research.' }
 if ($researcher -notmatch 'What') { throw 'Researcher must require what/so what/now what synthesis.' }
 if ($build -notmatch 'intentionally not a Claude Code Dynamic Workflow') { throw 'Build must remain an interactive default, not a dynamic workflow.' }
 if ($build -notmatch 'research_context') { throw 'Build must support a completed advisory research brief.' }
@@ -110,6 +145,7 @@ if ($researchHarness -notmatch 'RESEARCH_REQUEST') { throw 'Research harness mus
 if ($researchHarness -notmatch 'Architecture') { throw 'Research harness must define architecture mode.' }
 if ($researchHarness -notmatch 'Strategic/general') { throw 'Research harness must define strategic/general mode.' }
 if ($researchHarness -notmatch 'Source ledger') { throw 'Research harness must require a source ledger.' }
+if ($researchHarness -notmatch 'Before external research') { throw 'Research harness must require existing-report review before web research.' }
 if ($researchHarness -notmatch 'Professional review required before action') { throw 'Research harness must guard high-stakes research.' }
 if ($researchHarness -notmatch 'update in place') { throw 'Research harness must define in-place report updates.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
@@ -138,10 +174,22 @@ foreach ($case in $researchEvaluationCases) {
     }
 }
 
+$expectedT1Profiles = @('feature', 'debug', 'performance', 'refactor', 'UI', 'integration', 'prototype', 'research-escalation')
+foreach ($profile in $expectedT1Profiles) {
+    if (-not ($t1EvaluationCases.profile -contains $profile)) { throw "T1 evaluation cases must cover '$profile'." }
+}
+foreach ($case in $t1EvaluationCases) {
+    if (-not $case.request -or $case.required_skills.Count -lt 1 -or $case.required_evidence.Count -lt 2) {
+        throw "T1 evaluation case '$($case.profile)' lacks a usable rubric."
+    }
+}
+
 & (Join-Path $root 'tests/test-research-hooks.ps1')
 if ($LASTEXITCODE -ne 0) { throw 'Researcher hook validation failed.' }
 
-$allText = Get-ChildItem -Path $root -Recurse -File | Where-Object { $_.FullName -notmatch '\\tests\\validate\.ps1$' } | Get-Content -Raw
+$allText = Get-ChildItem -Path $root -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch '\\tests\\validate\.ps1$' } |
+    ForEach-Object { Get-Content -Raw -LiteralPath $_.FullName -ErrorAction SilentlyContinue }
 if ($allText -match '(?m)^\s*claude\s+-p\b') { throw 'The orchestrator must not contain a Claude print-mode invocation.' }
 
 Write-Host 'Claude Code orchestrator foundation validation passed.'

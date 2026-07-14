@@ -10,7 +10,7 @@ The orchestrator sends a `RESEARCH_REQUEST` and the researcher first returns `RE
 2. Scope, constraints, supplied evidence, boundaries, and exclusions.
 3. Depth, freshness, source priorities, and desired output emphasis.
 
-On the follow-up, the orchestrator includes the answers, any prior report path, and the original request. Researcher then investigates, persists the report, and returns `RESEARCH_READY`. No ordinary research route uses a Dynamic Workflow, background job, or `claude -p` subprocess.
+On the follow-up, the orchestrator includes the answers, any prior report path, and the original request. Before external research, researcher searches `docs/research/` for relevant prior reports, evaluates their source freshness and unresolved questions, then reuses or updates the matching report where appropriate. It uses web research only for gaps, stale/volatile claims, or material external/current facts. Researcher then persists the report and returns `RESEARCH_READY`. No ordinary research route uses a Dynamic Workflow, background job, or `claude -p` subprocess.
 
 ```text
 RESEARCH_REQUEST
@@ -42,7 +42,7 @@ Select one mode for every report:
 
 ## Evidence and reasoning standards
 
-1. Use supplied/local evidence first. For external research, prefer primary sources, peer-reviewed work, official company/government/regulatory data, then reputable secondary analysis. State the source hierarchy selected in the report.
+1. Before external research, search `docs/research/` and use relevant prior reports as local evidence. For external research, prefer primary sources, peer-reviewed work, official company/government/regulatory data, then reputable secondary analysis. State the source hierarchy selected in the report.
 2. Set freshness from intake. Default to current sources for volatile claims, while retaining foundational sources where relevant. Seek diverse, independent perspectives for material decisions.
 3. Every substantive factual claim gets an inline `[S#]` marker. The source ledger records `S#`, title/path, URL or repository path, source type, authority/relevance, published date if known, accessed date, and supported claims.
 4. Mark material statements as **Observation**, **Inference**, **Assumption**, or **Unknown**, with confidence. State contradictions and alternative interpretations directly.

@@ -38,13 +38,15 @@ research_context: <optional RESEARCH_BRIEF and docs/research report path; adviso
 constraints: <stack, compatibility, security, performance, no-touch boundaries>
 acceptance_checks: <specific tests/build/typecheck/visual checks and expected result>
 tdd: required — test first, RED → GREEN → REFACTOR
+task_profile: auto | feature | debug | performance | refactor | UI | integration | prototype
+quality_review: required — correctness, security, maintainability, performance, compatibility, tests, docs/operator, UI if applicable
 risk: low | medium | high
 commit_authority: no | yes, with requested message/branch
 assumptions: <only assumptions safe enough to proceed>
 END_ENGINEERING_JOB
 ```
 
-For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. For an unfamiliar, cross-file, security-sensitive, data-changing, or UI request, give the engineer enough context to explore first and to choose the appropriate verification.
+For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. T1 selects the task profile when `auto`, loads the minimum relevant internal playbooks, and completes the required full quality review before `JOB_DONE`. For an unfamiliar, cross-file, security-sensitive, data-changing, or UI request, give the engineer enough context to explore first and to choose the appropriate verification.
 
 When a `research_context` is present, it must be a completed `RESEARCH_BRIEF` as defined by `docs/RESEARCH-CONTRACT.md`. It is evidence for implementation, not a replacement for the user's request or an authorization to add scope. The orchestrator must resolve any conflict between research and explicit user requirements before the T1 handoff.
 
@@ -58,8 +60,11 @@ The orchestrator may report `JOB_DONE` only after the engineer provides all of:
 4. TDD evidence: test file, RED result before production code, GREEN result after it; for a pure refactor, characterization-test baseline and post-change result.
 5. Intentional behavior changes and remaining risks/limits.
 6. A commit hash only when a commit was authorized and made.
+7. Task profile/skill evidence and the full quality-review result, with every lens evidenced or marked `not applicable`.
 
 Missing TDD or verification evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. If no usable test harness can be established before implementation, the job is `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
+
+If T1 returns `JOB_BLOCKED` with `Research needed`, the orchestrator sends that precise question through the normal researcher intake route. T1 does not receive web tools and may resume only with the resulting advisory report path and `RESEARCH_BRIEF`.
 
 ## Isolation and escalation
 
