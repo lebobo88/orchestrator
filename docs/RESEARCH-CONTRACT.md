@@ -1,6 +1,6 @@
 # Research contract
 
-`researcher` is a conditional, evidence-first subagent. It is not a mandatory step for engineering jobs and it is not an implementation agent.
+`researcher` is a conditional, evidence-first subagent. It is not a mandatory step for engineering jobs and it is not an implementation agent. `docs/RESEARCH-HARNESS.md` defines its staged protocol, evidence requirements, profile/mode structures, and report lifecycle.
 
 `RECEIVED → CATEGORIZED → DIRECT | RESEARCHING → RESEARCH_NEEDS_INPUT ↔ USER_REPLY → RESEARCH_READY → REPORTED | BUILD_BRIEFED → T1_RUNNING`
 
@@ -12,11 +12,11 @@
 | Recommended | Dispatch when evidence would materially narrow unfamiliar architecture, broad scope, or several viable approaches. State the reason in the research brief. | Choose an authentication approach for an unfamiliar regulated product; investigate an existing system before a large migration. |
 | Not needed | Continue directly. | A precise local bug fix, a small requested implementation with clear acceptance checks, or a question answerable from supplied context. |
 
-For research-only requests, the orchestrator reports the brief to the user. For engineering requests, it adds a completed `RESEARCH_BRIEF` as `research_context` in the `ENGINEERING_JOB` only after resolving any scope or requirement conflict with the user.
+For research-only requests, the orchestrator reports the completed cited report to the user. For engineering requests, it adds only the report path and completed `RESEARCH_BRIEF` as `research_context` in the `ENGINEERING_JOB` after resolving any scope or requirement conflict with the user.
 
 ## Interactive clarification
 
-Claude Code subagents cannot use the interactive `AskUserQuestion` tool. Therefore `researcher` returns `RESEARCH_NEEDS_INPUT` with at most three prioritized questions; the orchestrator asks those questions in the user’s native session and re-dispatches researcher with the answer. This is the supported way to keep the user engaged without claiming the subagent can interact directly.
+Claude Code subagents cannot use the interactive `AskUserQuestion` tool. Therefore every newly dispatched research request begins with `RESEARCH_NEEDS_INPUT`: three combined questions for decision/audience/success, scope/constraints/evidence, and depth/freshness/source priorities. The orchestrator asks them in the user’s native session and re-dispatches researcher with the answers and any prior report path. This is the supported way to keep the user engaged without claiming the subagent can interact directly.
 
 ## Evidence and authority
 

@@ -34,7 +34,7 @@ outcome: <observable result>
 scope: <included behavior/files if known>
 non_goals: <what this job must not do>
 references: <@files, URLs, designs, errors, existing patterns>
-research_context: <optional RESEARCH_BRIEF from researcher; advisory only; explicit user requirements prevail>
+research_context: <optional RESEARCH_BRIEF and docs/research report path; advisory only; explicit user requirements prevail>
 constraints: <stack, compatibility, security, performance, no-touch boundaries>
 acceptance_checks: <specific tests/build/typecheck/visual checks and expected result>
 tdd: required — test first, RED → GREEN → REFACTOR

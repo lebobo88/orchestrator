@@ -42,6 +42,12 @@ Each engineering job is evaluated against the acceptance checks in its `ENGINEER
 
 Build behavior is covered by the scenarios in `tests/build-classification-cases.json`; the offline validator checks that those scenarios, the handoff gate, and the native configuration remain present. A live evaluation should be run in a disposable repository with a real interactive Claude Code session before any policy-sensitive deployment.
 
+## Research harness evaluation
+
+Research uses a separate staged evaluation contract in `docs/RESEARCH-HARNESS.md`. It validates intake before investigation, adaptive profile/mode selection, persisted report lifecycle, claim-level source ledger, uncertainty/contradiction handling, high-stakes informational guardrails, and advisory handoff precedence. `tests/research-evaluation-cases.json` provides rubric fixtures for deep architecture, strategic/general, comparison, root-cause, high-stakes, and research-bypass cases. `tests/test-research-hooks.ps1` verifies the scoped Bash and report-write hooks without invoking Claude Code print mode.
+
+Before relying on it for a policy-sensitive decision, run a real native interactive smoke test: invoke `/research`, answer the intake, inspect the generated `docs/research` report and source ledger, attempt an out-of-scope write to confirm it is blocked, and verify that T1 receives only the report path and advisory brief.
+
 ## Sources
 
 - [Claude Code best practices](https://code.claude.com/docs/en/best-practices), [prompt library](https://code.claude.com/docs/en/prompt-library), and [common workflows](https://code.claude.com/docs/en/common-workflows)

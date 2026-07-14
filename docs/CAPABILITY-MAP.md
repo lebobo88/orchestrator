@@ -35,7 +35,7 @@ Plugins can package skills, agents, hooks, and MCP. They are a last resort here:
 
 ## Hooks, events, and schedules
 
-- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane.
+- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane. `researcher` is the one local exception: its subagent-scoped `PreToolUse` hooks enforce a read-only command allowlist and Markdown writes only below `docs/research/`.
 - Channels are research-preview MCP servers that push allowlisted external events into an *open* Claude Code session. They require explicit per-session opt-in and should never grant an untrusted sender permission-relay authority.
 - `/loop` is session-scoped polling. It runs only while the session is open, restored only on resume while unexpired, and recurring loops expire after seven days.
 - Use Desktop scheduled tasks for local-file automation on an awake machine. Use Routines or CI scheduling for durable remote scheduling. A scheduled task should use a worktree when it may modify a Git repository.

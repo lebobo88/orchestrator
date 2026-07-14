@@ -8,6 +8,8 @@ $required = @(
     '.claude/agents/orchestrator.md',
     '.claude/agents/t1-engineer.md',
     '.claude/agents/researcher.md',
+    '.claude/hooks/validate-researcher-bash.ps1',
+    '.claude/hooks/validate-researcher-write.ps1',
     '.claude/skills/build/SKILL.md',
     '.claude/skills/research/SKILL.md',
     '.claude/skills/claude-operations/SKILL.md',
@@ -15,6 +17,8 @@ $required = @(
     '.claude/skills/workflow-author/templates/dynamic-workflow-template.js',
     'docs/BUILD-CONTRACT.md',
     'docs/RESEARCH-CONTRACT.md',
+    'docs/RESEARCH-HARNESS.md',
+    'docs/research/README.md',
     'docs/PROMPTING-AND-EVALUATION.md',
     'docs/ARCHITECTURE-ADAPTATION.md',
     'docs/KNOWN-UNKNOWNS.md',
@@ -23,6 +27,8 @@ $required = @(
     'docs/CUSTOM-WORKFLOWS.md',
     'tests/build-classification-cases.json',
     'tests/research-routing-cases.json',
+    'tests/research-evaluation-cases.json',
+    'tests/test-research-hooks.ps1',
     '.gitignore',
     'README.md'
 )
@@ -52,6 +58,7 @@ if ($LASTEXITCODE -ne 0 -or -not $head) {
 $orchestrator = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/orchestrator.md')
 $engineer = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/t1-engineer.md')
 $researcher = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/researcher.md')
+$researchHarness = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/RESEARCH-HARNESS.md')
 $build = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/build/SKILL.md')
 $researchSkill = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research/SKILL.md')
 $operations = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/claude-operations/SKILL.md')
@@ -63,6 +70,7 @@ $unknowns = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/KNOWN-UNKNOWNS.
 $audit = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/COMPLETION-AUDIT.md')
 $cases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/build-classification-cases.json') | ConvertFrom-Json
 $researchCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-routing-cases.json') | ConvertFrom-Json
+$researchEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-evaluation-cases.json') | ConvertFrom-Json
 
 if ($orchestrator -notmatch 't1-engineer') { throw 'Orchestrator must delegate to t1-engineer.' }
 if ($orchestrator -notmatch 'researcher') { throw 'Orchestrator must conditionally delegate to researcher.' }
@@ -76,8 +84,14 @@ if ($engineer -notmatch 'research_context') { throw 'T1 engineer must preserve r
 if ($researcher -notmatch '### RESEARCH_READY') { throw 'Researcher must expose a RESEARCH_READY handoff.' }
 if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }
 if ($researcher -notmatch 'RESEARCH_BRIEF') { throw 'Researcher must return a portable research brief.' }
-if ($researcher -match 'tools:.*(Write|Edit|Bash)') { throw 'Researcher must remain evidence-only and not modify the project.' }
+if ($researcher -notmatch 'Write, Edit') { throw 'Researcher must be able to persist the research report.' }
+if ($researcher -notmatch 'tools:.*Bash') { throw 'Researcher must support scoped read-only repository inspection.' }
+if ($researcher -notmatch 'validate-researcher-bash') { throw 'Researcher Bash access must be guarded by a scoped hook.' }
+if ($researcher -notmatch 'validate-researcher-write') { throw 'Researcher report writes must be guarded by a scoped hook.' }
 if ($researcher -match 'AskUserQuestion') { throw 'Researcher must use the orchestrator relay for user clarification.' }
+if ($researcher -notmatch 'Intake first') { throw 'Researcher must require the targeted intake before investigation.' }
+if ($researcher -notmatch 'docs/research') { throw 'Researcher must persist reports in the approved location.' }
+if ($researcher -notmatch 'What') { throw 'Researcher must require what/so what/now what synthesis.' }
 if ($build -notmatch 'intentionally not a Claude Code Dynamic Workflow') { throw 'Build must remain an interactive default, not a dynamic workflow.' }
 if ($build -notmatch 'research_context') { throw 'Build must support a completed advisory research brief.' }
 if ($researchSkill -notmatch 'disable-model-invocation: true') { throw 'Research slash command must remain user-forced.' }
@@ -92,6 +106,12 @@ if ($contract -notmatch 'research_context') { throw 'Build contract must define 
 if ($researchContract -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Research contract must define interactive clarification relay.' }
 if ($researchContract -notmatch 'not needed') { throw 'Research contract must keep research conditional.' }
 if ($researchContract -notmatch 'Explicit user requirements') { throw 'Research contract must preserve user authority.' }
+if ($researchHarness -notmatch 'RESEARCH_REQUEST') { throw 'Research harness must define the staged request envelope.' }
+if ($researchHarness -notmatch 'Architecture') { throw 'Research harness must define architecture mode.' }
+if ($researchHarness -notmatch 'Strategic/general') { throw 'Research harness must define strategic/general mode.' }
+if ($researchHarness -notmatch 'Source ledger') { throw 'Research harness must require a source ledger.' }
+if ($researchHarness -notmatch 'Professional review required before action') { throw 'Research harness must guard high-stakes research.' }
+if ($researchHarness -notmatch 'update in place') { throw 'Research harness must define in-place report updates.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
 if ($unknowns -notmatch 'worktree') { throw 'Known-unknowns documentation must address worktree configuration hygiene.' }
 if ($audit -notmatch 'No CLI print subprocesses') { throw 'Completion audit must cover the interactive-only constraint.' }
@@ -108,6 +128,18 @@ foreach ($route in $expectedResearchRoutes) {
     if (-not ($researchCases.expected -contains $route)) { throw "Research routing cases must cover '$route'." }
 }
 if ($researchCases.Count -lt 5) { throw 'Research routing cases are unexpectedly incomplete.' }
+
+if ($researchEvaluationCases.Count -lt 6) { throw 'Research evaluation cases are unexpectedly incomplete.' }
+foreach ($case in $researchEvaluationCases) {
+    if (-not $case.name -or -not $case.request) { throw 'Every research evaluation case requires a name and request.' }
+    if ($case.expected_route -eq 'research-not-needed') { continue }
+    if (-not $case.expected_profile -or -not $case.expected_mode -or $case.required_report_sections.Count -lt 3) {
+        throw "Research evaluation case '$($case.name)' lacks a complete rubric."
+    }
+}
+
+& (Join-Path $root 'tests/test-research-hooks.ps1')
+if ($LASTEXITCODE -ne 0) { throw 'Researcher hook validation failed.' }
 
 $allText = Get-ChildItem -Path $root -Recurse -File | Where-Object { $_.FullName -notmatch '\\tests\\validate\.ps1$' } | Get-Content -Raw
 if ($allText -match '(?m)^\s*claude\s+-p\b') { throw 'The orchestrator must not contain a Claude print-mode invocation.' }

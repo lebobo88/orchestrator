@@ -1,0 +1,59 @@
+[
+  {
+    "name": "deep-architecture",
+    "request": "Perform deep architectural research on this monorepo before we redesign its event processing.",
+    "expected_profile": "deep",
+    "expected_mode": "architecture",
+    "required_report_sections": [
+      "Repository & Dependency Topology",
+      "Architectural Views & Paradigms",
+      "Data & State Flow",
+      "Performance & Scalability Analysis",
+      "Security, Privacy & Supply-Chain Risks",
+      "Developer Experience & Extensibility",
+      "Implementation Roadmap",
+      "Edge Cases, Failure Modes & Recovery Strategies"
+    ]
+  },
+  {
+    "name": "deep-strategic-general",
+    "request": "Deep research the market and strategic options for our proposed accessibility platform.",
+    "expected_profile": "deep",
+    "expected_mode": "strategic-general",
+    "required_report_sections": [
+      "COMPREHENSIVE MARKET ANALYSIS",
+      "COMPETITIVE LANDSCAPE",
+      "SWOT ANALYSIS",
+      "STRATEGIC RECOMMENDATIONS",
+      "RISK ASSESSMENT & MITIGATION",
+      "IMPLEMENTATION ROADMAP",
+      "KNOWLEDGE GAPS & FURTHER RESEARCH"
+    ]
+  },
+  {
+    "name": "comparison",
+    "request": "Compare PostgreSQL and DynamoDB for this regulated event store.",
+    "expected_profile": "standard",
+    "expected_mode": "comparison",
+    "required_report_sections": ["Decision matrix", "Options and tradeoffs", "Confidence"]
+  },
+  {
+    "name": "root-cause",
+    "request": "Investigate why checkout latency spikes after token refresh.",
+    "expected_profile": "standard",
+    "expected_mode": "root-cause",
+    "required_report_sections": ["Observed symptoms", "Competing hypotheses", "Root cause", "Validation plan"]
+  },
+  {
+    "name": "high-stakes-informational",
+    "request": "Research current regulations affecting medical-device software in the United States.",
+    "expected_profile": "deep",
+    "expected_mode": "strategic-general",
+    "required_report_sections": ["Professional review required before action.", "Source ledger", "jurisdiction"]
+  },
+  {
+    "name": "bypass-clear-fix",
+    "request": "Fix the typo in the validation message and add the specified regression test.",
+    "expected_route": "research-not-needed"
+  }
+]

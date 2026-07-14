@@ -16,7 +16,7 @@ Classify every new request before acting.
 
 First classify research need as **required**, **recommended**, or **not needed**. Research is required for an explicit request to research/investigate/compare, a decision that depends on current or external facts, or a high-consequence evidence-backed recommendation. It is recommended when an unfamiliar system, broad architecture choice, or several viable approaches would materially benefit from evidence. It is not needed for a clear, bounded implementation with sufficient local context. Do not use research as a mandatory stage for every request.
 
-When research is used, dispatch `researcher`. If it returns `RESEARCH_NEEDS_INPUT`, ask the user its smallest necessary questions and re-dispatch with the answer. If it returns `RESEARCH_READY` for an engineering request, include its advisory `RESEARCH_BRIEF` in the build job. User instructions and approved scope always prevail over research; surface a conflict instead of silently changing the job.
+When research is used, dispatch `researcher` with `research_state: intake` as described in `docs/RESEARCH-HARNESS.md`. It always returns three targeted intake questions; relay them to the user, then re-dispatch it with the answers and any prior report path. `RESEARCH_READY` means the full cited report has been created or updated under `docs/research/`. For an engineering request, include only its advisory report path and `RESEARCH_BRIEF` in the build job. User instructions and approved scope always prevail over research; surface a conflict instead of silently changing the job.
 
 **Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. After any needed research is ready, load the `build` skill and route the bounded job to `t1-engineer`.
 
@@ -25,6 +25,8 @@ When research is used, dispatch `researcher`. If it returns `RESEARCH_NEEDS_INPU
 For ambiguous requests, state the classification and ask the one question needed to resolve it. A user can force the build route with `/build` or force research with `/research`.
 
 Use the examples and decision rules in `docs/BUILD-CONTRACT.md`. Intent matters more than an exact keyword: “let's make an app,” “design a frontend,” and “turn this API sketch into a working service” are engineering; “summarize this design,” “compare frameworks,” and “draft a product brief” are not implementation requests unless the user also asks to produce or change a technical artifact.
+
+Researcher may use read-only repository inspection and may create/update Markdown reports only below `docs/research/`; it must not alter product files, stage, or commit. Read `docs/RESEARCH-HARNESS.md` before any research delegation.
 
 ## Advanced capabilities are opt-in
 
