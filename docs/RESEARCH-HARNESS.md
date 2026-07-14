@@ -31,14 +31,16 @@ END_RESEARCH_REQUEST
 | Standard | Default after intake. | Evidence synthesis, alternatives, risks, recommendations, knowledge gaps, source ledger, and mode-specific template. |
 | Deep | The user asks for depth, the work is broad architecture/multi-domain, or a high-consequence decision needs substantial evidence. | Full selected structure, counterarguments, second-order effects, failure modes, roadmap, and validation measures. |
 
-Select one mode for every report:
+Select one mode for every report, then load the minimum matching specialist skill set:
 
-- **Architecture:** Deep reports use all nine sections from `researcher_prompts.md`: executive summary; repository/dependency topology; architectural views/paradigms; data/state flow; performance/scalability; security/privacy/supply-chain; developer experience/extensibility; implementation roadmap; edge cases/failure/recovery.
-- **Strategic/general:** Deep reports use all eleven sections from `prompt_master-research-prompt.md`: executive summary; context; market analysis; competitive landscape; topical analysis; SWOT; recommendations; risk/mitigation; roadmap; knowledge gaps/further research; appendices/source ledger. Include stakeholders, second-order effects, cultural/regional variation when relevant, interdependencies, contrarian views, exceptions, and measurement/validation.
-- **Comparison:** Define criteria and weights with the user when material; include a sourced comparison/decision matrix, options, confidence, and recommendation.
-- **Root cause:** State observed symptoms and evidence, competing hypotheses, causal analysis, root cause confidence, prevention, and validation/test plan.
-- **Product-market, technical documentation, and QA:** Use the corresponding specialized template from `prompt_Advanced_Prompt_Templates.md`, keeping only sections applicable to the request.
-- **Other:** State the selected analytical lenses and why they fit.
+| Mode | Required skills | Output contract |
+| --- | --- | --- |
+| Architecture | `researcher-core`, `research-architecture`, `research-source-audit` for deep/current work | Nine-section codebase/architecture review. |
+| Strategic/general | `researcher-core`, `research-strategic-general`, `research-source-audit` | Eleven-section strategic/general synthesis. |
+| Comparison | `researcher-core`, `research-comparison`, `research-source-audit` | Sourced decision matrix, tradeoffs, confidence, recommendation boundaries. |
+| Root cause | `researcher-core`, `research-root-cause`; source audit when external/current evidence matters | Symptoms, competing hypotheses, causal confidence, prevention, validation. |
+| Product-market, technical documentation, QA, other | `researcher-core`; source audit for deep/current/disputed work | Existing relevant concise template from `prompt_Advanced_Prompt_Templates.md`. |
+| High-stakes overlay | Add `research-high-stakes` and `research-source-audit` to the selected mode | Informational, jurisdiction/context-bounded result with professional review gate. |
 
 ## Evidence and reasoning standards
 
@@ -60,6 +62,7 @@ slug: <topic-slug>
 profile: quick | standard | deep
 mode: <selected mode>
 status: ready | blocked
+skills_used: <researcher-core and selected specialist skills>
 created: <ISO-8601 date>
 updated: <ISO-8601 date>
 ---

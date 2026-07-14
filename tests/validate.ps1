@@ -19,6 +19,13 @@ $required = @(
     '.claude/skills/t1-api-integration-contracts/SKILL.md',
     '.claude/skills/t1-ui-wiring-verification/SKILL.md',
     '.claude/skills/t1-security-reliability/SKILL.md',
+    '.claude/skills/researcher-core/SKILL.md',
+    '.claude/skills/research-architecture/SKILL.md',
+    '.claude/skills/research-strategic-general/SKILL.md',
+    '.claude/skills/research-comparison/SKILL.md',
+    '.claude/skills/research-root-cause/SKILL.md',
+    '.claude/skills/research-source-audit/SKILL.md',
+    '.claude/skills/research-high-stakes/SKILL.md',
     '.claude/skills/research/SKILL.md',
     '.claude/skills/claude-operations/SKILL.md',
     '.claude/skills/workflow-author/SKILL.md',
@@ -75,6 +82,13 @@ $t1Api = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-api-i
 $t1Ui = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-ui-wiring-verification/SKILL.md')
 $t1Security = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-security-reliability/SKILL.md')
 $researcher = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/researcher.md')
+$researcherCore = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/researcher-core/SKILL.md')
+$researchArchitecture = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-architecture/SKILL.md')
+$researchStrategic = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-strategic-general/SKILL.md')
+$researchComparison = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-comparison/SKILL.md')
+$researchRootCause = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-root-cause/SKILL.md')
+$researchSourceAudit = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-source-audit/SKILL.md')
+$researchHighStakes = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research-high-stakes/SKILL.md')
 $researchHarness = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/RESEARCH-HARNESS.md')
 $build = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/build/SKILL.md')
 $researchSkill = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/research/SKILL.md')
@@ -118,15 +132,27 @@ if ($t1Security -notmatch 'trust boundaries') { throw 'T1 security skill must id
 if ($researcher -notmatch '### RESEARCH_READY') { throw 'Researcher must expose a RESEARCH_READY handoff.' }
 if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }
 if ($researcher -notmatch 'RESEARCH_BRIEF') { throw 'Researcher must return a portable research brief.' }
+if ($researcher -notmatch 'tools: Read, Glob, Grep, WebFetch, WebSearch, Bash, Write, Edit, Skill') { throw 'Researcher must preserve its core tools and add only Skill.' }
+if ($researcher -notmatch 'model: sonnet') { throw 'Researcher must preserve the configured Sonnet model.' }
+if ($researcher -notmatch 'permissionMode: default') { throw 'Researcher must preserve the default permission mode.' }
+if ($researcher -notmatch 'maxTurns: 120') { throw 'Researcher must preserve the bounded turn limit.' }
+if ($researcher -notmatch 'researcher-core') { throw 'Researcher must preload the core research playbook.' }
 if ($researcher -notmatch 'Write, Edit') { throw 'Researcher must be able to persist the research report.' }
 if ($researcher -notmatch 'tools:.*Bash') { throw 'Researcher must support scoped read-only repository inspection.' }
 if ($researcher -notmatch 'validate-researcher-bash') { throw 'Researcher Bash access must be guarded by a scoped hook.' }
 if ($researcher -notmatch 'validate-researcher-write') { throw 'Researcher report writes must be guarded by a scoped hook.' }
 if ($researcher -match 'AskUserQuestion') { throw 'Researcher must use the orchestrator relay for user clarification.' }
-if ($researcher -notmatch 'Intake first') { throw 'Researcher must require the targeted intake before investigation.' }
-if ($researcher -notmatch 'docs/research') { throw 'Researcher must persist reports in the approved location.' }
-if ($researcher -notmatch 'Before any web research') { throw 'Researcher must check existing reports before external research.' }
-if ($researcher -notmatch 'What') { throw 'Researcher must require what/so what/now what synthesis.' }
+if ($researcher -notmatch 'Skill selection') { throw 'Researcher must select the minimum relevant specialist skills.' }
+if ($researcher -notmatch 'Skills used') { throw 'Researcher must report selected evidence procedures.' }
+if ($researcherCore -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Researcher core must preserve the intake relay.' }
+if ($researcherCore -notmatch 'Before any web research') { throw 'Researcher core must check existing reports before external research.' }
+if ($researcherCore -notmatch 'What, So what, and Now what') { throw 'Researcher core must require grounded synthesis.' }
+if ($researchArchitecture -notmatch 'nine sections') { throw 'Architecture skill must preserve the deep architecture structure.' }
+if ($researchStrategic -notmatch 'eleven sections') { throw 'Strategic skill must preserve the deep strategic structure.' }
+if ($researchComparison -notmatch 'comparison matrix') { throw 'Comparison skill must require a sourced decision matrix.' }
+if ($researchRootCause -notmatch 'competing hypotheses') { throw 'Root-cause skill must evaluate competing hypotheses.' }
+if ($researchSourceAudit -notmatch 'Source audit') { throw 'Source-audit skill must enforce evidence quality.' }
+if ($researchHighStakes -notmatch 'Professional review required before action') { throw 'High-stakes skill must preserve professional-review guardrails.' }
 if ($build -notmatch 'intentionally not a Claude Code Dynamic Workflow') { throw 'Build must remain an interactive default, not a dynamic workflow.' }
 if ($build -notmatch 'research_context') { throw 'Build must support a completed advisory research brief.' }
 if ($researchSkill -notmatch 'disable-model-invocation: true') { throw 'Research slash command must remain user-forced.' }
@@ -142,11 +168,11 @@ if ($researchContract -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Research contra
 if ($researchContract -notmatch 'not needed') { throw 'Research contract must keep research conditional.' }
 if ($researchContract -notmatch 'Explicit user requirements') { throw 'Research contract must preserve user authority.' }
 if ($researchHarness -notmatch 'RESEARCH_REQUEST') { throw 'Research harness must define the staged request envelope.' }
-if ($researchHarness -notmatch 'Architecture') { throw 'Research harness must define architecture mode.' }
-if ($researchHarness -notmatch 'Strategic/general') { throw 'Research harness must define strategic/general mode.' }
-if ($researchHarness -notmatch 'Source ledger') { throw 'Research harness must require a source ledger.' }
-if ($researchHarness -notmatch 'Before external research') { throw 'Research harness must require existing-report review before web research.' }
-if ($researchHarness -notmatch 'Professional review required before action') { throw 'Research harness must guard high-stakes research.' }
+if ($researchHarness -notmatch 'research-architecture') { throw 'Research harness must map architecture mode to its specialist skill.' }
+if ($researchHarness -notmatch 'research-strategic-general') { throw 'Research harness must map strategic mode to its specialist skill.' }
+if ($researchHarness -notmatch 'research-source-audit') { throw 'Research harness must map evidence audit to specialist skills.' }
+if ($researchHarness -notmatch 'research-high-stakes') { throw 'Research harness must map high-stakes guardrails to a specialist skill.' }
+if ($researchHarness -notmatch 'skills_used') { throw 'Research harness must record evidence procedures in report metadata.' }
 if ($researchHarness -notmatch 'update in place') { throw 'Research harness must define in-place report updates.' }
 if ($prompting -notmatch 'Evidence and anti-hallucination rules') { throw 'Prompting policy must include anti-hallucination guidance.' }
 if ($unknowns -notmatch 'worktree') { throw 'Known-unknowns documentation must address worktree configuration hygiene.' }
@@ -169,7 +195,7 @@ if ($researchEvaluationCases.Count -lt 6) { throw 'Research evaluation cases are
 foreach ($case in $researchEvaluationCases) {
     if (-not $case.name -or -not $case.request) { throw 'Every research evaluation case requires a name and request.' }
     if ($case.expected_route -eq 'research-not-needed') { continue }
-    if (-not $case.expected_profile -or -not $case.expected_mode -or $case.required_report_sections.Count -lt 3) {
+    if (-not $case.expected_profile -or -not $case.expected_mode -or $case.required_skills.Count -lt 1 -or $case.required_report_sections.Count -lt 3) {
         throw "Research evaluation case '$($case.name)' lacks a complete rubric."
     }
 }

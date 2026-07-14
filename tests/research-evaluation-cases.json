@@ -4,6 +4,7 @@
     "request": "Perform deep architectural research on this monorepo before we redesign its event processing.",
     "expected_profile": "deep",
     "expected_mode": "architecture",
+    "required_skills": ["researcher-core", "research-architecture", "research-source-audit"],
     "required_report_sections": [
       "Repository & Dependency Topology",
       "Architectural Views & Paradigms",
@@ -20,6 +21,7 @@
     "request": "Deep research the market and strategic options for our proposed accessibility platform.",
     "expected_profile": "deep",
     "expected_mode": "strategic-general",
+    "required_skills": ["researcher-core", "research-strategic-general", "research-source-audit"],
     "required_report_sections": [
       "COMPREHENSIVE MARKET ANALYSIS",
       "COMPETITIVE LANDSCAPE",
@@ -35,6 +37,7 @@
     "request": "Compare PostgreSQL and DynamoDB for this regulated event store.",
     "expected_profile": "standard",
     "expected_mode": "comparison",
+    "required_skills": ["researcher-core", "research-comparison", "research-source-audit"],
     "required_report_sections": ["Decision matrix", "Options and tradeoffs", "Confidence"]
   },
   {
@@ -42,13 +45,23 @@
     "request": "Investigate why checkout latency spikes after token refresh.",
     "expected_profile": "standard",
     "expected_mode": "root-cause",
+    "required_skills": ["researcher-core", "research-root-cause"],
     "required_report_sections": ["Observed symptoms", "Competing hypotheses", "Root cause", "Validation plan"]
+  },
+  {
+    "name": "current-source-audit",
+    "request": "Verify current official requirements for this cloud provider before we choose an integration.",
+    "expected_profile": "standard",
+    "expected_mode": "other",
+    "required_skills": ["researcher-core", "research-source-audit"],
+    "required_report_sections": ["Source ledger", "freshness", "Assumptions, unknowns, and contradictions"]
   },
   {
     "name": "high-stakes-informational",
     "request": "Research current regulations affecting medical-device software in the United States.",
     "expected_profile": "deep",
     "expected_mode": "strategic-general",
+    "required_skills": ["researcher-core", "research-strategic-general", "research-source-audit", "research-high-stakes"],
     "required_report_sections": ["Professional review required before action.", "Source ledger", "jurisdiction"]
   },
   {
