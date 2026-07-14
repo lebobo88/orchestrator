@@ -6,12 +6,17 @@ $required = @(
     '.claude/settings.json',
     '.agents/README.md',
     '.claude/agents/orchestrator.md',
+    '.claude/agents/planner.md',
     '.claude/agents/t1-engineer.md',
     '.claude/agents/researcher.md',
     '.claude/agents/scribe.md',
     '.claude/hooks/validate-researcher-bash.ps1',
     '.claude/hooks/validate-scribe-write.ps1',
     '.claude/skills/build/SKILL.md',
+    '.claude/skills/planner-core/SKILL.md',
+    '.claude/skills/planner-repository-analysis/SKILL.md',
+    '.claude/skills/planner-specification-decomposition/SKILL.md',
+    '.claude/skills/planner-risk-validation/SKILL.md',
     '.claude/skills/t1-core/SKILL.md',
     '.claude/skills/t1-tdd-test-design/SKILL.md',
     '.claude/skills/t1-route-tracing/SKILL.md',
@@ -38,6 +43,8 @@ $required = @(
     '.claude/skills/workflow-author/SKILL.md',
     '.claude/skills/workflow-author/templates/dynamic-workflow-template.js',
     'docs/BUILD-CONTRACT.md',
+    'docs/PLAN-CONTRACT.md',
+    'docs/plans/README.md',
     'docs/DOCUMENT-CONTRACT.md',
     'docs/RESEARCH-CONTRACT.md',
     'docs/RESEARCH-HARNESS.md',
@@ -49,6 +56,9 @@ $required = @(
     'docs/CAPABILITY-MAP.md',
     'docs/CUSTOM-WORKFLOWS.md',
     'tests/build-classification-cases.json',
+    'tests/planning-routing-cases.json',
+    'tests/planner-evaluation-cases.json',
+    'tests/teammate-mode-cases.json',
     'tests/research-routing-cases.json',
     'tests/research-evaluation-cases.json',
     'tests/t1-engineer-evaluation-cases.json',
@@ -71,6 +81,7 @@ $settingsPath = Join-Path $root '.claude/settings.json'
 $settings = Get-Content -Raw -LiteralPath $settingsPath | ConvertFrom-Json
 if ($settings.agent -ne 'orchestrator') { throw 'settings.json must select the orchestrator agent.' }
 if ($settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS -ne '1') { throw 'Agent teams must be available as an opt-in capability.' }
+if ($settings.teammateMode -ne 'in-process') { throw 'settings.json must force terminal-independent in-process teammate mode.' }
 if ($settings.worktree.baseRef -ne 'head') { throw 'Worktree baseRef must preserve the current local HEAD.' }
 
 if (-not (Test-Path -LiteralPath (Join-Path $root '.git/HEAD'))) {
@@ -83,7 +94,12 @@ if ($LASTEXITCODE -ne 0 -or -not $head) {
 }
 
 $orchestrator = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/orchestrator.md')
+$planner = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/planner.md')
 $engineer = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/agents/t1-engineer.md')
+$plannerCore = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/planner-core/SKILL.md')
+$plannerRepository = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/planner-repository-analysis/SKILL.md')
+$plannerSpecification = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/planner-specification-decomposition/SKILL.md')
+$plannerRisk = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/planner-risk-validation/SKILL.md')
 $t1Core = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-core/SKILL.md')
 $t1Tdd = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-tdd-test-design/SKILL.md')
 $t1RouteTracing = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/t1-route-tracing/SKILL.md')
@@ -113,12 +129,16 @@ $researchSkill = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/
 $operations = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/claude-operations/SKILL.md')
 $workflowTemplate = Get-Content -Raw -LiteralPath (Join-Path $root '.claude/skills/workflow-author/templates/dynamic-workflow-template.js')
 $contract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/BUILD-CONTRACT.md')
+$planContract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/PLAN-CONTRACT.md')
 $documentContract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/DOCUMENT-CONTRACT.md')
 $researchContract = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/RESEARCH-CONTRACT.md')
 $prompting = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/PROMPTING-AND-EVALUATION.md')
 $unknowns = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/KNOWN-UNKNOWNS.md')
 $audit = Get-Content -Raw -LiteralPath (Join-Path $root 'docs/COMPLETION-AUDIT.md')
 $cases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/build-classification-cases.json') | ConvertFrom-Json
+$planningCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/planning-routing-cases.json') | ConvertFrom-Json
+$plannerEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/planner-evaluation-cases.json') | ConvertFrom-Json
+$teammateModeCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/teammate-mode-cases.json') | ConvertFrom-Json
 $researchCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-routing-cases.json') | ConvertFrom-Json
 $researchEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/research-evaluation-cases.json') | ConvertFrom-Json
 $t1EvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/t1-engineer-evaluation-cases.json') | ConvertFrom-Json
@@ -127,11 +147,33 @@ $scribeEvaluationCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/s
 $browserUiCases = Get-Content -Raw -LiteralPath (Join-Path $root 'tests/browser-ui-policy-cases.json') | ConvertFrom-Json
 
 if ($orchestrator -notmatch 't1-engineer') { throw 'Orchestrator must delegate to t1-engineer.' }
+if ($orchestrator -notmatch 'planner') { throw 'Orchestrator must route non-basic work to planner.' }
 if ($orchestrator -notmatch 'researcher') { throw 'Orchestrator must conditionally delegate to researcher.' }
 if ($orchestrator -notmatch 'scribe') { throw 'Orchestrator must route non-code writing to Scribe.' }
 if ($orchestrator -notmatch 'TASK_RECEIPT') { throw 'Orchestrator must retain compact team receipts.' }
 if ($orchestrator -notmatch 'DOCUMENTATION_HANDOFF') { throw 'Orchestrator must support direct T1 to Scribe handoffs.' }
 if ($orchestrator -notmatch 'Browser UI invariant') { throw 'Orchestrator must enforce the browser UI invariant.' }
+if ($orchestrator -notmatch 'PLANNING_HANDOFF') { throw 'Orchestrator must support direct Planner to Scribe handoffs.' }
+if ($orchestrator -notmatch 'explicit user approval') { throw 'Orchestrator must require plan approval before downstream execution.' }
+if ($orchestrator -notmatch 'tmux, WSL, or split-pane error') { throw 'Orchestrator must fall back instead of requiring a terminal multiplexer.' }
+if ($planner -notmatch '### PLAN_READY') { throw 'Planner must expose a PLAN_READY handoff.' }
+if ($planner -notmatch '### PLAN_BLOCKED') { throw 'Planner must expose a PLAN_BLOCKED handoff.' }
+if ($planner -notmatch 'PLANNING_HANDOFF') { throw 'Planner must return a complete Scribe handoff.' }
+if ($planner -notmatch 'PLANNING_RESEARCH_REQUEST') { throw 'Planner must directly request material research.' }
+if ($planner -notmatch 'tools: Read, Glob, Grep, Skill') { throw 'Planner must preserve its strict read-only tool boundary.' }
+if ($planner -notmatch 'model: opus') { throw 'Planner must use the configured Opus model.' }
+if ($planner -notmatch 'permissionMode: plan') { throw 'Planner must preserve plan permission mode.' }
+if ($planner -notmatch 'maxTurns: 90') { throw 'Planner must preserve the bounded turn limit.' }
+if ($planner -notmatch 'planner-core') { throw 'Planner must preload the core planning playbook.' }
+if ($planner -match '(?m)^tools:.*(?:Write|Edit|Bash|WebFetch|WebSearch)') { throw 'Planner must not receive write, shell, or web tools.' }
+if ($planner -match 'AskUserQuestion') { throw 'Planner must use the orchestrator relay for user clarification.' }
+if ($plannerCore -notmatch 'explicit user approval') { throw 'Planner core must preserve the approval gate.' }
+if ($plannerCore -notmatch 'TASK_RECEIPT') { throw 'Planner core must preserve compact lead receipts.' }
+if ($plannerCore -notmatch 'tmux, WSL, or split-pane error') { throw 'Planner core must preserve the tmux-free fallback.' }
+if ($plannerRepository -notmatch 'affected') { throw 'Planner repository skill must map affected surfaces.' }
+if ($plannerSpecification -notmatch 'acceptance') { throw 'Planner specification skill must cover acceptance checks.' }
+if ($plannerRisk -notmatch 'Browser UI invariant') { throw 'Planner risk skill must preserve browser UI dialog policy.' }
+if ($plannerRisk -notmatch 'stale') { throw 'Planner risk skill must define stale-plan controls.' }
 if ($engineer -notmatch '### JOB_DONE') { throw 'T1 engineer must expose a JOB_DONE handoff.' }
 if ($engineer -notmatch '### JOB_BLOCKED') { throw 'T1 engineer must expose a JOB_BLOCKED handoff.' }
 if ($engineer -notmatch 'tools: Read, Write, Edit, Glob, Grep, Bash, Skill') { throw 'T1 engineer must preserve its core tools and add only Skill.' }
@@ -148,6 +190,7 @@ if ($engineer -notmatch 'Research needed') { throw 'T1 engineer must escalate ma
 if ($engineer -notmatch 'Quality review') { throw 'T1 engineer must report the full quality review.' }
 if ($engineer -notmatch 'DOCUMENTATION_HANDOFF') { throw 'T1 engineer must prepare a direct documentation handoff.' }
 if ($engineer -notmatch 'TASK_RECEIPT') { throw 'T1 engineer must preserve the compact team receipt protocol.' }
+if ($engineer -notmatch 'Plan stale') { throw 'T1 engineer must reject materially stale approved plans.' }
 if ($engineer -notmatch 'native `alert`') { throw 'T1 engineer must prohibit native browser dialogs.' }
 if ($t1Core -notmatch 'Production priorities') { throw 'T1 core skill must preserve production-first priorities.' }
 if ($t1Core -notmatch 'Research escalation') { throw 'T1 core skill must retain the researcher boundary.' }
@@ -179,6 +222,7 @@ if ($researcherCore -notmatch 'Before any web research') { throw 'Researcher cor
 if ($researcherCore -notmatch 'What, So what, and Now what') { throw 'Researcher core must require grounded synthesis.' }
 if ($researcherCore -notmatch 'RESEARCH_EVIDENCE') { throw 'Researcher core must require evidence packets.' }
 if ($researcher -notmatch 'research-browser-ui-safety') { throw 'Researcher must load browser UI safety guidance when applicable.' }
+if ($researcher -notmatch 'directly to Planner') { throw 'Researcher must hand plan evidence directly to Planner.' }
 if ($researcherCore -notmatch 'browser_ui_dialog_policy') { throw 'Researcher core must require browser UI dialog evidence.' }
 if ($researchBrowserUi -notmatch 'beforeunload') { throw 'Browser UI research skill must prohibit native browser dialogs.' }
 if ($scribe -notmatch '### DOC_DONE') { throw 'Scribe must expose a DOC_DONE handoff.' }
@@ -186,6 +230,7 @@ if ($scribe -notmatch '### DOC_BLOCKED') { throw 'Scribe must expose a DOC_BLOCK
 if ($scribe -notmatch 'tools: Read, Write, Edit, Glob, Grep, Bash, Skill') { throw 'Scribe must have scoped document authoring tools.' }
 if ($scribe -notmatch 'validate-scribe-write') { throw 'Scribe writes must be hook guarded.' }
 if ($scribe -notmatch 'TASK_RECEIPT') { throw 'Scribe must return compact team receipts.' }
+if ($scribe -notmatch 'PLANNING_HANDOFF') { throw 'Scribe must consume direct Planner handoffs.' }
 if ($scribeCore -notmatch 'DOCUMENT_JOB') { throw 'Scribe core must enforce the document contract.' }
 if ($scribeCore -notmatch 'em dashes') { throw 'Scribe core must enforce anti-tell style rules.' }
 if ($scribeTechnical -notmatch 'verified') { throw 'Technical-documentation skill must require verified evidence.' }
@@ -202,6 +247,8 @@ if ($researchHighStakes -notmatch 'Professional review required before action') 
 if ($build -notmatch 'intentionally not a Claude Code Dynamic Workflow') { throw 'Build must remain an interactive default, not a dynamic workflow.' }
 if ($build -notmatch 'research_context') { throw 'Build must support a completed advisory research brief.' }
 if ($build -notmatch 'DOCUMENTATION_HANDOFF') { throw 'Build must support the direct documentation handoff.' }
+if ($build -notmatch 'approved_plan') { throw 'Build must require an approved plan for non-basic engineering.' }
+if ($build -notmatch 'tmux, WSL, or split-pane error') { throw 'Build must fall back instead of requiring a terminal multiplexer.' }
 if ($researchSkill -notmatch 'disable-model-invocation: true') { throw 'Research slash command must remain user-forced.' }
 if ($operations -notmatch 'Channels require') { throw 'Operations skill must cover external event Channels.' }
 if ($operations -notmatch 'Claude Agent SDK') { throw 'Operations skill must cover the approved programmatic path.' }
@@ -212,10 +259,18 @@ if ($contract -notmatch 'Handoff acceptance gate') { throw 'Build contract must 
 if ($contract -notmatch 'tdd: required') { throw 'Build contract must make TDD mandatory for implementation jobs.' }
 if ($contract -notmatch 'research_context') { throw 'Build contract must define advisory research context.' }
 if ($contract -notmatch 'browser_ui_dialog_policy') { throw 'Build contract must require browser UI dialog policy evidence.' }
+if ($contract -notmatch 'approved_plan') { throw 'Build contract must define approved plans for non-basic jobs.' }
+if ($planContract -notmatch 'PLAN_JOB') { throw 'Plan contract must define the planning job envelope.' }
+if ($planContract -notmatch 'PLANNING_RESEARCH_REQUEST') { throw 'Plan contract must define direct research requests.' }
+if ($planContract -notmatch 'PLANNING_HANDOFF') { throw 'Plan contract must define Scribe handoffs.' }
+if ($planContract -notmatch 'docs/plans/') { throw 'Plan contract must define persisted Scribe plan paths.' }
+if ($planContract -notmatch 'Plan stale') { throw 'Plan contract must define stale-plan handling.' }
+if ($planContract -notmatch 'tmux, WSL, or split-pane error') { throw 'Plan contract must define the tmux-free fallback.' }
 if ($documentContract -notmatch 'DOCUMENT_JOB') { throw 'Document contract must define the document job envelope.' }
 if ($documentContract -notmatch 'TASK_RECEIPT') { throw 'Document contract must define compact team receipts.' }
 if ($documentContract -notmatch 'RESEARCH_EVIDENCE') { throw 'Document contract must define direct research evidence.' }
 if ($documentContract -notmatch 'DOCUMENTATION_HANDOFF') { throw 'Document contract must define direct engineering evidence.' }
+if ($documentContract -notmatch 'overlapping document ownership') { throw 'Document contract must deny overlapping document ownership.' }
 if ($researchContract -notmatch 'RESEARCH_NEEDS_INPUT') { throw 'Research contract must define interactive clarification relay.' }
 if ($researchContract -notmatch 'not needed') { throw 'Research contract must keep research conditional.' }
 if ($researchContract -notmatch 'Explicit user requirements') { throw 'Research contract must preserve user authority.' }
@@ -238,6 +293,26 @@ foreach ($route in $expectedRoutes) {
     if (-not ($cases.expected -contains $route)) { throw "Classification cases must cover '$route'." }
 }
 if ($cases.Count -lt 7) { throw 'Classification test cases are unexpectedly incomplete.' }
+
+$expectedPlanningRoutes = @('direct-engineering', 'planner-required', 'direct-writing', 'clarify')
+foreach ($route in $expectedPlanningRoutes) {
+    if (-not ($planningCases.expected -contains $route)) { throw "Planning routing cases must cover '$route'." }
+}
+if ($planningCases.Count -lt 6) { throw 'Planning routing cases are unexpectedly incomplete.' }
+
+if ($plannerEvaluationCases.Count -lt 6) { throw 'Planner evaluation cases are unexpectedly incomplete.' }
+foreach ($case in $plannerEvaluationCases) {
+    if (-not $case.name -or -not $case.request -or -not $case.expected_route -or $case.required_skills.Count -lt 1 -or $case.required_evidence.Count -lt 3) {
+        throw "Planner evaluation case '$($case.name)' lacks a usable rubric."
+    }
+}
+
+if ($teammateModeCases.Count -lt 3) { throw 'Teammate-mode cases are unexpectedly incomplete.' }
+foreach ($case in $teammateModeCases) {
+    if (-not $case.name -or -not $case.request -or -not $case.expected_route -or $case.required_evidence.Count -lt 3) {
+        throw "Teammate-mode case '$($case.name)' lacks a usable rubric."
+    }
+}
 
 $expectedResearchRoutes = @('required', 'recommended', 'not-needed')
 foreach ($route in $expectedResearchRoutes) {

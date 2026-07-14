@@ -1,6 +1,6 @@
 # Claude Code capability map
 
-This is an operating map, not a mandate to turn every request into a multi-agent system. The orchestrator defaults to one interactive lead and one foreground T1 or Scribe worker.
+This is an operating map, not a mandate to turn every request into a persistent multi-agent system. The orchestrator defaults to one interactive lead, with a task-scoped Planner/Scribe team for non-basic work.
 
 ## Native session control
 
@@ -15,12 +15,14 @@ This is an operating map, not a mandate to turn every request into a multi-agent
 | --- | --- | --- |
 | One bounded implementation task | `t1-engineer` subagent | Default code route; foreground and interactive. |
 | One standalone non-code document | `scribe` subagent | Default document route; Scribe is the sole document author. |
-| Specialist evidence needed by Scribe | Temporary agent team | Direct Researcher/T1-to-Scribe packet, shared dependency, and compact lead receipt only. |
+| Non-basic task requiring an approved plan | In-process Planner/Scribe team | Planner sends Scribe a direct handoff; user approval gates downstream work. |
+| Specialist evidence needed by Scribe | In-process temporary agent team | Direct Researcher/T1-to-Scribe packet, shared dependency, and compact lead receipt only. |
+| In-process team unavailable | Sequential normal subagents | Bounded packet/reference relay, explicit approval, and stale-plan checks remain active. |
 | Separate files/branches for parallel work | `EnterWorktree` or `claude --worktree <name>` | Explicit isolation only; worktrees branch from local `HEAD` in this project. |
 | Reusable fixed multi-stage pipeline | Dynamic Workflow | Create only through `/workflow-author`; not the build default. |
 | Many separate sessions to monitor | `claude agents` / Agent view | User-operated, not silently created by the orchestrator. |
 
-Agent teams require Claude Code v2.1.32+. They should have 2–5 independent roles with a clear shared-task benefit. They have a shared task list and mailbox; normal subagents instead return only to the caller. Use them only for cross-agent document work, end them after the task, and partition writable paths because teams do not replace worktrees.
+Agent teams require Claude Code v2.1.32+. They should have 2–5 independent roles with a clear shared-task benefit. They have a shared task list and mailbox; normal subagents instead return only to the caller. This project uses `teammateMode: in-process`, which works without tmux, WSL, cmux, iTerm2, or split panes. Use task-scoped Planner/Scribe teams for non-basic work and add Researcher only for material evidence. If team creation fails, immediately use sequential normal subagents and the bounded packet fallback. End teams after the task and partition writable paths because teams do not replace worktrees.
 
 For worktrees, run `claude` once in the repository to accept workspace trust, then use `claude --worktree <name>`. Put `.claude/worktrees/` in the target repository's `.gitignore`. A `.worktreeinclude` file can copy gitignored local configuration that the worktree genuinely needs; never use it to casually distribute secrets.
 

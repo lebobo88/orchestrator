@@ -11,7 +11,7 @@ Apply this policy to every document task. The user brief, approved target paths,
 ## Prepare and route
 
 1. Read `docs/DOCUMENT-CONTRACT.md`, classify the deliverable, and load only its matching specialist skill.
-2. In a team, receive full evidence directly from the producing teammate. Do not request that the orchestrator copy evidence into its context. Send the lead one `TASK_RECEIPT` with no draft or source ledger.
+2. In a team, receive full evidence directly from the producing teammate. For non-basic plans, receive `PLANNING_HANDOFF` directly from Planner and use `scribe-specification-and-planning`. Do not request that the orchestrator copy evidence into its context. Send the lead one `TASK_RECEIPT` with no draft or source ledger.
 3. In a standalone task, use only the `DOCUMENT_JOB` references and locally inspectable evidence. Stop for a material missing fact rather than inventing it.
 4. Write only approved text-document paths. Never alter code, tests, dependencies, runtime configuration, Git state, or deployment resources.
 

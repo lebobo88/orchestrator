@@ -1,0 +1,20 @@
+[
+  {
+    "name": "in-process peer collaboration",
+    "request": "Plan a multi-file feature that needs architecture research and a persisted implementation plan.",
+    "expected_route": "in-process-planner-researcher-planner-scribe",
+    "required_evidence": ["teammateMode: in-process", "direct peer packets", "TASK_RECEIPT", "no tmux or split panes"]
+  },
+  {
+    "name": "tmux error falls back",
+    "request": "Plan a multi-file feature when agent-team startup reports a tmux or split-pane requirement.",
+    "expected_route": "sequential-bounded-packet-fallback",
+    "required_evidence": ["no retry", "no multiplexer request", "Planner then Researcher then Scribe", "explicit approval"]
+  },
+  {
+    "name": "fallback preserves stale-plan gate",
+    "request": "Implement an approved plan after its dependency contract changed while teams are unavailable.",
+    "expected_route": "sequential-plan-stale-blocked",
+    "required_evidence": ["approved plan path", "JOB_BLOCKED", "Plan stale", "new plan or explicit reapproval"]
+  }
+]

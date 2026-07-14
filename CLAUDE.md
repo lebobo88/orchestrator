@@ -1,12 +1,12 @@
 # Claude Code Orchestrator
 
-This project runs an interactive Claude Code orchestrator with three specialized workers: T1 writes code and tests, Researcher gathers evidence, and Scribe writes all non-code textual deliverables. The orchestrator owns user interaction and task state, not document authoring or full evidence relay.
+This project runs an interactive Claude Code orchestrator with four specialized workers: Planner creates read-only execution plans, T1 writes code and tests, Researcher gathers evidence, and Scribe writes all non-code textual deliverables. The orchestrator owns user interaction and task state, not document authoring or full evidence relay.
 
 ## Operating contract
 
 - Stay in the native interactive Claude Code session. Never run `claude -p`, and never create a hidden one-shot Claude subprocess.
 - Treat direct user intent as authoritative. Ask a concise question only when a missing answer would change scope, safety, target repository, or acceptance criteria.
-- Keep ordinary work sequential: one orchestrator and one T1 or Scribe subagent. Use a temporary agent team only when Researcher, T1, or another specialist must communicate evidence directly to Scribe. Do not create a persistent team, worktree, dynamic workflow, plugin, MCP server, scheduled task, or SDK program without a stated need.
+- Keep basic work sequential: one orchestrator and one T1 or Scribe subagent. For every non-basic task, prefer a temporary in-process Planner/Scribe team; add Researcher only when Planner needs material evidence. If that team cannot start, use the sequential packet fallback. Do not create a persistent team, worktree, dynamic workflow, plugin, MCP server, scheduled task, or SDK program without a stated need.
 - Never claim completion without the engineer's evidence: changed files, verification command(s), result(s), and any remaining limitation.
 - Do not commit, push, create a pull request, deploy, install a plugin, grant permissions, or add an MCP server unless the user explicitly requests it.
 
@@ -20,11 +20,13 @@ Classify every new request before acting.
 
 First classify research need as **required**, **recommended**, or **not needed**. Research is required for an explicit request to research/investigate/compare, a decision that depends on current or external facts, or a high-consequence evidence-backed recommendation. It is recommended when an unfamiliar system, broad architecture choice, or several viable approaches would materially benefit from evidence. It is not needed for a clear, bounded implementation with sufficient local context. Do not use research as a mandatory stage for every request.
 
-When research is used, dispatch `researcher` with `research_state: intake` as described in `docs/RESEARCH-HARNESS.md`. It returns three targeted intake questions; relay only the answers it needs. In cross-agent document work, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe, which writes the cited report under `docs/research/`. The lead receives only a compact task receipt. User instructions and approved scope always prevail over research.
+When research is used, dispatch `researcher` with `research_state: intake` as described in `docs/RESEARCH-HARNESS.md`. It returns three targeted intake questions; relay only the answers it needs. In research-writing work, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe. In planning work, it sends evidence directly to Planner. The lead receives only a compact task receipt. User instructions and approved scope always prevail over research.
 
-**Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. After any needed research is ready, load the `build` skill and route the bounded job to `t1-engineer`.
+**Basic** means only a clear, isolated one-file change or short self-contained answer/document with explicit acceptance checks. Basic work may route directly to T1 or Scribe. Every other engineering, multi-stage research, significant document, migration, architecture, integration, browser UI, or design-uncertain request must first route to Planner using `docs/PLAN-CONTRACT.md`. Planner sends a complete handoff directly to Scribe, Scribe persists `docs/plans/<slug>.md`, and T1 starts only after the user explicitly approves that plan.
 
-**Writing** requests for documents, READMEs, instructions, plans, ADRs, changelogs, research briefings, or rewrites route to Scribe. Short advisory answers remain with the orchestrator. Do not route non-code writing to T1.
+**Engineering** requests ask to build, make, create, implement, design a frontend or app, modify software, fix a bug, refactor, test, integrate, automate code, or otherwise produce/change a technical artifact. After any required planning and approval, load the `build` skill and route the bounded job to `t1-engineer` with the exact `approved_plan` path.
+
+**Writing** requests for documents, READMEs, instructions, plans, ADRs, changelogs, research briefings, or rewrites route to Scribe when basic; significant or design-uncertain writing routes through Planner first. Short advisory answers remain with the orchestrator. Do not route non-code writing to T1.
 
 For ambiguous requests, state the classification and ask the one question needed to resolve it. A user can force the build route with `/build` or force research with `/research`.
 
@@ -35,12 +37,12 @@ Researcher may use read-only repository inspection but writes no repository arti
 ## Advanced capabilities are opt-in
 
 - Use a native worktree only when isolation, parallel edits, or a clean branch is requested. Prefer Claude Code's `EnterWorktree` tool in-session or start an interactive session with `claude --worktree <name>`.
-- Use plain subagents for bounded work that should return a summary. Use an agent team only after explicit user approval when teammates need to communicate; it is experimental and costs more context and tokens.
+- Use plain subagents for basic bounded work that should return a summary. Use only task-scoped in-process Planner/Scribe teams for non-basic work, with the user's plan-first harness choice as authorization; it is experimental and costs more context and tokens. Tmux, WSL, cmux, iTerm2, and split panes are never required. If in-process teams cannot start, use the bounded sequential fallback. Use any other agent team only after explicit user approval when teammates need to communicate.
 - Use a dynamic workflow only when the user explicitly asks to define or run a reusable multi-stage pipeline. It is not the implementation of `/build`.
 - Add MCP only as a deliberately reviewed project/user configuration. Prefer no plugin; a plugin is justified only when a maintained package is materially better than local project configuration.
 - Use `/goal` for a session-scoped completion condition, `/resume`, `/continue`, or `/fork` for session management, `/loop` only for session-scoped polling, and Routines/Desktop scheduled tasks for durable schedules.
 - External events require a Channel-compatible MCP server, an open session, and explicit opt-in. Do not expose a channel or relay permissions without a sender allowlist.
 
-Read `docs/CAPABILITY-MAP.md` before proposing any advanced capability.
+Read `docs/PLAN-CONTRACT.md` before planning non-basic work, `docs/CAPABILITY-MAP.md` before proposing any other advanced capability.
 
 Read `docs/PROMPTING-AND-EVALUATION.md` when creating a job brief, verification gate, evaluation case, or model-selection recommendation. Read `docs/ARCHITECTURE-ADAPTATION.md` when changing orchestration structure.

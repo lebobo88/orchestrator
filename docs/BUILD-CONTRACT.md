@@ -2,9 +2,9 @@
 
 `build` is an interactive routing contract, not a hidden batch pipeline. Its state machine is deliberately small:
 
-`RECEIVED → CLASSIFIED → BRIEFED → T1_RUNNING → JOB_DONE | JOB_BLOCKED → REPORTED`
+`RECEIVED → CLASSIFIED → [PLANNED → USER_APPROVED] → BRIEFED → T1_RUNNING → JOB_DONE | JOB_BLOCKED → REPORTED`
 
-The orchestrator owns classification, task state, human questions, and the final user-facing report. `t1-engineer` owns a single bounded implementation job and its evidence. `scribe` owns any standalone document resulting from the job. A job is not complete merely because a teammate stopped.
+The orchestrator owns classification, task state, human questions, and the final user-facing report. For non-basic work, Planner owns the read-only plan and Scribe owns its persisted artifact before T1 begins. `t1-engineer` owns a single bounded implementation job and its evidence. `scribe` owns any standalone document resulting from the job. A job is not complete merely because a teammate stopped.
 
 ## Classification rules
 
@@ -35,6 +35,7 @@ scope: <included behavior/files if known>
 non_goals: <what this job must not do>
 references: <@files, URLs, designs, errors, existing patterns>
 research_context: <optional RESEARCH_EVIDENCE packet or source references sent directly by Researcher; advisory only; explicit user requirements prevail>
+approved_plan: <required exact docs/plans/<slug>.md for every non-basic job; user-approved and not stale | not applicable for a basic job>
 constraints: <stack, compatibility, security, performance, no-touch boundaries>
 acceptance_checks: <specific tests/build/typecheck/visual checks and expected result>
 browser_ui_dialog_policy: required for browser-rendered UI or webview work — prohibit native alert/confirm/prompt/window variants/beforeunload; require app-owned modal or inline validation, keyboard/focus behavior, and no-native-dialog scan
@@ -48,7 +49,7 @@ assumptions: <only assumptions safe enough to proceed>
 END_ENGINEERING_JOB
 ```
 
-For a small clear fix, `scope`, `references`, and `acceptance_checks` may be brief. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. T1 selects the task profile when `auto`, loads the minimum relevant internal playbooks, and completes the required full quality review before `JOB_DONE`. For a browser-rendered UI or webview, `t1-ui-wiring-verification` and `browser_ui_dialog_policy` are mandatory even if the primary profile is not `UI`.
+For a basic clear fix, `scope`, `references`, and `acceptance_checks` may be brief and `approved_plan` is `not applicable`. Every non-basic job requires a user-approved Scribe-authored plan under `docs/plans/` as defined by `PLAN-CONTRACT.md`. Every implementation job is TDD: the engineer writes/runs the narrowest test before production code, demonstrates RED for a behavior change, makes it GREEN, then runs broader verification. T1 selects the task profile when `auto`, loads the minimum relevant internal playbooks, and completes the required full quality review before `JOB_DONE`. For a browser-rendered UI or webview, `t1-ui-wiring-verification` and `browser_ui_dialog_policy` are mandatory even if the primary profile is not `UI`.
 
 When a `research_context` is present, it is a completed `RESEARCH_EVIDENCE` packet as defined by `docs/RESEARCH-CONTRACT.md`. In a team, Researcher sends it directly to T1. It is evidence for implementation, not a replacement for the user's request or an authorization to add scope. The orchestrator must resolve any conflict between research and explicit user requirements before the T1 handoff.
 
@@ -65,6 +66,7 @@ The orchestrator may report `JOB_DONE` only after the engineer provides all of:
 7. Task profile/skill evidence and the full quality-review result, with every lens evidenced or marked `not applicable`.
 8. `DOCUMENTATION_HANDOFF` when standalone documentation is required. In a team, the full handoff goes directly to Scribe; the orchestrator retains only a compact receipt.
 9. For browser UI work, modal/inline-feedback behavior, keyboard/focus evidence, and the exact no-native-dialog scan command/result.
+10. For a non-basic job, approved-plan path plus a current-state check; material drift requires `JOB_BLOCKED` with `Plan stale`.
 
 Missing TDD or verification evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. If no usable test harness can be established before implementation, the job is `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
 
@@ -74,5 +76,5 @@ If T1 returns `JOB_BLOCKED` with `Research needed`, the orchestrator sends that 
 
 - Default to the current interactive project directory.
 - Use a native worktree only for explicitly requested isolation, concurrent edits, a clean branch, or a risky experiment. The user can start `claude --worktree <name>` interactively, or the orchestrator can use `EnterWorktree` in the active session.
-- Use a plain subagent for an isolated code job. Use a temporary T1/Scribe team for code work with a documentation deliverable, with T1 and Scribe assigned non-overlapping paths. A dynamic workflow still requires an explicitly requested reusable multi-stage pipeline.
+- Use a plain subagent only for a basic isolated code job. Use a temporary in-process Planner/Scribe team for every non-basic job, adding Researcher when Planner needs evidence. If in-process team creation is unavailable or reports tmux, WSL, or split-pane requirements, use the sequential bounded-packet fallback and do not request a multiplexer. Use a temporary in-process T1/Scribe team for post-implementation documentation with non-overlapping paths when available. A dynamic workflow still requires an explicitly requested reusable multi-stage pipeline.
 - Do not turn uncertainty into silent architecture. Ask the user when target, destructive scope, credentials, legal/security requirements, or acceptance criteria change the implementation materially.

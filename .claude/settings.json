@@ -5,6 +5,7 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "teammateDefaultModel": "sonnet",
+  "teammateMode": "in-process",
   "worktree": {
     "baseRef": "head"
   },

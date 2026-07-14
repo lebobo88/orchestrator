@@ -1,18 +1,20 @@
 # Claude Code Orchestrator
 
-An interactive Claude Code orchestrator with a test-driven T1 engineering route, evidence-first Researcher, and dedicated Scribe. Scribe writes all non-code documents. When Researcher or T1 must supply evidence, a temporary agent team lets them message Scribe directly while the orchestrator retains only compact task receipts.
+An interactive Claude Code orchestrator with a read-only Planner, test-driven T1 engineering route, evidence-first Researcher, and dedicated Scribe. Scribe writes all non-code documents, including durable plans. For every non-basic task, an in-process temporary Planner/Scribe team produces a user-approved plan before execution; Researcher joins only when Planner needs material evidence. If teams are unavailable, the same workflow runs sequentially through bounded packets.
 
 Use `/build <request>` to force the engineering route or `/research <question>` to force a foreground research pass. For normal requests, the orchestrator classifies both engineering intent and research need.
 
 A Claude Code-native, interactive orchestration foundation. Its default workflow is intentionally small:
 
-`user request → classify → T1 code or Scribe document → compact receipt → orchestrator report`
+`user request → classify → Planner → Scribe plan → user approval → T1 code or Scribe delivery → compact receipt → orchestrator report`
 
-For a cross-agent document task:
+Basic one-file changes and short self-contained documents with explicit acceptance checks may still route directly to T1 or Scribe.
 
-`Researcher/T1 → direct evidence packet → Scribe → DOC_DONE → compact lead receipt`
+For a research-backed plan:
 
-It does not use Claude CLI print mode, plugins, MCP, Agent SDK code, dynamic workflows, persistent teams, or worktrees for an ordinary request. Agent teams are task-scoped for direct specialist-to-Scribe communication only.
+`Planner → direct research question → Researcher → direct evidence packet → Planner → Scribe → plan draft → user approval`
+
+It does not use Claude CLI print mode, plugins, MCP, Agent SDK code, dynamic workflows, persistent teams, or worktrees for an ordinary request. Agent teams are task-scoped, in-process direct specialist-to-Scribe communication only. Tmux, WSL, cmux, iTerm2, and split panes are not required.
 
 ## Start an interactive session
 
@@ -40,7 +42,7 @@ Or force the engineering workflow:
 /build design a responsive frontend for a recipe planner and verify the production build
 ```
 
-The orchestrator sends a bounded foreground job to T1 for code or Scribe for documents, then reports completion evidence. It asks for clarification only when a missing decision is material.
+The orchestrator sends a bounded foreground job to T1 for code or Scribe for documents only after required planning and approval, then reports completion evidence. It asks for clarification only when a missing decision is material.
 
 For every browser-rendered UI or webview, T1 must use app-owned accessible modals or inline validation instead of native browser dialogs. The build contract requires a focused no-native-dialog scan and modal keyboard/focus evidence.
 
@@ -51,6 +53,12 @@ Claude Code loads project instructions from the directory where it starts. Copy 
 ## Advanced tools
 
 Agent teams, worktrees, MCP, plugins, hooks, sessions, channels, schedules, and Agent SDK boundaries are documented in [CAPABILITY-MAP.md](docs/CAPABILITY-MAP.md). They are available as opt-in tools, not automatic behavior. Define a reusable multi-stage pipeline with `/workflow-author`; `build` itself stays interactive and one-engineer by default.
+
+To force the terminal-independent team display for one session, start Claude Code with:
+
+```powershell
+claude --teammate-mode in-process
+```
 
 ## Activation notes
 

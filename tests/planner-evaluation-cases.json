@@ -1,0 +1,44 @@
+[
+  {
+    "name": "multi-file feature approval gate",
+    "request": "Add account export across API, UI, and tests.",
+    "expected_route": "planner-scribe-user-approval-t1",
+    "required_skills": ["planner-core", "planner-repository-analysis", "planner-specification-decomposition"],
+    "required_evidence": ["PLAN_JOB", "PLANNING_HANDOFF", "docs/plans/", "explicit user approval", "approved_plan"]
+  },
+  {
+    "name": "planner research handoff",
+    "request": "Plan an OAuth integration using current provider requirements.",
+    "expected_route": "planner-researcher-planner-scribe",
+    "required_skills": ["planner-core", "planner-repository-analysis", "planner-specification-decomposition"],
+    "required_evidence": ["PLANNING_RESEARCH_REQUEST", "RESEARCH_EVIDENCE", "direct to Planner", "TASK_RECEIPT"]
+  },
+  {
+    "name": "browser UI policy",
+    "request": "Plan a Tauri account-deletion confirmation flow.",
+    "expected_route": "planner-scribe-user-approval-t1",
+    "required_skills": ["planner-core", "planner-risk-validation"],
+    "required_evidence": ["Browser UI invariant", "no-native-dialog scan", "keyboard/focus", "app-owned modal"]
+  },
+  {
+    "name": "high-risk migration",
+    "request": "Plan a production data migration with rollback.",
+    "expected_route": "planner-scribe-user-approval-t1",
+    "required_skills": ["planner-core", "planner-repository-analysis", "planner-risk-validation"],
+    "required_evidence": ["rollback", "explicit user approval", "acceptance_and_validation"]
+  },
+  {
+    "name": "stale plan rejection",
+    "request": "Implement a previously approved plan after its dependency contract changed.",
+    "expected_route": "plan-stale-blocked",
+    "required_skills": ["planner-core", "planner-risk-validation"],
+    "required_evidence": ["JOB_BLOCKED", "Plan stale", "new PLAN_JOB or explicit reapproval"]
+  },
+  {
+    "name": "team ownership and compact lead context",
+    "request": "Produce two documents that target the same plan path in one team.",
+    "expected_route": "ownership-denied",
+    "required_skills": ["planner-core", "scribe-core"],
+    "required_evidence": ["denied overlap", "TASK_RECEIPT", "no source ledger or plan content in lead context"]
+  }
+]

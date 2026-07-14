@@ -1,0 +1,8 @@
+[
+  { "name": "trivial single-file fix", "input": "Fix the typo in this one error string and run its existing unit test.", "expected": "direct-engineering" },
+  { "name": "multi-file feature", "input": "Add account export across API, UI, and tests.", "expected": "planner-required" },
+  { "name": "significant documentation", "input": "Create an operator guide for the new deployment process.", "expected": "planner-required" },
+  { "name": "short standalone document", "input": "Correct one sentence in the supplied README.", "expected": "direct-writing" },
+  { "name": "browser UI", "input": "Build a browser settings screen with destructive account removal.", "expected": "planner-required" },
+  { "name": "ambiguous request", "input": "We need something for customer onboarding.", "expected": "clarify" }
+]
