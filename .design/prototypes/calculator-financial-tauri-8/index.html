@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Mechanism Computes — Studio prototype (calc-fin-tauri-8)</title>
+<style>
+  :root{
+    --bronze-900:#4A3B23;
+    --lacquer-950:#0B0A08;
+    --parchment-100:#EDE3CC;
+    --amber-500:#E0A438;
+    --paper-200:#DCD5C3;
+    --focus-100:#F4EAD2;
+  }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--parchment-100);
+    color:var(--lacquer-950);
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    line-height:1.45;
+    padding:0 0 4rem;
+  }
+  h1,h2{ color:var(--bronze-900); }
+  .skip-link{
+    position:absolute; left:-999px; top:0; background:var(--lacquer-950); color:var(--parchment-100);
+    padding:0.5rem 1rem; z-index:50;
+  }
+  .skip-link:focus{ left:0.5rem; top:0.5rem; }
+  .page-header{ background:var(--bronze-900); color:var(--parchment-100); padding:1rem 1.25rem 1.5rem; }
+  .page-header h1{ color:var(--parchment-100); margin:0.25rem 0; }
+  .prototype-badge{
+    display:inline-block; background:var(--amber-500); color:var(--lacquer-950);
+    font-weight:700; font-size:0.8rem; padding:0.3rem 0.6rem; border-radius:2px; margin:0;
+  }
+  .subtitle{ margin:0.25rem 0 0; font-size:0.95rem; max-width:60ch; }
+  main{ max-width:760px; margin:0 auto; padding:0 1.25rem; }
+
+  section{ margin-top:2rem; padding-top:1rem; border-top:1px solid var(--paper-200); }
+  .section-hint{ font-size:0.9rem; color:var(--bronze-900); margin-top:-0.25rem; }
+
+  /* ---- view controls ---- */
+  .view-controls{ margin-top:1.5rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .toggle-button{
+    background:var(--paper-200); color:var(--lacquer-950); border:2px solid var(--bronze-900);
+    padding:0.5rem 0.9rem; border-radius:3px; cursor:pointer; font-size:0.95rem;
+  }
+  .toggle-button[aria-pressed="true"]{ background:var(--amber-500); }
+  .view-status{ font-size:0.85rem; margin:0; }
+
+  /* ---- generic rectangular dual-tone focus keyline: inner 2px near-black,
+         2px transparent gap, outer 2px pale. Applies to plain (non-clipped,
+         non-circular) interactive elements directly. ---- */
+  button:not(.hub-button):focus-visible,
+  input:focus-visible,
+  .flat-radio input:focus-visible{
+    outline:none;
+    box-shadow:
+      0 0 0 2px var(--lacquer-950),
+      0 0 0 4px transparent,
+      0 0 0 6px var(--focus-100);
+  }
+
+  /* ---- flat linear selectors (always in DOM; baseline experience) ---- */
+  .flat-selectors{ display:none; margin-top:1rem; }
+  body.view-flat #flat-selectors{ display:block; }
+  body.view-flat #radial-dial{ display:none; }
+  .field-group{ border:1px solid var(--paper-200); border-radius:4px; padding:0.75rem 1rem; margin-bottom:0.75rem; }
+  .field-group legend{ font-weight:700; color:var(--bronze-900); padding:0 0.25rem; }
+  .flat-radio-list{ display:flex; flex-wrap:wrap; gap:0.4rem; }
+  .flat-radio{
+    display:inline-flex; align-items:center; gap:0.35rem;
+    background:var(--paper-200); border-radius:3px; padding:0.35rem 0.6rem; cursor:pointer;
+    font-size:0.9rem;
+  }
+  .flat-radio:has(input:checked){ background:var(--amber-500); color:var(--lacquer-950); font-weight:700; }
+
+  /* ---- radial dial (progressive enhancement) ---- */
+  #radial-dial{ margin-top:1rem; }
+  .dial-stage{
+    position:relative; width:256px; height:256px; margin:0 auto; min-width:232px;
+  }
+  .dial-decorative{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .dial-interactive{ position:absolute; inset:0; }
+  .ring-group{ position:absolute; inset:0; pointer-events:none; }
+  .segment-slot{ position:absolute; pointer-events:none; }
+  .segment-hit{
+    position:absolute; inset:0; pointer-events:auto; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    background:var(--paper-200); color:var(--bronze-900);
+    font-size:10.5px; font-weight:700; line-height:1.05; padding:2px;
+    font-variant-numeric:tabular-nums;
+  }
+  .segment-hit.is-selected{ background:var(--amber-500); color:var(--lacquer-950); }
+  .segment-label{ pointer-events:none; }
+  .segment-focus-ring{ position:absolute; inset:0; pointer-events:none; }
+  .segment-focus-ring.is-focused{
+    box-shadow:
+      0 0 0 2px var(--lacquer-950),
+      0 0 0 4px transparent,
+      0 0 0 6px var(--focus-100);
+  }
+  .hub-button{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:96px; height:96px; border-radius:50%;
+    background:var(--amber-500); color:var(--lacquer-950); border:2px solid var(--bronze-900);
+    font-weight:700; font-size:0.85rem; cursor:pointer;
+  }
+  .hub-button.is-computing{ animation:hub-spin 0.6s ease-in-out; }
+  @keyframes hub-spin{
+    from{ transform:translate(-50%,-50%) rotate(0deg); }
+    to{ transform:translate(-50%,-50%) rotate(360deg); }
+  }
+  .hub-focus-ring{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:96px; height:96px; pointer-events:none;
+  }
+  .hub-focus-ring.is-focused{
+    box-shadow:
+      0 0 0 2px var(--lacquer-950),
+      0 0 0 4px transparent,
+      0 0 0 6px var(--focus-100);
+  }
+  .dial-hint{ font-size:0.85rem; text-align:center; max-width:44ch; margin:0.75rem auto 0; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hub-button.is-computing{ animation:none; }
+    #gear-rotor{ transition:none !important; }
+  }
+
+  /* ---- 400% zoom / reflow: replace the dial region with the flat
+         equivalents outright (never merely scale the dial down) ---- */
+  @media (max-width: 480px){
+    #radial-dial{ display:none !important; }
+    #flat-selectors{ display:block !important; }
+    #view-toggle{ display:none; }
+  }
+
+  /* ---- inputs ---- */
+  .field-row{ margin-bottom:0.9rem; display:flex; flex-direction:column; gap:0.25rem; max-width:22rem; }
+  .field-row label{ font-weight:600; font-size:0.9rem; }
+  .field-row input, #crank-number{
+    font-size:1rem; padding:0.4rem 0.55rem; border:1px solid var(--bronze-900); border-radius:3px;
+    background:#fff; color:var(--lacquer-950); font-variant-numeric:tabular-nums; text-align:right;
+  }
+
+  /* ---- crank ---- */
+  .crank-control{ display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .gear-decorative{ width:64px; height:64px; flex:0 0 auto; }
+  #gear-rotor{ transform-box:fill-box; transform-origin:50% 50%; transform:rotate(var(--gear-angle,0deg)); transition:transform 0.15s linear; }
+  .crank-inputs{ display:flex; flex-direction:column; gap:0.4rem; flex:1 1 16rem; min-width:14rem; }
+  .crank-inputs label{ font-size:0.85rem; font-weight:600; }
+  #crank-range{ width:100%; }
+  #crank-number{ width:8rem; }
+  .live-region{ font-size:0.9rem; margin-top:0.75rem; min-height:1.3em; }
+
+  /* ---- results ---- */
+  .primary-button{
+    background:var(--amber-500); color:var(--lacquer-950); border:2px solid var(--bronze-900);
+    padding:0.55rem 1rem; border-radius:3px; font-weight:700; cursor:pointer; font-size:0.95rem;
+  }
+  .secondary-button{
+    background:var(--paper-200); color:var(--lacquer-950); border:2px solid var(--bronze-900);
+    padding:0.5rem 0.9rem; border-radius:3px; cursor:pointer; font-size:0.9rem; margin-left:0.6rem;
+  }
+  .prototype-flag{ font-weight:400; font-size:0.75rem; color:var(--bronze-900); }
+  .result-readout{
+    background:var(--parchment-100); border:1px solid var(--bronze-900); border-radius:4px;
+    padding:0.75rem 1rem; margin:0.9rem 0; color:var(--lacquer-950);
+  }
+  .result-row{ display:flex; justify-content:space-between; gap:1rem; padding:0.3rem 0; font-variant-numeric:tabular-nums; }
+  .result-row dt{ font-weight:600; }
+  .result-row dd{ margin:0; font-weight:700; text-align:right; }
+
+  /* ---- modal ---- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(11,10,8,0.55); display:flex; align-items:center; justify-content:center; z-index:100;
+  }
+  .modal-overlay[hidden]{ display:none; }
+  .modal-dialog{
+    background:var(--parchment-100); color:var(--lacquer-950); border:2px solid var(--bronze-900);
+    border-radius:5px; padding:1.25rem; max-width:26rem; width:calc(100% - 2rem);
+  }
+  .modal-actions{ margin-top:1rem; display:flex; justify-content:flex-end; gap:0.5rem; }
+
+  .diagnostics-section summary{ cursor:pointer; font-weight:600; }
+  #measure-output{ font-size:0.9rem; margin-top:0.5rem; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to calculator</a>
+
+<header class="page-header">
+  <p class="prototype-badge">PROTOTYPE DATA — placeholder math for interaction testing only. Nothing is saved. Not the certified calculation engine.</p>
+  <h1>The Mechanism Computes</h1>
+  <p class="subtitle">Antikythera concentric-ring shell over a linear financial form — Studio direction, novel, disposable design evidence for task calc-fin-tauri-8.</p>
+</header>
+
+<main id="main">
+
+  <div class="view-controls">
+    <button type="button" id="view-toggle" class="toggle-button" aria-pressed="false">Switch to flat view</button>
+    <p class="view-status" id="view-status" aria-live="polite">Dial view active. Function and Mode are chosen from the concentric rings.</p>
+  </div>
+
+  <form id="calc-form" novalidate>
+
+    <section class="mechanism-section" aria-labelledby="mechanism-heading">
+      <h2 id="mechanism-heading">Function &amp; Mode</h2>
+      <p class="section-hint">Both views control the same two choices. Switching views never loses your selection.</p>
+
+      <div id="flat-selectors" class="flat-selectors">
+        <fieldset class="field-group">
+          <legend>Function</legend>
+          <div class="flat-radio-list" id="flat-function-list"></div>
+        </fieldset>
+        <fieldset class="field-group">
+          <legend>Mode (payment frequency)</legend>
+          <div class="flat-radio-list" id="flat-mode-list"></div>
+        </fieldset>
+      </div>
+
+      <div id="radial-dial">
+        <div class="dial-stage">
+          <svg class="dial-decorative" id="dial-decorative" viewBox="0 0 256 256" aria-hidden="true" focusable="false"></svg>
+          <div class="dial-interactive" id="dial-interactive">
+            <div class="ring-group" id="ring-function" role="radiogroup" aria-label="Function, 11 options"></div>
+            <div class="ring-group" id="ring-mode" role="radiogroup" aria-label="Mode, 4 options"></div>
+            <button type="button" id="hub-compute" class="hub-button">Compute</button>
+            <div class="hub-focus-ring" id="hub-focus-ring" aria-hidden="true"></div>
+          </div>
+        </div>
+        <p class="dial-hint">Tab moves between the Function ring, the Mode ring, and the hub. Arrow keys choose within a ring. Selection always mirrors the flat list.</p>
+      </div>
+    </section>
+
+    <section class="inputs-section" aria-labelledby="inputs-heading">
+      <h2 id="inputs-heading">Loan details</h2>
+      <div class="field-row">
+        <label for="principal">Loan amount ($)</label>
+        <input type="number" id="principal" name="principal" min="0" step="100" value="25000" inputmode="decimal">
+      </div>
+      <div class="field-row">
+        <label for="rate">Annual interest rate (%)</label>
+        <input type="number" id="rate" name="rate" min="0" step="0.05" value="6.5" inputmode="decimal">
+      </div>
+      <div class="field-row">
+        <label for="term">Term (years)</label>
+        <input type="number" id="term" name="term" min="1" step="1" value="5" inputmode="numeric">
+      </div>
+    </section>
+
+    <section class="crank-section" aria-labelledby="crank-heading">
+      <h2 id="crank-heading">What-if crank — extra monthly payment</h2>
+      <div class="crank-control">
+        <svg class="gear-decorative" id="gear-visual" viewBox="0 0 120 120" aria-hidden="true" focusable="false"></svg>
+        <div class="crank-inputs">
+          <label for="crank-range">Extra payment — drag the gear, or use arrow / Page / Home / End keys</label>
+          <input type="range" id="crank-range" min="0" max="500" step="5" value="0">
+          <label for="crank-number">Extra payment amount ($)</label>
+          <input type="number" id="crank-number" min="0" max="500" step="5" value="0" inputmode="decimal">
+        </div>
+      </div>
+      <p id="crank-live" class="live-region" aria-live="polite"></p>
+    </section>
+
+    <section class="result-section" aria-labelledby="result-heading">
+      <h2 id="result-heading">Result <span class="prototype-flag">(prototype estimate)</span></h2>
+      <button type="button" id="compute-button" class="primary-button">Turn the mechanism — Compute</button>
+      <button type="button" id="reset-button" class="secondary-button">Reset all fields</button>
+      <dl class="result-readout" id="result-readout">
+        <div class="result-row">
+          <dt>Estimated payment</dt>
+          <dd id="result-payment">—</dd>
+        </div>
+        <div class="result-row">
+          <dt>Payoff time with extra payment</dt>
+          <dd id="result-payoff">—</dd>
+        </div>
+      </dl>
+    </section>
+  </form>
+
+  <section class="diagnostics-section">
+    <details>
+      <summary>Engineering diagnostics (prototype only, not part of the design)</summary>
+      <p>Dial geometry: hub r0–48px, Function band r48–88px (11 segments), Mode band r88–128px (4 segments), dial diameter fixed at 256 CSS px. Below a 480 CSS px viewport the dial is replaced by the flat form, never scaled down.</p>
+      <button type="button" id="measure-button" class="secondary-button" style="margin-left:0;">Measure narrowest rendered hit target</button>
+      <p id="measure-output" role="status"></p>
+    </details>
+  </section>
+</main>
+
+<div id="reset-modal" class="modal-overlay" hidden>
+  <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title" aria-describedby="reset-modal-desc">
+    <h2 id="reset-modal-title">Reset all fields?</h2>
+    <p id="reset-modal-desc">This clears the loan amount, rate, term, and the extra-payment crank back to their defaults. Function and Mode selection are not changed.</p>
+    <div class="modal-actions">
+      <button type="button" id="reset-cancel" class="secondary-button" style="margin-left:0;">Cancel</button>
+      <button type="button" id="reset-confirm" class="primary-button">Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var FUNCTIONS = ["Loan","Amort","Interest","Savings","Invest","Retire","Tax","Currency","Deprec","Bond","Lease"];
+  var MODES = ["Monthly","Bi-weekly","Weekly","Custom"];
+  var MODE_PERIODS = [12,26,52,12];
+
+  var HUB_R = 48, FUNCTION_INNER_R = 48, FUNCTION_OUTER_R = 88, MODE_INNER_R = 88, MODE_OUTER_R = 128;
+  var CX = 128, CY = 128;
+
+  var state = {
+    functionIndex: 0,
+    modeIndex: 0,
+    view: "dial",
+    crankValue: 0,
+    baseInputs: null,
+    pendingAnnouncement: "",
+    prefersReducedMotion: false
+  };
+
+  var mql = window.matchMedia("(prefers-reduced-motion: reduce)");
+  state.prefersReducedMotion = mql.matches;
+  if (mql.addEventListener) {
+    mql.addEventListener("change", function (e) {
+      state.prefersReducedMotion = e.matches;
+      if (e.matches) { gearVisual.style.removeProperty("--gear-angle"); }
+    });
+  }
+
+  function toRad(d){ return d * Math.PI / 180; }
+  function polar(cx, cy, r, deg){
+    var rad = toRad(deg);
+    return { x: cx + r * Math.sin(rad), y: cy - r * Math.cos(rad) };
+  }
+
+  function svgEl(tag, attrs){
+    var e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (var k in attrs) { e.setAttribute(k, attrs[k]); }
+    return e;
+  }
+
+  /* ---------- decorative dial art (aria-hidden, pointer-events:none) ---------- */
+  function buildDecorative(){
+    var svg = document.getElementById("dial-decorative");
+    svg.appendChild(svgEl("circle",{ cx:CX, cy:CY, r:126, fill:"none", stroke:"var(--bronze-900)", "stroke-width":2 }));
+    [48,88,128].forEach(function(r){
+      svg.appendChild(svgEl("circle",{ cx:CX, cy:CY, r:r, fill:"none", stroke:"var(--bronze-900)", "stroke-width":1, "stroke-opacity":0.5 }));
+    });
+    FUNCTIONS.forEach(function(_, i){
+      var d = i * (360 / FUNCTIONS.length);
+      var p1 = polar(CX, CY, 48, d), p2 = polar(CX, CY, 88, d);
+      svg.appendChild(svgEl("line",{ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, stroke:"var(--bronze-900)", "stroke-width":1, "stroke-opacity":0.6 }));
+    });
+    MODES.forEach(function(_, i){
+      var d = i * (360 / MODES.length);
+      var p1 = polar(CX, CY, 88, d), p2 = polar(CX, CY, 128, d);
+      svg.appendChild(svgEl("line",{ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, stroke:"var(--bronze-900)", "stroke-width":1, "stroke-opacity":0.6 }));
+    });
+    var teeth = 24;
+    for (var i = 0; i < teeth; i++) {
+      var d = i * (360 / teeth);
+      var p1 = polar(CX, CY, 120, d), p2 = polar(CX, CY, 126, d);
+      svg.appendChild(svgEl("line",{ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, stroke:"var(--bronze-900)", "stroke-width":2 }));
+    }
+    svg.appendChild(svgEl("circle",{ cx:CX, cy:CY, r:46, fill:"none", stroke:"var(--amber-500)", "stroke-width":1, "stroke-dasharray":"2 3", "stroke-opacity":0.7 }));
+  }
+
+  function buildGear(){
+    var svg = document.getElementById("gear-visual");
+    var g = svgEl("g", { id:"gear-rotor" });
+    g.appendChild(svgEl("circle",{ cx:60, cy:60, r:34, fill:"var(--paper-200)", stroke:"var(--bronze-900)", "stroke-width":2 }));
+    g.appendChild(svgEl("circle",{ cx:60, cy:60, r:10, fill:"var(--lacquer-950)" }));
+    var teeth = 12;
+    for (var i = 0; i < teeth; i++) {
+      var d = i * (360 / teeth);
+      var p1 = polar(60, 60, 34, d), p2 = polar(60, 60, 44, d);
+      g.appendChild(svgEl("line",{ x1:p1.x, y1:p1.y, x2:p2.x, y2:p2.y, stroke:"var(--bronze-900)", "stroke-width":4, "stroke-linecap":"round" }));
+    }
+    svg.appendChild(g);
+  }
+
+  /* ---------- interactive ring segments: plain HTML, token-styled, ARIA + keyboard ---------- */
+  var functionHits = [], modeHits = [];
+
+  function buildRing(containerEl, labels, innerR, outerR, hitsArray, kind){
+    var count = labels.length;
+    var slice = 360 / count;
+    labels.forEach(function(label, i){
+      var startDeg = i * slice, endDeg = (i + 1) * slice;
+      var outerStart = polar(CX, CY, outerR, startDeg), outerEnd = polar(CX, CY, outerR, endDeg);
+      var innerStart = polar(CX, CY, innerR, startDeg), innerEnd = polar(CX, CY, innerR, endDeg);
+      var xs = [outerStart.x, outerEnd.x, innerStart.x, innerEnd.x];
+      var ys = [outerStart.y, outerEnd.y, innerStart.y, innerEnd.y];
+      var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs);
+      var minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+      var w = maxX - minX, h = maxY - minY;
+
+      var slot = document.createElement("div");
+      slot.className = "segment-slot";
+      slot.setAttribute("role", "presentation");
+      slot.style.left = minX + "px"; slot.style.top = minY + "px";
+      slot.style.width = w + "px"; slot.style.height = h + "px";
+
+      function pt(p){ return (p.x - minX).toFixed(2) + "px " + (p.y - minY).toFixed(2) + "px"; }
+      var clip = "polygon(" + [outerStart, outerEnd, innerEnd, innerStart].map(pt).join(", ") + ")";
+
+      var hit = document.createElement("div");
+      hit.className = "segment-hit";
+      hit.style.clipPath = clip;
+      hit.setAttribute("role", "radio");
+      hit.setAttribute("aria-checked", "false");
+      hit.setAttribute("aria-label", label);
+      hit.tabIndex = -1;
+      hit.dataset.kind = kind;
+      hit.dataset.index = i;
+
+      var labelSpan = document.createElement("span");
+      labelSpan.className = "segment-label";
+      labelSpan.textContent = label;
+      labelSpan.setAttribute("aria-hidden", "true");
+      hit.appendChild(labelSpan);
+
+      var ring = document.createElement("div");
+      ring.className = "segment-focus-ring";
+      ring.setAttribute("aria-hidden", "true");
+
+      slot.appendChild(hit);
+      slot.appendChild(ring);
+      containerEl.appendChild(slot);
+      hitsArray.push(hit);
+    });
+  }
+
+  function applySelection(kind){
+    var hits = kind === "function" ? functionHits : modeHits;
+    var selIndex = kind === "function" ? state.functionIndex : state.modeIndex;
+    hits.forEach(function(el, i){
+      var selected = i === selIndex;
+      el.setAttribute("aria-checked", selected ? "true" : "false");
+      el.classList.toggle("is-selected", selected);
+      el.tabIndex = selected ? 0 : -1;
+    });
+    var flatContainer = kind === "function" ? flatFunctionList : flatModeList;
+    var inputs = flatContainer.querySelectorAll("input[type=radio]");
+    inputs.forEach(function(inp, i){ inp.checked = i === selIndex; });
+  }
+
+  function selectIndex(kind, index, moveFocus){
+    if (kind === "function") { state.functionIndex = index; } else { state.modeIndex = index; }
+    applySelection(kind);
+    if (moveFocus !== false) {
+      var hits = kind === "function" ? functionHits : modeHits;
+      hits[index].focus();
+    }
+  }
+
+  function ringKeydown(e, kind){
+    var hits = kind === "function" ? functionHits : modeHits;
+    var currentIndex = kind === "function" ? state.functionIndex : state.modeIndex;
+    var next = null;
+    switch (e.key) {
+      case "ArrowRight": case "ArrowDown": next = (currentIndex + 1) % hits.length; break;
+      case "ArrowLeft": case "ArrowUp": next = (currentIndex - 1 + hits.length) % hits.length; break;
+      case "Home": next = 0; break;
+      case "End": next = hits.length - 1; break;
+      case " ": case "Enter": next = currentIndex; break;
+      default: return;
+    }
+    e.preventDefault();
+    selectIndex(kind, next, true);
+  }
+
+  function wireRing(containerEl, kind){
+    containerEl.addEventListener("keydown", function(e){ ringKeydown(e, kind); });
+    containerEl.addEventListener("click", function(e){
+      var hit = e.target.closest(".segment-hit");
+      if (!hit) { return; }
+      selectIndex(kind, Number(hit.dataset.index), false);
+      hit.focus();
+    });
+    containerEl.addEventListener("focusin", function(e){
+      var hit = e.target.closest(".segment-hit");
+      if (!hit) { return; }
+      hit.closest(".segment-slot").querySelector(".segment-focus-ring").classList.add("is-focused");
+    });
+    containerEl.addEventListener("focusout", function(e){
+      var hit = e.target.closest(".segment-hit");
+      if (!hit) { return; }
+      hit.closest(".segment-slot").querySelector(".segment-focus-ring").classList.remove("is-focused");
+    });
+  }
+
+  function buildFlatList(container, labels, kind){
+    labels.forEach(function(label, i){
+      var wrapper = document.createElement("label");
+      wrapper.className = "flat-radio";
+      var input = document.createElement("input");
+      input.type = "radio"; input.name = kind; input.value = label; input.id = kind + "-flat-" + i;
+      input.addEventListener("change", function(){ selectIndex(kind, i, false); });
+      wrapper.appendChild(input);
+      wrapper.appendChild(document.createTextNode(" " + label));
+      container.appendChild(wrapper);
+    });
+  }
+
+  /* ---------- mock financial math (placeholder, not the certified engine) ---------- */
+  function periodPayment(principal, annualRatePct, years, periodsPerYear){
+    var r = (annualRatePct / 100) / periodsPerYear;
+    var n = years * periodsPerYear;
+    if (n <= 0) { return 0; }
+    if (r === 0) { return principal / n; }
+    return principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+  }
+  function payoffPeriods(principal, annualRatePct, years, periodsPerYear, extraPerPeriod){
+    var r = (annualRatePct / 100) / periodsPerYear;
+    var basePayment = periodPayment(principal, annualRatePct, years, periodsPerYear);
+    var payment = basePayment + extraPerPeriod;
+    var balance = principal, periods = 0;
+    var maxPeriods = periodsPerYear * 100;
+    if (payment <= balance * r && r > 0) { return maxPeriods; }
+    while (balance > 0 && periods < maxPeriods) {
+      var interest = balance * r;
+      balance = balance + interest - payment;
+      periods++;
+    }
+    return periods;
+  }
+  function formatPeriods(periods, periodsPerYear){
+    var years = periods / periodsPerYear;
+    var y = Math.floor(years);
+    var months = Math.round((years - y) * 12);
+    if (months === 12) { y++; months = 0; }
+    return y + " yr " + months + " mo";
+  }
+  function formatCurrency(n){
+    return "$" + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  var principalInput = document.getElementById("principal");
+  var rateInput = document.getElementById("rate");
+  var termInput = document.getElementById("term");
+  var resultPayment = document.getElementById("result-payment");
+  var resultPayoff = document.getElementById("result-payoff");
+  var crankRange = document.getElementById("crank-range");
+  var crankNumber = document.getElementById("crank-number");
+  var crankLive = document.getElementById("crank-live");
+  var gearVisual = document.getElementById("gear-visual");
+  var hubButton = document.getElementById("hub-compute");
+  var hubFocusRing = document.getElementById("hub-focus-ring");
+  var flatFunctionList = document.getElementById("flat-function-list");
+  var flatModeList = document.getElementById("flat-mode-list");
+  var viewToggle = document.getElementById("view-toggle");
+  var viewStatus = document.getElementById("view-status");
+  var calcForm = document.getElementById("calc-form");
+  var measureButton = document.getElementById("measure-button");
+  var measureOutput = document.getElementById("measure-output");
+
+  var liveTimer = null;
+  function scheduleLiveAnnouncement(){
+    if (liveTimer) { clearTimeout(liveTimer); }
+    liveTimer = setTimeout(function(){
+      crankLive.textContent = state.pendingAnnouncement;
+      liveTimer = null;
+    }, 260);
+  }
+
+  function recomputePayoff(immediate){
+    if (!state.baseInputs) { return; }
+    var b = state.baseInputs;
+    var extra = state.crankValue;
+    var months = payoffPeriods(b.principal, b.rate, b.years, b.periodsPerYear, extra);
+    var baseMonths = payoffPeriods(b.principal, b.rate, b.years, b.periodsPerYear, 0);
+    var saved = Math.max(0, baseMonths - months);
+    var payoffText = formatPeriods(months, b.periodsPerYear) + (extra > 0 ? " (" + formatPeriods(saved, b.periodsPerYear) + " sooner)" : "");
+    resultPayoff.textContent = payoffText;
+    var announce = "Extra payment " + formatCurrency(extra) + " per period. Payoff in " + formatPeriods(months, b.periodsPerYear) +
+      (extra > 0 ? ", " + formatPeriods(saved, b.periodsPerYear) + " sooner than the base schedule." : ".");
+    state.pendingAnnouncement = announce;
+    if (immediate) {
+      if (liveTimer) { clearTimeout(liveTimer); liveTimer = null; }
+      crankLive.textContent = announce;
+    } else {
+      scheduleLiveAnnouncement();
+    }
+  }
+
+  function onCrankInput(rawValue){
+    var v = Math.round(Number(rawValue) / 5) * 5;
+    if (isNaN(v)) { v = 0; }
+    v = Math.min(500, Math.max(0, v));
+    state.crankValue = v;
+    crankRange.value = v;
+    crankNumber.value = v;
+    if (!state.prefersReducedMotion) {
+      gearVisual.style.setProperty("--gear-angle", (v / 500 * 360 * 3) + "deg");
+    }
+    recomputePayoff(false);
+  }
+
+  function runCompute(){
+    var principal = Number(principalInput.value) || 0;
+    var rate = Number(rateInput.value) || 0;
+    var years = Number(termInput.value) || 1;
+    var periodsPerYear = MODE_PERIODS[state.modeIndex];
+    var payment = periodPayment(principal, rate, years, periodsPerYear);
+    state.baseInputs = { principal: principal, rate: rate, years: years, periodsPerYear: periodsPerYear };
+    resultPayment.textContent = formatCurrency(payment) + " / " + MODES[state.modeIndex].toLowerCase() +
+      " period (" + FUNCTIONS[state.functionIndex] + ")";
+    recomputePayoff(true);
+    if (!state.prefersReducedMotion) {
+      hubButton.classList.add("is-computing");
+      setTimeout(function(){ hubButton.classList.remove("is-computing"); }, 650);
+    }
+  }
+
+  /* ---------- reset modal (app-owned; no native confirm()) ---------- */
+  var resetModal = document.getElementById("reset-modal");
+  var resetButton = document.getElementById("reset-button");
+  var resetCancel = document.getElementById("reset-cancel");
+  var resetConfirm = document.getElementById("reset-confirm");
+  var lastFocusedBeforeModal = null;
+
+  function openModal(){
+    lastFocusedBeforeModal = document.activeElement;
+    resetModal.hidden = false;
+    resetCancel.focus();
+    document.addEventListener("keydown", modalKeydown, true);
+  }
+  function closeModal(){
+    resetModal.hidden = true;
+    document.removeEventListener("keydown", modalKeydown, true);
+    if (lastFocusedBeforeModal) { lastFocusedBeforeModal.focus(); }
+  }
+  function modalKeydown(e){
+    if (e.key === "Escape") { e.preventDefault(); closeModal(); return; }
+    if (e.key === "Tab") {
+      var focusables = [resetCancel, resetConfirm];
+      var idx = focusables.indexOf(document.activeElement);
+      e.preventDefault();
+      var nextIdx = e.shiftKey ? (idx <= 0 ? focusables.length - 1 : idx - 1) : (idx === focusables.length - 1 ? 0 : idx + 1);
+      focusables[nextIdx].focus();
+    }
+  }
+  resetButton.addEventListener("click", openModal);
+  resetCancel.addEventListener("click", closeModal);
+  resetConfirm.addEventListener("click", function(){
+    principalInput.value = 25000; rateInput.value = 6.5; termInput.value = 5;
+    onCrankInput(0);
+    closeModal();
+    runCompute();
+  });
+
+  /* ---------- view toggle ---------- */
+  viewToggle.addEventListener("click", function(){
+    state.view = state.view === "dial" ? "flat" : "dial";
+    document.body.classList.toggle("view-flat", state.view === "flat");
+    viewToggle.setAttribute("aria-pressed", state.view === "flat" ? "true" : "false");
+    viewToggle.textContent = state.view === "flat" ? "Switch to dial view" : "Switch to flat view";
+    viewStatus.textContent = state.view === "flat"
+      ? "Flat view active. Function and Mode are chosen from plain linear lists."
+      : "Dial view active. Function and Mode are chosen from the concentric rings.";
+  });
+
+  /* ---------- measurement tool (risk 3) ---------- */
+  measureButton.addEventListener("click", function(){
+    var dialRect = document.querySelector(".dial-stage").getBoundingClientRect();
+    var scale = dialRect.width / 256;
+    var fnChord = 2 * (FUNCTION_INNER_R * scale) * Math.sin(Math.PI / FUNCTIONS.length);
+    var modeChord = 2 * (MODE_INNER_R * scale) * Math.sin(Math.PI / MODES.length);
+    var narrow = Math.min(fnChord, modeChord);
+    var pass = narrow >= 24;
+    measureOutput.textContent = "Rendered dial diameter: " + dialRect.width.toFixed(1) + "px. " +
+      "Function-ring inner chord: " + fnChord.toFixed(1) + "px. Mode-ring inner chord: " + modeChord.toFixed(1) + "px. " +
+      "Narrowest: " + narrow.toFixed(1) + "px — " + (pass ? "meets" : "fails") + " the 24px CSS-px minimum.";
+  });
+
+  /* ---------- wire up everything ---------- */
+  calcForm.addEventListener("submit", function(e){ e.preventDefault(); });
+  document.getElementById("compute-button").addEventListener("click", runCompute);
+  hubButton.addEventListener("click", runCompute);
+  hubButton.addEventListener("focus", function(){ hubFocusRing.classList.add("is-focused"); });
+  hubButton.addEventListener("blur", function(){ hubFocusRing.classList.remove("is-focused"); });
+  crankRange.addEventListener("input", function(e){ onCrankInput(e.target.value); });
+  crankNumber.addEventListener("input", function(e){ onCrankInput(e.target.value); });
+
+  buildDecorative();
+  buildGear();
+  buildFlatList(flatFunctionList, FUNCTIONS, "function");
+  buildFlatList(flatModeList, MODES, "mode");
+  buildRing(document.getElementById("ring-function"), FUNCTIONS, FUNCTION_INNER_R, FUNCTION_OUTER_R, functionHits, "function");
+  buildRing(document.getElementById("ring-mode"), MODES, MODE_INNER_R, MODE_OUTER_R, modeHits, "mode");
+  wireRing(document.getElementById("ring-function"), "function");
+  wireRing(document.getElementById("ring-mode"), "mode");
+  applySelection("function");
+  applySelection("mode");
+  runCompute();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+  {
+    "name": "independent passing feature verification",
+    "expected_verdict": "VERIFICATION_PASS",
+    "required_evidence": ["approved plan scope check", "re-run focused test", "re-run broader check"]
+  },
+  {
+    "name": "t1 claim without runnable evidence",
+    "expected_verdict": "VERIFICATION_NEEDS_FIX",
+    "required_evidence": ["missing evidence", "exact required command", "bounded remediation"]
+  },
+  {
+    "name": "reproducible regression",
+    "expected_verdict": "VERIFICATION_NEEDS_FIX",
+    "required_evidence": ["reproduction command", "expected versus observed", "artifact path"]
+  },
+  {
+    "name": "material plan drift",
+    "expected_verdict": "VERIFICATION_BLOCKED",
+    "required_evidence": ["plan stale evidence", "approved plan path", "replanning action"]
+  },
+  {
+    "name": "required verification command unavailable",
+    "expected_verdict": "VERIFICATION_BLOCKED",
+    "required_evidence": ["exact unavailable command", "environment evidence", "smallest unblock action"]
+  },
+  {
+    "name": "third remediation failure stops the loop",
+    "expected_verdict": "VERIFICATION_BLOCKED",
+    "required_evidence": ["remediation_cycle: 2", "no third T1 dispatch", "user review blocker"]
+  }
+]

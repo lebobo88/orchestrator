@@ -10,7 +10,7 @@ The orchestrator sends a `RESEARCH_REQUEST` and the researcher first returns `RE
 2. Scope, constraints, supplied evidence, boundaries, and exclusions.
 3. Depth, freshness, source priorities, and desired output emphasis.
 
-On the follow-up, the orchestrator includes the answers, any prior report path, and the original request. Before external research, Researcher searches `docs/research/` for relevant prior reports and evaluates their source freshness and unresolved questions. It uses web research only for gaps, stale/volatile claims, or material external/current facts. For research writing, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe; for planning, it sends the packet directly to Planner after receiving `PLANNING_RESEARCH_REQUEST`. Planner then sends Scribe a grounded `PLANNING_HANDOFF`. No ordinary research route uses a Dynamic Workflow, background job, or `claude -p` subprocess.
+On the follow-up, the requesting parent includes the answers, any prior report path, and the original request. Before external research, Researcher searches `docs/research/` for relevant prior reports and evaluates their source freshness and unresolved questions. It uses web research only for gaps, stale/volatile claims, or material external/current facts. For planning, nested Researcher returns the packet directly to Planner after receiving `PLANNING_RESEARCH_REQUEST`; Planner then invokes nested Scribe with a grounded `PLANNING_HANDOFF`. No ordinary research route uses a project JavaScript workflow runtime, background job, or `claude -p` subprocess.
 
 ```text
 RESEARCH_REQUEST
@@ -77,4 +77,4 @@ Legal, medical, financial, safety, privacy, or security-sensitive reports are in
 
 ## Handoff
 
-The full report is for the user. `RESEARCH_EVIDENCE` is the complete direct packet for Scribe, Planner, or another approved specialist. It includes topic, profile/mode, claim/source/confidence entries, full source ledger, implications, preserved constraints, unknowns/contradictions, approvals needed, validation measures, and limits. The lead receives only `TASK_RECEIPT`. Research never overrides the user or authorizes scope changes.
+The full report is for the user. `RESEARCH_EVIDENCE` is the complete direct packet for the requesting Planner, Scribe, or another approved specialist. It includes topic, profile/mode, claim/source/confidence entries, full source ledger, implications, preserved constraints, unknowns/contradictions, approvals needed, validation measures, and limits. Research never overrides the user or authorizes scope changes.

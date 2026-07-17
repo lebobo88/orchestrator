@@ -2,10 +2,19 @@
   "$schema": "https://json-schema.org/claude-code-settings.json",
   "agent": "orchestrator",
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
   },
-  "teammateDefaultModel": "sonnet",
   "teammateMode": "in-process",
+  "statusLine": {
+    "type": "command",
+    "command": "powershell -NoProfile -File ./.claude/scripts/statusline.ps1",
+    "padding": 1,
+    "refreshInterval": 5
+  },
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "powershell -NoProfile -File ./.claude/scripts/subagent-statusline.ps1"
+  },
   "worktree": {
     "baseRef": "head"
   },
@@ -13,6 +22,9 @@
     "deny": [
       "Read(./.env*)",
       "Read(./**/*secret*)",
+      "Agent(general-purpose)",
+      "Agent(Explore)",
+      "Agent(Plan)",
       "Bash(rm -rf *)",
       "Bash(git push --force*)",
       "Bash(git clean -fd*)"

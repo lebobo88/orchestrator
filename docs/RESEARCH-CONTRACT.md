@@ -12,7 +12,7 @@
 | Recommended | Dispatch when evidence would materially narrow unfamiliar architecture, broad scope, or several viable approaches. State the reason in the research brief. | Choose an authentication approach for an unfamiliar regulated product; investigate an existing system before a large migration. |
 | Not needed | Continue directly. | A precise local bug fix, a small requested implementation with clear acceptance checks, or a question answerable from supplied context. |
 
-For research-only requests, Researcher sends `RESEARCH_EVIDENCE` directly to Scribe in a temporary team, and Scribe writes the completed cited report. For a non-basic planned task, Researcher sends the packet directly to Planner, which incorporates only grounded implications into `PLANNING_HANDOFF` for Scribe. For basic engineering requests, the packet may go directly to T1. The orchestrator retains only a compact task receipt after resolving scope conflicts with the user.
+For research-only requests, Researcher returns `RESEARCH_EVIDENCE` to its requesting named parent, which routes the completed report to Scribe. For a non-basic planned task, nested Researcher returns the packet directly to Planner, which incorporates only grounded implications into `PLANNING_HANDOFF` for nested Scribe. For basic engineering requests, the packet may go directly to T1. Explicit user requirements prevail over every research recommendation.
 
 ## Interactive clarification
 

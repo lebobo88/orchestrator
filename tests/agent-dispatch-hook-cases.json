@@ -1,0 +1,12 @@
+[
+  {"name":"allows known planner type","parent":"session","input":{"subagent_type":"planner","run_in_background":false},"exit":0},
+  {"name":"allows known design type","parent":"session","input":{"subagent_type":"visual-system-designer","run_in_background":false},"exit":0},
+  {"name":"allows a normal stable custom-subagent name","parent":"session","input":{"subagent_type":"ux-architect","name":"ux-architect-calc8"},"exit":0},
+  {"name":"allows omitted mode when the session disables background tasks","parent":"session","input":{"subagent_type":"design-director"},"exit":0},
+  {"name":"blocks background dispatch","parent":"session","input":{"subagent_type":"researcher","run_in_background":true},"exit":2},
+  {"name":"blocks incident research alias","parent":"session","input":{"subagent_type":"rsch-jsonl","run_in_background":false},"exit":2},
+  {"name":"blocks incident director alias","parent":"session","input":{"subagent_type":"design-dir","run_in_background":false},"exit":2},
+  {"name":"blocks unknown role","parent":"session","input":{"subagent_type":"unregistered-role","run_in_background":false},"exit":2},
+  {"name":"blocks team-name dispatch","parent":"session","input":{"subagent_type":"researcher","run_in_background":false,"team_name":"planning-team"},"exit":2},
+  {"name":"blocks unsafe custom-subagent name","parent":"session","input":{"subagent_type":"researcher","name":"Researcher Formula 1"},"exit":2}
+]

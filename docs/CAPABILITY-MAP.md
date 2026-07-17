@@ -1,6 +1,6 @@
 # Claude Code capability map
 
-This is an operating map, not a mandate to turn every request into a persistent multi-agent system. The orchestrator defaults to one interactive lead, with a task-scoped Planner/Scribe team for non-basic work.
+This is an operating map, not a mandate to turn every request into a persistent multi-agent system. The orchestrator defaults to one interactive lead and a nested Planner chain for non-basic work.
 
 ## Native session control
 
@@ -13,16 +13,26 @@ This is an operating map, not a mandate to turn every request into a persistent 
 
 | Need | Native choice | Orchestrator policy |
 | --- | --- | --- |
-| One bounded implementation task | `t1-engineer` subagent | Default code route; foreground and interactive. |
+| Ordinary bounded implementation | `t1-engineer` → `verifier` → conditional `browser-validator` | Foreground, interactive code route; T1 cannot self-approve. |
+| Planning-stage product/design work | `design-generalist` or `design-director` → specialists → `design-reviewer` | Runs inside Planner before Scribe/engineering; one selected Studio prototype is guarded. |
+| Selective independent criticism | `codex-judge-runner` → local `codex exec` | Read-only, ephemeral, no web/MCP, structured result, evidence-backed policy and strict call caps. |
+| Repeated failed implementation gate | `t1-engineer` → `t2-engineer` escalation | T2 receives the complete evidence packet after two counted T1 remediation failures; it is the sole replacement writer. |
+| Exceptionally coupled engineering | Explicitly enabled in-process Engineering Lead + T1 + T3 team | Explicit plan approval and a separate team-enabled session only; Orchestrator remains fixed team lead, T3 is read-only, and T2 joins only after T1 releases ownership. |
 | One standalone non-code document | `scribe` subagent | Default document route; Scribe is the sole document author. |
-| Non-basic task requiring an approved plan | In-process Planner/Scribe team | Planner sends Scribe a direct handoff; user approval gates downstream work. |
-| Specialist evidence needed by Scribe | In-process temporary agent team | Direct Researcher/T1-to-Scribe packet, shared dependency, and compact lead receipt only. |
-| In-process team unavailable | Sequential normal subagents | Bounded packet/reference relay, explicit approval, and stale-plan checks remain active. |
+| Non-basic task requiring an approved plan | Foreground `planner` with nested Researcher/Scribe | Planner keeps handoffs inside the nested chain; user approval gates downstream work. |
+| Specialist evidence needed by Scribe | Nested parent/child handoff or sequential named route | Keep serial evidence out of an unnecessary team; use a team only when the specialist work is independent. |
+| Independent parallel tasks | Explicitly enabled in-process named agent team | Requires an approved team-enabled session, stable agent IDs, shared task completion, direct messages, and non-overlapping paths. |
 | Separate files/branches for parallel work | `EnterWorktree` or `claude --worktree <name>` | Explicit isolation only; worktrees branch from local `HEAD` in this project. |
-| Reusable fixed multi-stage pipeline | Dynamic Workflow | Create only through `/workflow-author`; not the build default. |
+| Reusable routing or operating pattern | Skill + custom agent definitions | Keep the policy in `.claude/skills/`; do not create a project JavaScript workflow runtime. |
 | Many separate sessions to monitor | `claude agents` / Agent view | User-operated, not silently created by the orchestrator. |
 
-Agent teams require Claude Code v2.1.32+. They should have 2–5 independent roles with a clear shared-task benefit. They have a shared task list and mailbox; normal subagents instead return only to the caller. This project uses `teammateMode: in-process`, which works without tmux, WSL, cmux, iTerm2, or split panes. Use task-scoped Planner/Scribe teams for non-basic work and add Researcher only for material evidence. If team creation fails, immediately use sequential normal subagents and the bounded packet fallback. End teams after the task and partition writable paths because teams do not replace worktrees.
+Agent teams require the experimental feature flag and provider support. They are disabled in the default serial session, which also disables background tasks. They have a shared task list and mailbox; normal subagents instead return only to the caller. For an explicitly approved team workflow, launch a separate session with temporary settings that enable `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` and set `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS=0`:
+
+```powershell
+claude --settings '{"env":{"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS":"1","CLAUDE_CODE_DISABLE_BACKGROUND_TASKS":"0"}}' --teammate-mode in-process
+```
+
+Use `/config` or an explicit request to choose teammate models. The main session is the fixed team lead; a technical `engineering-lead` teammate cannot take over lifecycle authority. For extreme advisory work, start Engineering Lead, T1, and T3 only; T2 is spawned after an explicit `WRITER_RELEASED` handoff. End teams after the task and partition writable paths because teams do not isolate files or enforce source-file locks.
 
 For worktrees, run `claude` once in the repository to accept workspace trust, then use `claude --worktree <name>`. Put `.claude/worktrees/` in the target repository's `.gitignore`. A `.worktreeinclude` file can copy gitignored local configuration that the worktree genuinely needs; never use it to casually distribute secrets.
 
@@ -38,14 +48,14 @@ Plugins can package skills, agents, hooks, and MCP. They are a last resort here:
 
 ## Hooks, events, and schedules
 
-- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane. Researcher has a read-only inspection allowlist; Scribe has a scoped text-document write guard.
+- Hooks are deterministic lifecycle automation. Start with a narrow `PostToolUse` formatter or a test/lint check; use `PreToolUse`/`Stop` gates only with a bounded escape path. A Stop hook can be overridden after repeated blocks, so it is not a durable control plane. Researcher has a read-only inspection allowlist; Scribe has a scoped text-document write guard; Design Prototyper is restricted to one prototype slug; Codex Judge Runner can write only an ephemeral job and invoke only the adapter.
 - Channels are research-preview MCP servers that push allowlisted external events into an *open* Claude Code session. They require explicit per-session opt-in and should never grant an untrusted sender permission-relay authority.
 - `/loop` is session-scoped polling. It runs only while the session is open, restored only on resume while unexpired, and recurring loops expire after seven days.
 - Use Desktop scheduled tasks for local-file automation on an awake machine. Use Routines or CI scheduling for durable remote scheduling. A scheduled task should use a worktree when it may modify a Git repository.
 
 ## When programmatic orchestration is genuinely required
 
-The default build path does not need the Agent SDK. If an approved integration needs a programmatic, multi-turn controller, use the Claude Agent SDK—not CLI print mode. Use streaming input for an interactive, long-lived conversation; capture and resume the SDK session ID; surface permission/user-input requests to the human; use structured outputs for machine decisions; and load only necessary Claude Code settings sources. Persist transcripts externally only when there is a defined retention, access-control, and recovery policy.
+The default build path does not need the Agent SDK or a project-authored JavaScript workflow engine. If an approved integration needs a programmatic, multi-turn controller, use the Claude Agent SDK—not CLI print mode. Use streaming input for an interactive, long-lived conversation; capture and resume the SDK session ID; surface permission/user-input requests to the human; use structured outputs for machine decisions; and load only necessary Claude Code settings sources. Persist transcripts externally only when there is a defined retention, access-control, and recovery policy.
 
 ## Capability checks before use
 

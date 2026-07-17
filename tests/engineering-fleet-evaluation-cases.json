@@ -1,0 +1,57 @@
+[
+  {
+    "name": "ordinary approved job starts with T1",
+    "expected_mode": "standard",
+    "required_evidence": ["engineering-fleet", "t1-engineer", "VERIFICATION_PASS", "BROWSER_NOT_APPLICABLE"]
+  },
+  {
+    "name": "two counted T1 gate failures escalate to T2",
+    "expected_mode": "t2-escalation",
+    "required_evidence": ["remediation_cycles: 2", "ENGINEERING_ESCALATION_PACKET", "t2-engineer", "writer_ownership"]
+  },
+  {
+    "name": "research blocker does not consume a remediation cycle",
+    "expected_mode": "standard",
+    "required_evidence": ["JOB_BLOCKED", "Research needed", "does not count"]
+  },
+  {
+    "name": "T2 stops after two counted gate failures",
+    "expected_mode": "t2-escalation",
+    "required_evidence": ["t2-engineer", "remediation limit", "JOB_BLOCKED", "user review"]
+  },
+  {
+    "name": "extreme team keeps T3 read-only and T2 on-call",
+    "expected_mode": "extreme-advisory-team",
+    "required_evidence": ["engineering-lead", "t3-engineering-advisor", "T2_ESCALATION_RECOMMENDATION", "no Write"]
+  },
+  {
+    "name": "T2 starts only after writer release",
+    "expected_mode": "extreme-advisory-team",
+    "required_evidence": ["WRITER_RELEASED", "t1-engineer", "t2-engineer", "block"]
+  },
+  {
+    "name": "T2 scope rejection re-dispatches a direct full-build continuation",
+    "expected_mode": "t2-full-build-continuation",
+    "required_evidence": ["RESCOPE_REQUIRED", "remediation_scope_exceeded", "assignment_kind: full-build-continuation", "writer_ownership: t2", "scope_fingerprint"]
+  },
+  {
+    "name": "scope continuation uses extreme only when eligible and authorized",
+    "expected_mode": "t2-full-build-continuation",
+    "required_evidence": ["Engineering Lead", "extreme criteria", "plan explicitly authorizes", "t2-engineer"]
+  },
+  {
+    "name": "repeated or stale scope continuation blocks for replanning",
+    "expected_mode": "scope-rescope-blocked",
+    "required_evidence": ["scope_fingerprint", "Plan stale", "changed acceptance", "JOB_BLOCKED"]
+  },
+  {
+    "name": "team transport fallback is serial advisory",
+    "expected_mode": "serial-advisory-fallback",
+    "required_evidence": ["engineering-lead", "t3-engineering-advisor", "serial", "no multiplexer"]
+  },
+  {
+    "name": "swarm remains explicit and rejects overlap",
+    "expected_mode": "future-swarm-not-active",
+    "required_evidence": ["explicit user opt-in", "non-overlapping paths", "independent gates"]
+  }
+]

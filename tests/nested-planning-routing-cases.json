@@ -1,0 +1,44 @@
+[
+  {
+    "name": "complex app starts one foreground planner",
+    "request": "Build an advanced Tauri financial calculator spanning storage, UI, research, and tests.",
+    "expected_route": "foreground-planner-nested-chain",
+    "required_evidence": ["one planner", "no pre-spawned researcher", "no pre-spawned scribe", "no Agent(general-purpose)"]
+  },
+  {
+    "name": "planner requests nested research after local analysis",
+    "request": "Plan an OAuth integration with current provider requirements.",
+    "expected_route": "planner-nested-researcher-planner-nested-scribe",
+    "required_evidence": ["planner-repository-analysis", "PLANNING_RESEARCH_REQUEST", "RESEARCH_EVIDENCE", "PLANNING_HANDOFF"]
+  },
+  {
+    "name": "research intake resumes the original planner",
+    "request": "Plan a regulated data-retention change with missing research preferences.",
+    "expected_route": "plan-blocked-sendmessage-resume",
+    "required_evidence": ["PLAN_BLOCKED", "compact questions", "SendMessage", "same planner ID", "no planner-2"]
+  },
+  {
+    "name": "nested scribe owns the durable plan",
+    "request": "Plan a multi-file account export feature.",
+    "expected_route": "planner-nested-scribe-plan-ready",
+    "required_evidence": ["docs/plans/", "DOC_DONE", "PLAN_READY", "explicit user approval"]
+  },
+  {
+    "name": "idle is not completion",
+    "request": "Check a Planner that has gone idle before returning PLAN_READY or PLAN_BLOCKED.",
+    "expected_route": "wait-for-terminal-contract",
+    "required_evidence": ["idle notification is non-terminal", "no Agent polling", "no duplicate agent"]
+  },
+  {
+    "name": "optional team requires independent work",
+    "request": "Run independent architecture and security reviews in parallel.",
+    "expected_route": "independent-in-process-team",
+    "required_evidence": ["independent tasks", "non-overlapping paths", "shared task completion", "stable agent IDs"]
+  },
+  {
+    "name": "built-in agents remain denied",
+    "request": "Quickly scan a repository before planning a broad feature.",
+    "expected_route": "named-planner-only",
+    "required_evidence": ["Agent(general-purpose) denied", "Agent(Explore) denied", "Agent(Plan) denied", "accidental output non-authoritative"]
+  }
+]

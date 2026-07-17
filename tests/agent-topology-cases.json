@@ -1,0 +1,37 @@
+{
+  "runtime_registry": [
+    "planner",
+    "researcher",
+    "scribe",
+    "design-generalist",
+    "design-director",
+    "ux-architect",
+    "visual-system-designer",
+    "motion-designer",
+    "asset-art-director",
+    "design-reviewer",
+    "design-prototyper",
+    "t1-engineer",
+    "t2-engineer",
+    "t3-engineering-advisor",
+    "engineering-lead",
+    "verifier",
+    "browser-validator",
+    "codex-judge-runner"
+  ],
+  "routing_edges": {
+    "orchestrator": ["planner", "researcher", "scribe", "t1-engineer", "t2-engineer", "t3-engineering-advisor", "engineering-lead", "verifier", "browser-validator", "codex-judge-runner"],
+    "planner": ["researcher", "scribe", "design-generalist", "design-director", "design-reviewer", "design-prototyper"],
+    "design-director": ["ux-architect", "visual-system-designer", "motion-designer", "asset-art-director"]
+  },
+  "fixtures": [
+    {"name":"compact","expected_chain":["orchestrator","planner","design-generalist","design-reviewer","scribe"],"required_gate":"DESIGN_REVIEW_RESULT: PASS"},
+    {"name":"standard","expected_chain":["orchestrator","planner","design-director","ux-architect","visual-system-designer","design-reviewer","scribe"],"required_gate":"DESIGN_REVIEW_RESULT: PASS"},
+    {"name":"studio","expected_chain":["orchestrator","planner","design-director","design-reviewer","scribe"],"required_gate":"DESIGN_SELECTION_NEEDED"},
+    {"name":"conditional-motion","expected_chain":["orchestrator","planner","design-director","motion-designer","design-reviewer","scribe"],"required_gate":"reduced-motion"},
+    {"name":"conditional-assets","expected_chain":["orchestrator","planner","design-director","asset-art-director","design-reviewer","scribe"],"required_gate":"asset fallback"},
+    {"name":"reviewer-remediation","expected_chain":["orchestrator","planner","design-reviewer","design-director","design-reviewer","scribe"],"required_gate":"one evidence-backed revision"},
+    {"name":"selected-prototype","expected_chain":["orchestrator","planner","design-director","design-prototyper","design-reviewer","scribe"],"required_gate":"selected direction only"},
+    {"name":"runtime-unavailable","expected_chain":["orchestrator","planner"],"required_gate":"design_runtime_unavailable"}
+  ]
+}

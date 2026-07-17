@@ -1,0 +1,16 @@
+{
+  "mode": "shadow",
+  "minimum_shadow_reviews": 10,
+  "standard_call_cap": 2,
+  "high_risk_call_cap": 4,
+  "maximum_revision_loops": 1,
+  "blocking_severities": ["major", "critical"],
+  "blocking_confidence": "high",
+  "enable_blocking_after": {
+    "schema_valid_rate": 1.0,
+    "seeded_critical_recall": 1.0,
+    "maximum_evidence_invalid_rate": 0.1,
+    "maximum_false_critical_blocks": 0,
+    "sandbox_or_network_violations": 0
+  }
+}

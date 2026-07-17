@@ -11,11 +11,12 @@ The orchestrator is deliberately configured as a local, interactive Claude Code 
 
 | Capability | Decision still needed | Why it matters |
 | --- | --- | --- |
-| In-process agent teams | Whether the installed provider permits live teammate messaging for a specific task | Cross-agent work uses temporary in-process teams with direct packets, compact lead receipts, and non-overlapping paths. Tmux, WSL, cmux, iTerm2, and split panes are not required; unavailable teams automatically use the sequential bounded-packet fallback. |
-| Dynamic Workflows | First named pipeline, input contract, and failure/approval behavior | The template is available, but no business workflow should be invented without a use case. |
+| In-process agent teams | Whether the installed provider permits live teammate messaging and task state for an explicitly approved extreme advisory task | The fleet can fall back to serial Engineering Lead/T3 checkpoints. The Orchestrator remains fixed team lead; source-file ownership is a protocol, not a lock. |
+| Fleet model availability | Whether the provider/org permits haiku, sonnet, and opus for the configured role definitions | Subagent model frontmatter falls back to the inherited model when an organization excludes a requested model. |
 | MCP | Exact service, OAuth/scopes, data classification, and project vs user scope | An MCP configuration changes external data/tool access. |
 | Plugins | Named trusted source and capability gap local `.claude` files cannot fill | Plugins package executable behavior and are intentionally avoided by default. |
 | Hooks | Event, deterministic guard, command/endpoint, failure behavior, and escape path | Hooks can block tools or stop a session, so they must be narrowly specified. |
+| Browser Validator | Claude in Chrome availability, target launch/reset recipe, and browser-test credentials/fixtures | UI completion is blocked until a rendered browser journey can be validated. If no backend exists, the orchestrator asks before downloading pinned Playwright and Chromium into user caches. |
 | Channels | External source, sender allowlist, permission-relay policy, and organization enablement | Channels are preview, require an open session, and use a Channel-compatible plugin/MCP setup. |
 | Schedules | Local/Desktop, cloud Routine, CI, or temporary `/loop`; plus idempotency and overlap rules | Scheduling changes the durability, environment, and permission model. |
 | Agent SDK | A concrete approved programmatic integration and persistence/security design | The default interactive route does not need a programmatic controller. |

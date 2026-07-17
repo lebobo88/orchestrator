@@ -1,0 +1,12 @@
+[
+  {"name":"trivial-skip","risk":"low","checkpoint":"none","model":"none","effort":"none","required_evidence":["single deterministic file","no public/security/UI impact"]},
+  {"name":"plan-duck-luna","risk":"medium","checkpoint":"PLAN_DUCK","model":"gpt-5.6-luna","effort":"medium","required_evidence":["plan rubric","call cap"]},
+  {"name":"cross-layer-terra","risk":"medium","checkpoint":"CODE_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["multi-file semantics","contract evidence"]},
+  {"name":"security-terra","risk":"high","checkpoint":"CODE_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["adversarial lens","trust boundary"]},
+  {"name":"irreversible-terra","risk":"critical","checkpoint":"CODE_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["irreversible consequence","explicit route"]},
+  {"name":"verification-challenge","risk":"high","checkpoint":"VERIFICATION_CHALLENGE","model":"gpt-5.6-terra","effort":"medium","required_evidence":["coverage gap","deterministic verifier authority"]},
+  {"name":"studio-visual","risk":"high","checkpoint":"VISUAL_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["reviewed design handoff","local screenshot"]},
+  {"name":"unavailable-required","risk":"high","checkpoint":"CODE_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["unassessed","no Claude fallback"]},
+  {"name":"abstain-escalation","risk":"medium","checkpoint":"PLAN_DUCK","model":"gpt-5.6-luna","effort":"medium","required_evidence":["one escalation maximum","insufficient evidence"]},
+  {"name":"stale-suppression","risk":"medium","checkpoint":"CODE_REVIEW","model":"gpt-5.6-terra","effort":"medium","required_evidence":["fingerprint invalidation","finding retained"]}
+]

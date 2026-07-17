@@ -8,5 +8,5 @@ description: Add proportionate risk, verification, rollout, rollback, security, 
 1. Identify material correctness, security/privacy, compatibility/data, operational, accessibility, and rollback risks.
 2. Define the narrowest deterministic verification for each material risk, plus the strongest practical broader check.
 3. For migrations or irreversible operations, state backup, rollback, compatibility, and approval boundaries before downstream work begins.
-4. For browser-rendered UI or webview work, preserve the Browser UI invariant: no native browser dialogs; accessible app-owned modal or inline validation; keyboard/focus behavior; source-level no-native-dialog scan.
+4. For browser-rendered UI or webview work, preserve the Browser UI invariant: no native browser dialogs; accessible app-owned modal or inline validation; keyboard/focus behavior; source-level no-native-dialog scan. Also require Browser Validator inputs: local launch/readiness command, base URL, deterministic fixture/reset, visible user journeys, fixed viewport profiles, and observable rendered outcomes.
 5. Mark the plan stale when current repository state, requirements, dependencies, or research evidence materially invalidates its assumptions. Require replanning or explicit reapproval.

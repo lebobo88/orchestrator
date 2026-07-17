@@ -1,0 +1,10 @@
+[
+  {
+    "name": "malformed visual specialist result",
+    "specialist": "visual-system-designer",
+    "result": "VISUAL_SYSTEM_SPEC packet delivered above",
+    "expected_parent_packet": "DESIGN_BLOCKED",
+    "expected_reason": "design_protocol_invalid",
+    "forbidden_actions": ["fresh Agent dispatch", "anonymous Agent dispatch", "replacement Agent dispatch", "unreviewed DESIGN_HANDOFF"]
+  }
+]

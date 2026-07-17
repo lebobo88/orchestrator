@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "JUDGE_RESULT",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "confidence", "findings", "assumptions", "unknowns"],
+  "properties": {
+    "verdict": {"type": "string", "enum": ["PASS", "REVISE", "BLOCK", "ABSTAIN"]},
+    "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "confidence", "criterion", "claim", "evidence", "location", "impact", "remediation"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^J-[A-Z0-9-]{3,64}$"},
+          "severity": {"type": "string", "enum": ["critical", "major", "minor", "advisory"]},
+          "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+          "criterion": {"type": "string", "minLength": 1},
+          "claim": {"type": "string", "minLength": 1},
+          "evidence": {"type": "string", "minLength": 1},
+          "location": {"type": "string", "minLength": 1},
+          "impact": {"type": "string", "minLength": 1},
+          "remediation": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "unknowns": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,17 @@
+[
+  {"name":"planner ready","role":"planner","message":"PLAN_READY\nplan_id: sample","stop_hook_active":false,"exit":0},
+  {"name":"planner blocked","role":"planner","message":"PLAN_BLOCKED\nblocker: design_runtime_unavailable","stop_hook_active":false,"exit":0},
+  {"name":"planner first partial","role":"planner","message":"Waiting on design-dir.","stop_hook_active":false,"exit":2},
+  {"name":"planner repeated partial reaches parent","role":"planner","message":"Still waiting.","stop_hook_active":true,"exit":0},
+  {"name":"director selection packet","role":"design-director","message":"DESIGN_SELECTION_NEEDED\nsafe: a\nrefined: b\nnovel: c\nEND_DESIGN_SELECTION_NEEDED","stop_hook_active":false,"exit":0},
+  {"name":"director handoff packet","role":"design-director","message":"DESIGN_HANDOFF\ntask_id: sample\nselected_direction: novel\nux_spec: complete\nvisual_system_spec: complete\nengineering_invariants: preserve contrast\nbrowser_validation_brief: keyboard\nEND_DESIGN_HANDOFF","stop_hook_active":false,"exit":0},
+  {"name":"ux packet","role":"ux-architect","message":"UX_SPEC\njourneys: calculate\ninformation_architecture: calculator\nresponsive_behavior: reflow\naccessibility: keyboard\nstates: error\nevidence: brief\nassumptions: none\nunresolved_decisions: none\nEND_UX_SPEC","stop_hook_active":false,"exit":0},
+  {"name":"visual packet","role":"visual-system-designer","message":"VISUAL_SYSTEM_SPEC\nselected_direction: novel\ndirection_rationale: precise\ntypography: sans\ncolor_and_contrast: AA\nlayout_and_density: dense\ntokens: DTCG\ncomponents_and_states: key states\naccessibility: focus\nengineering_invariants: contrast\nevidence: UX_SPEC\nassumptions: none\nunresolved_decisions: none\nEND_VISUAL_SYSTEM_SPEC","stop_hook_active":false,"exit":0},
+  {"name":"visual packet reference is invalid","role":"visual-system-designer","message":"The VISUAL_SYSTEM_SPEC packet delivered above contains the requested system.","stop_hook_active":false,"exit":2},
+  {"name":"visual packet missing closing marker is invalid","role":"visual-system-designer","message":"VISUAL_SYSTEM_SPEC\nselected_direction: novel\ndirection_rationale: precise\ntypography: sans\ncolor_and_contrast: AA\nlayout_and_density: dense\ntokens: DTCG\ncomponents_and_states: key states\naccessibility: focus\nengineering_invariants: contrast\nevidence: UX_SPEC\nassumptions: none\nunresolved_decisions: none","stop_hook_active":false,"exit":2},
+  {"name":"visual repeated invalid reaches parent","role":"visual-system-designer","message":"VISUAL_SYSTEM_SPEC delivered above","stop_hook_active":true,"exit":0},
+  {"name":"motion packet","role":"motion-designer","message":"MOTION_ASSET_SPEC\nscope: motion\npurpose: feedback\nreduced_motion: instant\nevidence: UX_SPEC\nEND_MOTION_ASSET_SPEC","stop_hook_active":false,"exit":0},
+  {"name":"asset packet","role":"asset-art-director","message":"MOTION_ASSET_SPEC\nscope: asset\nasset_brief: dial\nfallback: CSS illustration\nevidence: brief\nEND_MOTION_ASSET_SPEC","stop_hook_active":false,"exit":0},
+  {"name":"review pass packet","role":"design-reviewer","message":"DESIGN_REVIEW_RESULT\nverdict: PASS\nfindings: none\nreviewed_direction: novel\nremaining_limits: none\nEND_DESIGN_REVIEW_RESULT","stop_hook_active":false,"exit":0},
+  {"name":"prototype done packet","role":"design-prototyper","message":"PROTOTYPE_DONE\npath: .design/prototypes/sample\nvalidation: open index.html\nEND_PROTOTYPE_DONE","stop_hook_active":false,"exit":0}
+]

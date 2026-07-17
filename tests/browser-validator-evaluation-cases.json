@@ -1,0 +1,47 @@
+[
+  {
+    "name": "chrome visual journey passes",
+    "expected_verdict": "BROWSER_PASS",
+    "required_evidence": ["visible interaction steps", "fixed viewport", "screenshot evidence"]
+  },
+  {
+    "name": "visual interaction regression",
+    "expected_verdict": "BROWSER_NEEDS_FIX",
+    "required_evidence": ["visible reproduction", "expected versus observed", "screenshot or trace"]
+  },
+  {
+    "name": "browser ui native dialog regression",
+    "expected_verdict": "BROWSER_NEEDS_FIX",
+    "required_evidence": ["dialog policy", "visible behavior", "bounded remediation"]
+  },
+  {
+    "name": "chrome unavailable uses existing playwright",
+    "expected_verdict": "BROWSER_PASS",
+    "required_evidence": ["existing playwright command", "rendered journey", "runtime version"]
+  },
+  {
+    "name": "missing playwright requires approval",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["playwright_missing", "playwright_setup_authorized: no", "approval request"]
+  },
+  {
+    "name": "approved playwright setup resumes validation",
+    "expected_verdict": "BROWSER_PASS",
+    "required_evidence": ["playwright_setup_authorized: yes", "playwright@1.61.0", "same validation job"]
+  },
+  {
+    "name": "declined playwright approval remains blocked",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["playwright_missing", "approval declined", "no automatic install"]
+  },
+  {
+    "name": "playwright install failure remains blocked",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["playwright_install_failed", "exact install result", "no automatic retry"]
+  },
+  {
+    "name": "non-ui work is explicit",
+    "expected_verdict": "BROWSER_NOT_APPLICABLE",
+    "required_evidence": ["non-ui classification", "no browser spawn", "terminal receipt"]
+  }
+]

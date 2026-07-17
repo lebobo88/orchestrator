@@ -1,0 +1,28 @@
+[
+  {
+    "name": "studio direction resume",
+    "input": {
+      "to": "ad59c0c25e0e61db8",
+      "summary": "Develop selected novel direction",
+      "message": "DIRECTION SELECTED: novel. Return the complete DESIGN_HANDOFF."
+    },
+    "valid": true
+  },
+  {
+    "name": "string message missing summary",
+    "input": {
+      "to": "ad59c0c25e0e61db8",
+      "message": "DIRECTION SELECTED: novel."
+    },
+    "valid": false
+  },
+  {
+    "name": "design review remediation resume",
+    "input": {
+      "to": "ad59c0c25e0e61db8",
+      "summary": "Resolve six review findings",
+      "message": "Resolve the bounded findings and return the revised DESIGN_HANDOFF."
+    },
+    "valid": true
+  }
+]
