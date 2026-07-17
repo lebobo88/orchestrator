@@ -1,2 +1,19 @@
 # Claude Code creates isolated session worktrees here by default.
 /.claude/worktrees/
+.claude/.runtime/
+.runtime/
+runtime/*
+!runtime/README.md
+
+# Local scratch/experiment app folders — never track or push
+/calculator-financial-2/
+/calculator-financial-3/
+/calculator-financial-tauri-3/
+/calculator-financial-tauri-5/
+/calculator-financial-tauri-6/
+/calculator-financial-tauri-7/
+/calculator-financial-tauri-8/
+/calculator-test-1/
+/photo-genie/
+/mythic-proportion/
+/lizbeth_spanish/
