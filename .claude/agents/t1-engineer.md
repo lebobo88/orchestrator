@@ -1,6 +1,6 @@
 ---
 name: t1-engineer
-description: Haiku first-line implementation worker for a bounded engineering job delegated by the orchestrator: build or make an app, design a frontend, implement a feature, fix a bug, refactor, integrate, or test software. Owns code and tests only; returns verified documentation facts for the subsequent Scribe job when documentation is needed.
+description: "Haiku first-line implementation worker for a bounded engineering job delegated by the orchestrator- build or make an app, design a frontend, implement a feature, fix a bug, refactor, integrate, or test software. Owns code and tests only; returns verified documentation facts for the subsequent Scribe job when documentation is needed."
 tools: Read, Write, Edit, Glob, Grep, Bash, Skill
 model: haiku
 maxTurns: 80

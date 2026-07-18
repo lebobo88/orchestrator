@@ -43,5 +43,55 @@
     "name": "non-ui work is explicit",
     "expected_verdict": "BROWSER_NOT_APPLICABLE",
     "required_evidence": ["non-ui classification", "no browser spawn", "terminal receipt"]
+  },
+  {
+    "name": "tauri webview2 native desktop app passes with proper identity",
+    "expected_verdict": "BROWSER_PASS",
+    "required_evidence": ["backend: pinned-tauri-driver-2.0.6", "target_surface: tauri-webview2-desktop", "expected_app_identity validated", "process PID anchor verified", "tauri-driver proxy endpoint"]
+  },
+  {
+    "name": "tauri-driver missing without authorization",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: tauri_driver_missing", "tauri_driver_setup_authorized: no", "approval request"]
+  },
+  {
+    "name": "authorized tauri-driver setup resumes validation",
+    "expected_verdict": "BROWSER_PASS",
+    "required_evidence": ["tauri_driver_setup_authorized: yes", "cargo install tauri-driver --version 2.0.6", "same validation job", "runtime records tauri-driver, WebView2 Runtime, and msedgedriver versions"]
+  },
+  {
+    "name": "declined tauri-driver approval remains blocked",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: tauri_driver_missing", "approval declined", "no automatic install"]
+  },
+  {
+    "name": "tauri-driver install failure remains blocked",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: tauri_driver_install_failed", "exact install result", "no automatic retry"]
+  },
+  {
+    "name": "tauri session with masked or unrelated window fails identity check",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: tauri_session_unverified", "firstMatch used or blank title or data: URL", "process PID anchor not verified", "expected_app_identity does not match"]
+  },
+  {
+    "name": "missing or malformed target_surface is invalid",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: target_surface_invalid", "target_surface empty or unrecognized", "no backend guessed"]
+  },
+  {
+    "name": "target_surface contradicts launch commands",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: target_surface_mismatch", "target_surface declares browser-web-ui but commands start native app", "no silent backend selection"]
+  },
+  {
+    "name": "stale or orphaned tauri-driver process causes provenance failure",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: tauri_process_provenance_uncertain", "pre-launch port occupied by unrecorded process", "or recorded PID command no longer matches"]
+  },
+  {
+    "name": "webview2 runtime version cannot be authoritatively resolved",
+    "expected_verdict": "BROWSER_BLOCKED",
+    "required_evidence": ["reason: webview2_runtime_unresolved", "loader API discovery fails", "no matching msedgedriver available"]
   }
 ]

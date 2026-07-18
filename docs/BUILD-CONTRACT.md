@@ -162,20 +162,27 @@ approved_plan: <path or not applicable>
 verification_pass: <packet/reference>
 judge_findings: <prior unresolved IDs and verification-challenge requests or none>
 design_handoff: <reviewed handoff/browser rubric or not applicable>
+target_surface: browser-web-ui | tauri-webview2-desktop
 launch_and_readiness: <command and success signal>
 base_url: <local test URL>
+expected_app_identity: <expected app URL prefix/pattern and/or expected window-title pattern; required for tauri-webview2-desktop>
 fixture_and_reset: <deterministic state procedure>
 journeys: <visible user steps and expected outcomes>
 viewport_profiles: <fixed desktop/mobile profiles>
 browser_ui_dialog_policy: <required details>
 playwright_setup_authorized: no | yes
+tauri_driver_setup_authorized: no | yes
 remediation_cycle: 0 | 1 | 2
 END_BROWSER_VALIDATION_JOB
 ```
 
 Cross-vendor packets use `docs/JUDGE-CONTRACT.md`. The Orchestrator runs `PLAN_DUCK` after Scribe and before approval, `CODE_REVIEW` after every structurally complete `JOB_DONE` when eligible, `VERIFICATION_CHALLENGE` after a verifier pass only when coverage risk remains, and `VISUAL_REVIEW` after browser evidence only for eligible UI. Standard work has at most two calls; high-risk/Studio has at most four. Judge-driven remediation is capped at one loop and does not replace the two deterministic remediation limits.
 
-Browser validation is screenshot/interaction-first: DOM, accessibility trees, and console logs are diagnostics but cannot prove success. Prefer connected Claude in Chrome; then use existing target Playwright. If no backend exists, `BROWSER_BLOCKED reason: playwright_missing` causes one orchestrator-owned approval prompt. Only after explicit approval does Browser Validator run `npx --yes playwright@1.61.0 install chromium`; it writes only npm/Playwright user caches and never target dependencies, locks, source, snapshots, or baselines. Re-dispatch the same job after install; decline or install failure remains blocked.
+Browser validation is screenshot/interaction-first: DOM, accessibility trees, and console logs are diagnostics but cannot prove success. Every `BROWSER_VALIDATION_JOB` carries a mandatory, never-inferred `target_surface: browser-web-ui | tauri-webview2-desktop`; a missing or unrecognized value is `BROWSER_BLOCKED reason: target_surface_invalid`, and a value that contradicts the job's own launch/readiness commands is `BROWSER_BLOCKED reason: target_surface_mismatch`. Exactly one backend applies per job, selected deterministically from `target_surface`.
+
+For `target_surface: browser-web-ui`, prefer connected Claude in Chrome; then use existing target Playwright. If no backend exists, `BROWSER_BLOCKED reason: playwright_missing` causes one orchestrator-owned approval prompt. Only after explicit approval does Browser Validator run `npx --yes playwright@1.61.0 install chromium`; it writes only npm/Playwright user caches and never target dependencies, locks, source, snapshots, or baselines. Re-dispatch the same job after install; decline or install failure remains blocked.
+
+For `target_surface: tauri-webview2-desktop` (a native Tauri/WebView2 window, not reachable via Chrome or Playwright), the applicable backend is the pinned `tauri-driver` setup. If it or a matching `msedgedriver` is absent and `tauri_driver_setup_authorized: no`, `BROWSER_BLOCKED reason: tauri_driver_missing` causes one orchestrator-owned approval prompt. Only after explicit approval with `tauri_driver_setup_authorized: yes` does Browser Validator run exactly `cargo install tauri-driver --version 2.0.6` and resolve a matching `msedgedriver` against the host's authoritative WebView2 Runtime version; setup writes only to the Cargo bin/tooling cache, never target dependencies, locks, or source. Re-dispatch the same job after install; decline or install failure (`tauri_driver_install_failed`) remains blocked and is never retried autonomously. Every `tauri-driver` session requires the `alwaysMatch` capability shape and a target-bound post-session identity check (never a bare non-blank check); an unverified session is `BROWSER_BLOCKED reason: tauri_session_unverified`, an uncertain process/port provenance is `BROWSER_BLOCKED reason: tauri_process_provenance_uncertain`, and an unresolved WebView2 Runtime/driver match is `BROWSER_BLOCKED reason: webview2_runtime_unresolved`.
 
 If T1 returns `JOB_BLOCKED` with `Research needed`, the orchestrator sends that precise question through the normal Researcher intake route. T1 does not receive web tools and may resume only after Researcher directly provides the resulting advisory `RESEARCH_EVIDENCE` packet.
 

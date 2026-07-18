@@ -387,11 +387,11 @@ $designAgents = @{
 }
 $seenDesignNames = @{}
 foreach ($entry in $designAgents.GetEnumerator()) {
-    if ($entry.Value -notmatch "(?m)^name: $([regex]::Escape($entry.Key))$") { throw "Design agent '$($entry.Key)' must expose its unique frontmatter name." }
+    if ($entry.Value -notmatch "(?m)^name: $([regex]::Escape($entry.Key))\s*$") { throw "Design agent '$($entry.Key)' must expose its unique frontmatter name." }
     if ($seenDesignNames.ContainsKey($entry.Key)) { throw "Duplicate design agent name '$($entry.Key)'." }
     $seenDesignNames[$entry.Key] = $true
-    if ($entry.Value -notmatch '(?m)^model: claude-sonnet-5$') { throw "Design agent '$($entry.Key)' must default explicitly to Claude Sonnet 5." }
-    if ($entry.Value -notmatch '(?m)^effort: (?:medium|high)$') { throw "Design agent '$($entry.Key)' must declare bounded effort." }
+    if ($entry.Value -notmatch '(?m)^model: claude-sonnet-5\s*$') { throw "Design agent '$($entry.Key)' must default explicitly to Claude Sonnet 5." }
+    if ($entry.Value -notmatch '(?m)^effort: (?:medium|high)\s*$') { throw "Design agent '$($entry.Key)' must declare bounded effort." }
     if ($entry.Value -match '(?m)^tools:.*(?:WebFetch|WebSearch|mcp__)') { throw "Design agent '$($entry.Key)' must not receive web or MCP tools." }
 }
 foreach ($readOnlyDesignAgent in @($designGeneralist, $designDirector, $uxArchitect, $visualDesigner, $motionDesigner, $assetDirector, $designReviewer)) {
@@ -400,7 +400,7 @@ foreach ($readOnlyDesignAgent in @($designGeneralist, $designDirector, $uxArchit
 foreach ($leafDesignAgent in @($designGeneralist, $uxArchitect, $visualDesigner, $motionDesigner, $assetDirector, $designReviewer, $designPrototyper)) {
     if ($leafDesignAgent -match '(?m)^tools:.*\bAgent\b') { throw 'Leaf design agents must not exceed the three-level nesting policy.' }
 }
-if ($designDirector -notmatch '(?m)^tools: Agent, Read, Glob, Grep, Skill$' -or $designDirector -match '(?m)^tools: Agent\(') { throw 'Nested Design Director must use bare Agent capability without peer-messaging authority; typed nested allowlists are ignored by Claude Code.' }
+if ($designDirector -notmatch '(?m)^tools: Agent, Read, Glob, Grep, Skill\s*$' -or $designDirector -match '(?m)^tools: Agent\(') { throw 'Nested Design Director must use bare Agent capability without peer-messaging authority; typed nested allowlists are ignored by Claude Code.' }
 if ($designDirector -notmatch 'DESIGN_SELECTION_NEEDED' -or $designDirector -notmatch 'ux-architect' -or $designDirector -notmatch 'visual-system-designer') { throw 'Design Director must own Studio selection and bounded specialist synthesis.' }
 if ($designDirector -notmatch 'validate-terminal-packet' -or $designDirector -notmatch 'never request background execution, message, resume, or poll') { throw 'Design Director must preserve terminal validation and remain free of peer resumption.' }
 if ($designDirector -notmatch 'Never create a fresh, anonymous, replacement, or retry `Agent` dispatch' -or $designDirector -notmatch 'Do not synthesize a handoff unless both required UX and visual packets are valid and present') { throw 'Design Director must block malformed specialist output without replacement dispatch or unreviewed handoff.' }
@@ -417,7 +417,7 @@ foreach ($designTerminalAgent in @($designGeneralist, $designDirector, $uxArchit
     if ($designTerminalAgent -notmatch 'validate-terminal-packet') { throw 'Every design-stage agent must validate its terminal packet.' }
 }
 
-if ($codexJudgeRunner -notmatch '(?m)^tools: Read, Write, Bash, Skill$' -or $codexJudgeRunner -notmatch '(?m)^model: haiku$') { throw 'Codex Judge Runner must remain a Haiku transport with only guarded read/write/command tools.' }
+if ($codexJudgeRunner -notmatch '(?m)^tools: Read, Write, Bash, Skill\s*$' -or $codexJudgeRunner -notmatch '(?m)^model: haiku\s*$') { throw 'Codex Judge Runner must remain a Haiku transport with only guarded read/write/command tools.' }
 if ($codexJudgeRunner -notmatch 'transport agent, not a reviewer' -or $codexJudgeRunner -notmatch 'validate-codex-judge-command' -or $codexJudgeRunner -notmatch 'validate-codex-judge-job-write') { throw 'Codex Judge Runner must be transport-only and hook guarded.' }
 if ($codexJudgeRunner -match '(?m)^tools:.*(?:Edit|WebFetch|WebSearch|mcp__)') { throw 'Codex Judge Runner must not receive review, web, edit, or MCP tools.' }
 if ($codexJudgeRunner -notmatch 'write_path:' -or $codexJudgeRunner -notmatch 'adapter_job_path:' -or $codexJudgeRunner -notmatch 'Never pass `write_path` to the adapter') { throw 'Codex Judge Runner must distinguish the absolute Write path from the relative adapter path.' }
@@ -502,6 +502,12 @@ if ($browserValidator -notmatch 'mcp__claude-in-chrome__\*') { throw 'Browser Va
 if ($browserValidator -match '(?m)^tools:.*(?:Write|Edit)') { throw 'Browser Validator must not receive write tools.' }
 if ($browserValidator -notmatch 'playwright_setup_authorized') { throw 'Browser Validator must require setup approval.' }
 if ($browserValidator -notmatch 'playwright@1\.61\.0 install chromium') { throw 'Browser Validator must pin the approved Playwright fallback.' }
+if ($browserValidator -notmatch 'target_surface') { throw 'Browser Validator must require mandatory target_surface field.' }
+if ($browserValidator -notmatch 'pinned-tauri-driver-2\.0\.6') { throw 'Browser Validator must define the pinned tauri-driver version.' }
+if ($browserValidator -notmatch 'tauri_driver_setup_authorized') { throw 'Browser Validator must require tauri-driver setup approval.' }
+if ($browserValidator -notmatch 'cargo install tauri-driver --version 2\.0\.6') { throw 'Browser Validator must pin the approved tauri-driver version.' }
+if ($browserValidator -notmatch 'alwaysMatch.*tauri:options.*application') { throw 'Browser Validator must require alwaysMatch session capability.' }
+if ($browserValidator -notmatch 'tauri_session_unverified') { throw 'Browser Validator must define the session-identity verification failure.' }
 if ($browserValidatorCore -notmatch 'screenshot') { throw 'Browser Validator core must require visual evidence.' }
 if ($researcher -notmatch '### RESEARCH_EVIDENCE_READY') { throw 'Researcher must expose a RESEARCH_EVIDENCE_READY handoff.' }
 if ($researcher -notmatch '### RESEARCH_NEEDS_INPUT') { throw 'Researcher must expose an interactive clarification handoff.' }

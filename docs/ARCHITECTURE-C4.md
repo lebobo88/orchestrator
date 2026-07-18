@@ -57,6 +57,7 @@ flowchart TB
     repo["External system: Target repository<br/>source, tests, approved plan"]
     chrome["External system: Claude in Chrome<br/>visible browser and DevTools"]
     playwright["External system: Playwright Chromium<br/>existing setup or approval-gated fallback"]
+    tauriDriver["External system: pinned tauri-driver 2.0.6<br/>approval-gated native Tauri/WebView2 backend"]
     codex["External system: local Codex CLI<br/>ephemeral, read-only, web/MCP off"]
 
     user -->|request or approval| orchestrator
@@ -103,8 +104,9 @@ flowchart TB
     t1 -->|edits and tests| repo
     verifier -->|independent checks| repo
     browser -->|launch/reset and evidence| repo
-    browser -->|preferred backend| chrome
-    browser -->|fallback backend| playwright
+    browser -->|preferred backend, browser-web-ui| chrome
+    browser -->|fallback backend, browser-web-ui| playwright
+    browser -->|native-desktop backend, tauri-webview2-desktop target_surface, not a fallback rung| tauriDriver
     orchestrator -->|one-time approval when missing| user
 ```
 
@@ -115,3 +117,5 @@ flowchart TB
 ## Browser fallback
 
 Browser Validator uses Claude in Chrome first, then an existing Playwright setup. When neither is available it returns `BROWSER_BLOCKED` with `playwright_missing`; the orchestrator asks the user once before allowing the pinned `npx --yes playwright@1.61.0 install chromium` bootstrap. The fallback uses npm/Playwright user caches and must not change the target repository's dependency manifest, lockfile, or source tree.
+
+For a native Tauri/WebView2 desktop target (`target_surface: tauri-webview2-desktop`), Browser Validator uses the pinned `tauri-driver` backend instead of Chrome/Playwright; this is a distinct target-type branch, not a third rung of the Chrome-then-Playwright fallback ladder. When `tauri-driver` or a matching `msedgedriver` is absent, `BROWSER_BLOCKED` with `tauri_driver_missing` triggers one orchestrator-owned approval prompt before the pinned `cargo install tauri-driver --version 2.0.6` setup, writing only to the Cargo bin/tooling cache.

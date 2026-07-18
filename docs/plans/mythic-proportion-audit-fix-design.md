@@ -1,6 +1,6 @@
 # Plan: mythic-proportion-audit-fix-design - Audit, Fix, and Four-Mode Design Expansion
 
-Status: APPROVED. Approved by rob.hasselbach@gmail.com on 2026-07-16. Engineering work (t2-engineer, per Section 10.1's routing override) may now begin. This approval does not cover the separate additive-token-family approval (Section 7/10.7) or any commit/push/deployment/pull-request approval (Section 10.7/14); those remain open, separate, later approvals, unaffected by this update.
+Status: APPROVED. Approved by rob.hasselbach@gmail.com on 2026-07-16. Engineering work (t2-engineer, per Section 10.1's routing override) may now begin. The separate additive-token-family approval (Section 7/10.7) is also now done, approved by rob.hasselbach@gmail.com on 2026-07-17. This approval does not cover any commit/push/deployment/pull-request approval (Section 10.7/14); that remains a separate, open, later approval, unaffected by this update.
 
 task_id: mythic-proportion-audit-fix-design-2026-07-16
 plan_id: mythic-proportion-audit-fix-design
@@ -99,7 +99,7 @@ The following are explicitly acceptable to leave open at plan approval and settl
 - The exact Leiden hierarchy level depth exposed in the Strata mode.
 - Which centrality measure drives node size (degree is the default; betweenness or eigenvector centrality is an additional/selectable channel).
 - Whether Orbital mode takes the real Leiden dependency immediately (recommended) versus an interim "approximate" client-bucket grouping.
-- Approval of the new additive token families (`--focus-context-dim`, the `--graph-community-glyph`/`pattern` set, the generator parameters, and the optional light-theme `--graph-community-*` lightness override) and adoption of the expanded gating contrast test case.
+- ~~Approval of the new additive token families (`--focus-context-dim`, the `--graph-community-glyph`/`pattern` set, the generator parameters, and the optional light-theme `--graph-community-*` lightness override) and adoption of the expanded gating contrast test case.~~ **Resolved.** Approved by rob.hasselbach@gmail.com on 2026-07-17 (Section 7, Section 10.7); no longer an open item.
 - The Terrain elevation-aggregation formula and the generator's hue strategy/large-community-count cap.
 
 ## 6. Ordered work
@@ -191,7 +191,9 @@ This step governs shipped, in-app Terrain chrome-layer assets specifically. Atel
 - **Enriched `GET /api/graph` node shape** adds: `community` (integer, the real Leiden community ID), `level` (integer, hierarchy depth, 0 = coarsest), `centrality` (an object with `degree` and at least one of `betweenness` or `eigenvector`, each normalized 0..1), and an optional `parentCommunity` keyed by level. This is a **projection of already-computed** `graspologic` hierarchical Leiden output (`store.community_memberships`, `store.max_community_level`); it is not new graph computation. It is backward compatible: the client falls back to its existing union-find grouping when these fields are absent, which keeps rollout safe.
 - **Edge shape**: `weight` is already returned by `read_entity_graph` (`store.py:629`/`631`/`609`); only the client's `VizEdge` wiring is new (`types.ts`'s `VizEdge.weight` field is already optional).
 - **Preserved contracts**: the `/api/query` mode contract (omitting `mode` returns the legacy 5-key shape) and the P6 loopback egress gate (enforced at both config-set time and client-construction time) must not change.
-- **New additive DTCG 2025.10 tokens** (require design-system-owner approval before adoption, per Section 5.3): `--focus-context-dim` (approximately 0.28); a `--graph-community-glyph-*`/`pattern-*` set; `graph.community.generator` parameters; a `terrain.*` family (elevation ramp steps 1 through 5, contour-line/major line tokens, `sky.bg`, `matcap.ref`, `band.*`); edge-weight width/opacity minimum/maximum tokens; component-tier tokens for the mode radiogroup, the Strata level control, the community legend, the community chip, the reading pane, and a focus ring of at least 2px width and at least 3:1 contrast. One flagged optional light-theme `--graph-community-*` lightness override is proposed (dark-theme values unchanged). No other existing token value is replaced.
+- **New additive DTCG 2025.10 tokens** (approved as final; see the approval note immediately below): `--focus-context-dim` (approximately 0.28); a `--graph-community-glyph-*`/`pattern-*` set; `graph.community.generator` parameters; a `terrain.*` family (elevation ramp steps 1 through 5, contour-line/major line tokens, `sky.bg`, `matcap.ref`, `band.*`); edge-weight width/opacity minimum/maximum tokens; component-tier tokens for the mode radiogroup, the Strata level control, the community legend, the community chip, the reading pane, and a focus ring of at least 2px width and at least 3:1 contrast. One flagged optional light-theme `--graph-community-*` lightness override is proposed (dark-theme values unchanged). No other existing token value is replaced.
+
+**Approved as final.** Approved by rob.hasselbach@gmail.com on 2026-07-17. All additive token families listed in this section, including the flagged optional light-theme `--graph-community-*` lightness override, are now approved as final, not merely proposed, per Section 10.7.
 
 ## 8. Browser UI dialog policy
 
@@ -273,7 +275,7 @@ Work proceeds on local `main @ 0e5e1c5` (the already-completed merge). No push t
 ### 10.7 User approvals still needed before downstream execution
 
 - Explicit approval of this plan (Section 12), before any `t2-engineer` work begins.
-- Separate approval of the new additive token families listed in Section 7, before they are adopted as final (not merely proposed).
+- ~~Separate approval of the new additive token families listed in Section 7, before they are adopted as final (not merely proposed).~~ **Done.** Approved by rob.hasselbach@gmail.com on 2026-07-17; the token families listed in Section 7 are now adopted as final.
 - Separate, later, explicit approval of any commit, push, deployment, or pull request; this plan's approval does not cover any of those actions.
 
 ## 11. Risks and rollback
