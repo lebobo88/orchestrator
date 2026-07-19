@@ -311,32 +311,118 @@ Each Advanced-band week is accepted only when all of the following hold:
    "resolved" the methodology so much as formalized the status quo default with better-organized
    justification for its floor. This decision accepts that critique as substantially correct for the
    ceiling specifically, and states plainly, rather than obscures, exactly which parts of the final
-   allocation below are evidence-backed and which are author judgment.
+   allocation below are evidence-backed and which are author judgment. **Update (2026-07-19, adversarial
+   remediation):** a Codex Terra review of this decision correctly found that the ceiling's original
+   Spain-versus-Argentina reasoning stated a conclusion without a testable comparative rule. What follows
+   replaces that reasoning with an explicit criterion, applied to both locations individually.
+
+   **The ceiling-exception criterion, stated explicitly.** A location earns the single available ceiling
+   exception — a third pass beyond every location's spaced two-pass floor — only if both of the following
+   hold:
+
+   1. Specific, already-planned content in the band structurally requires that location's variety: the
+      content is defined by a category inherently and historically tied to that location, not merely a
+      topic, sector, or population fact the location's variety happens to serve well.
+   2. No other location's variety, and no other location's own comparably-evidenced content tie, could
+      satisfy that same structural need at least as well.
+
+   A location whose case is a real, evidence-grounded sector fit, thematic convenience, or population/
+   frequency relevance, but whose underlying content need could plausibly be met by more than one
+   location's variety, does not meet this bar. That is a "benefits from" case, and the two-pass floor
+   already serves it.
+
+   **Applying the criterion to Spain's three weeks individually, not as a bloc.** The prior version of
+   this decision treated Weeks 5, 19, and 20 as one uniform "structural consequence." Tested individually,
+   they are not uniform:
+
+   - **Week 19 (first Golden Age Spanish literature excerpt): passes both prongs.** Golden Age Spanish
+     literature (the Siglo de Oro, roughly 1492-1681) is a defined historical-literary period and body of
+     work produced in the Kingdom of Spain specifically. No other location among this course's ten has an
+     equivalent canonical "Golden Age" literary tradition; no other variety could deliver this specific,
+     already-planned content. This is genuinely, independently structural.
+   - **Week 20 (second classic-author/historical-document excerpt): structurally coupled to Week 19 by
+     this roadmap's own design, not independently structural.** `advanced-band-syllabus.md` Section 7's
+     own "Builds on/connects" column states Week 20 "directly extends Week 19's Golden Age material."
+     Given that design choice, Week 20 inherits Week 19's requirement by dependency, not because the
+     old/modern mechanism itself demands a second, independent Peninsular application. Decoupling Week 20
+     from Week 19 would require redesigning Week 20's content, a content-authoring decision this
+     remediation does not make. This is a weaker, derivative form of the requirement, honestly
+     distinguished from Week 19's.
+   - **Week 5 (archaic legal/notarial register, Legal-arc capstone): does not independently pass prong
+     1.** The evidence record (the anchor research, and `docs/research/advanced-spanish-dialect-
+     weighting-methodology.md`'s own S17 citation: legal-Spanish courses at B2-C2, the Library of
+     Congress's "Herencia" historical notarial archive) documents that archaic/historical Spanish
+     legal-notarial teaching exists and has archival precedent, but neither source establishes this
+     content as Peninsular-exclusive. Spanish notarial and legal register operated across the entire
+     Spanish colonial empire; nothing in this project's evidence rules out an equally genuine archaic-
+     legal-register pull from a different location's own historical-documentary tradition. Week 5's
+     Spain assignment is evidence-consistent, not structurally exclusive.
+
+   **Applying the same criterion to Argentina.** Argentina's strongest evidenced case is the anchor
+   research's own directly-cited "Rioplatense for finance" target-market guidance (already realized at
+   Weeks 7 and 9), plus its genuinely distinct, pedagogically rich voseo grammatical system.
+
+   - **Prong 1, tested against a third Finance-arc pass: fails.** No specific, already-planned Finance-arc
+     content beyond Weeks 7 and 9 exists in this roadmap that structurally requires a third Rioplatense
+     pass; the sector tie is real but already fully served by the existing two passes.
+   - **Prong 1, tested against the one open discretionary slot (Week 5): also fails, for a different
+     reason.** Week 5 needs archaic/historical *legal-register* content specifically. Argentina's
+     evidenced strength is *modern financial-register* content. Nothing in this project's evidence
+     connects Rioplatense Spanish to an archaic/historical Spanish legal-documentary tradition; asserting
+     that connection here would be a new, unevidenced claim, not a use of existing evidence. Argentina's
+     real strength does not transfer to the specific content need the open slot has.
+   - **Voseo's own diachronic history, considered and not adopted.** Voseo's evolution from a formal
+     second-person-plural address form to Rioplatense's modern informal singular is itself a genuine piece
+     of historical Spanish linguistics, and could in principle support a different kind of old/modern
+     content pairing in a future revision. This project's evidence record does not establish or scope
+     that connection for this band, so it is not adopted here as grounds for a third pass. If a future
+     research pass develops it, this is the specific, named path by which Argentina's case would become
+     independently structural rather than a "benefits from" case.
+
+   **No other location has a comparably strong case.** Per this document's own existing language (above),
+   Colombia, El Salvador, Honduras, Peru, the Dominican Republic, Puerto Rico, and Ecuador are placed
+   "without a specific anchor-research sector citation, an editorial rotation choice... not a claim of
+   dialect-specific sourcing." None of the remaining seven locations has any cited content or sector tie
+   at all, let alone one meeting this criterion's bar. Spain and Argentina are the only two candidates
+   worth testing, and neither Mexico's population/frequency case (already declined below on separate,
+   correct grounds) nor any other location's case approaches either one.
+
+   **Conclusion, reached from the criterion rather than asserted.** Spain still holds the ceiling
+   exception, but on a materially narrower and more honest basis than the prior version of this decision
+   stated. Only Week 19 is independently structural (only Spain can supply Golden Age Spanish
+   literature). Week 20 is structural by this roadmap's own internal design dependency on Week 19, not by
+   independent necessity. Week 5 is not structurally required to be Spain at all; it survives as part of
+   the allocation because no other location, including Argentina, has a comparably relevant evidenced tie
+   to archaic/historical *legal*-register content specifically, not because the old/modern mechanism
+   mandates Peninsular Spanish a third time. Put plainly: the original claim that "three of the band's
+   four old/modern weeks fall naturally to Spain as a direct structural consequence" overstated the case
+   for two of those three weeks. The corrected claim is that one week (19) is structurally locked to
+   Spain, one week (20) is derivatively locked to Spain by this document's own design choice, and one week
+   (5) is Spain's by absence of a better-evidenced alternative, not by structural necessity. Under a
+   genuinely fair, criterion-driven comparison, Spain's allocation holds, and Argentina's case remains
+   real but is correctly served by its own two-pass floor rather than a third pass.
 
    **Concrete allocation for the ~26-week, roughly 20–21-location-anchor-slot Advanced band.** The floor
-   of two passes, spaced, applies to all ten locations. One location receives a third pass, on evidence-
-   grounded structural grounds already established in the syllabus, not on a population or diaspora
-   basis:
+   of two passes, spaced, applies to all ten locations. Spain receives the one available third pass, for
+   the tiered reasoning stated above, not on a population or diaspora basis:
 
-   - **Spain: three passes (Weeks 5, 19, 20).** This is the one ceiling exception this decision adopts,
-     and it is evidence-grounded, not an arbitrary pick: the syllabus's old/modern register-concentration
-     mechanism (Section 4) structurally requires Golden Age literature and historical legal register,
-     both conventionally Peninsular-associated bodies of content, and three of the band's four old/modern
-     weeks fall naturally to Spain as a direct structural consequence, not a weighting preference chosen
-     independently of content.
+   - **Spain: three passes (Weeks 5, 19, 20).** Week 19 is independently structural; Week 20 is
+     structurally coupled to Week 19 by this roadmap's own design; Week 5 is evidence-consistent and
+     unrivaled among the alternatives tested, not independently structural. This is the one ceiling
+     exception this decision adopts.
    - **Mexico, Colombia, El Salvador, Honduras, Argentina, Peru, the Dominican Republic, Puerto Rico, and
      Ecuador: two passes each**, at the floor, spaced across the band, per the existing week assignments
      already in `advanced-band-syllabus.md` Section 3 (Mexico Weeks 1, 15; Colombia Weeks 2, 16; El
      Salvador Weeks 3, 21; Honduras Weeks 4, 6; Argentina Weeks 7, 9; Peru Weeks 8, 22; Dominican Republic
      Weeks 10, 24; Puerto Rico Weeks 12, 17; Ecuador Weeks 14, 17).
-   - **Argentina was evaluated for, and declined, a third pass.** Its "Rioplatense for finance" sector
-     tie is the strongest evidence-grounded ceiling case of any location besides Spain's structurally-
-     necessitated one. It was not elevated because doing so within the band's fixed roughly-21-slot
-     budget would require either breaking another location's own evidence-backed floor (rejected, since
-     the floor is the best-evidenced element available) or restructuring the already-sequenced
-     grammar/topic/week connections spanning Weeks 7–26, a distinct content-authoring decision this plan
-     does not make. This is stated explicitly as author judgment: if a future revision changes the week
-     budget or grammar sequencing, Argentina is the first candidate the evidence would support elevating.
+   - **Argentina was evaluated for, and declined, a third pass, under the criterion stated above, not on
+     ad hoc grounds.** Its "Rioplatense for finance" sector tie is the strongest evidence-grounded case
+     of any location besides Spain's, but it does not transfer to the one open discretionary slot (Week
+     5), which needs archaic-legal-register content, a different kind of content need than Argentina's
+     evidenced strength. This is stated explicitly: if a future revision either (a) adds Finance-arc
+     content beyond Weeks 7 and 9 that a third Rioplatense pass would structurally serve, or (b) develops
+     voseo's own diachronic history into a scoped old/modern content pairing, Argentina is the first
+     candidate the evidence would support elevating.
    - **Mexico's real-world encounter frequency was considered as a tie-break input, not adopted as a
      numeric addition.** Applying it as an extra pass would reintroduce the population-proportional logic
      this decision explicitly declines to govern the whole scheme by (see Candidate B above). Instead,
@@ -347,14 +433,19 @@ Each Advanced-band week is accepted only when all of the following hold:
    floor of two, spaced across the band, is evidence-backed (spaced-repetition/frequency science, applied
    by analogy). The choice of balanced rotation over population-, diaspora-, or business-weighting as the
    *governing* scheme is a reasoned values-and-context judgment resting on the confirmed "a mix" learner-
-   base input, not a directly evidenced finding on its own. Spain's third pass is evidence-grounded via
-   the old/modern mechanism's structural requirements. The decision not to elevate Argentina or Mexico
-   to a third pass is author judgment, made transparently for the stated week-budget and sequencing
-   reasons, not because the evidence argues against them. This resolution supersedes the syllabus's prior
-   "Unknown" flag on dialect-weighting methodology (`advanced-band-syllabus.md` Section 8, items 3 and
-   13, both updated to reflect this resolution); the instructor may still substitute a specific week's
-   anchor zone per the syllabus's own standing substitution provision, provided any substitution
-   preserves the floor and spacing this resolution establishes.
+   base input, not a directly evidenced finding on its own. Of Spain's third pass specifically: Week 19 is
+   evidence-backed and structurally required; Week 20 is evidence-backed as a design-dependent extension
+   of Week 19, not as an independent requirement; Week 5 is evidence-consistent but is author judgment in
+   the sense that no source establishes it as Peninsular-exclusive — it is Spain's only because no
+   better-evidenced alternative exists in the record, and that absence-of-alternative reasoning is itself
+   a form of author judgment, stated as such rather than dressed as structural necessity. The decision not
+   to elevate Argentina or Mexico to a third pass is author judgment, made transparently for the stated
+   content-need and sequencing reasons, not because the evidence argues against either location's own
+   real strengths. This resolution supersedes the syllabus's prior "Unknown" flag on dialect-weighting
+   methodology (`advanced-band-syllabus.md` Section 8, items 3 and 13, both updated to reflect this
+   resolution); the instructor may still substitute a specific week's anchor zone per the syllabus's own
+   standing substitution provision, provided any substitution preserves the floor and spacing this
+   resolution establishes.
 
 ## 10. Downstream owner
 
