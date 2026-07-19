@@ -219,10 +219,16 @@ Each Advanced-band week is accepted only when all of the following hold:
    syllabus positions this explicitly as a curated, accelerated, instructor-led program, not a claim of
    matching generic benchmarks. The instructor should confirm this is the intended framing, particularly
    before any outcome-facing or marketing-adjacent copy is written from this content.
-4. **The "mentoring/curriculum-design participation" C2 Table-1 item.** Currently unassigned to any
-   teaching week. The instructor should confirm whether it belongs only to Phase 7's separate
-   professional track, or whether a lighter, orientation-only touch belongs somewhere in this band
-   (most plausibly Week 25 or 26).
+4. **RESOLVED (2026-07-19): the "mentoring/curriculum-design participation" C2 Table-1 item.** The
+   instructor confirmed a light, receptive-only orientation touch within the Advanced band itself,
+   rather than deferring it entirely to Phase 7's separate professional track. `advanced-band-
+   syllabus.md` Section 5 and Section 7's Week 26 row now carry this resolution: Week 26's capstone
+   package introduces the register and vocabulary of giving feedback on another learner's language
+   production, explaining a pedagogical choice, or discussing curriculum structure in Spanish, at the
+   same receptive/orientation depth this project has used for every prior "preview, not taught
+   content" item (Beginner Week 26's B1 preview; Intermediate Week 26's C1 preview) — excluded from
+   that week's vocabulary list and flashcards, not decomposed for production, not tested, and
+   requiring no change to this band's already-planned 26-week count or four domain arcs.
 5. **Dialect-weighting methodology across the pluricentric curriculum — RESOLVED.** A second, deeper
    research briefing (`docs/research/advanced-spanish-dialect-weighting-methodology.md`) confirmed the
    first briefing's finding that no ready-made, purpose-built dialect-weighting methodology exists
