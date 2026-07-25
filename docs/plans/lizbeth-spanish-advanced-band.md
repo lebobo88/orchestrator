@@ -1,7 +1,9 @@
 # Plan: Lizbeth Spanish Advanced Band — Grounded Roadmap and Authoring Sequence
 
-Status: **Approved by the user; all Section 9 decisions resolved as of 2026-07-19; in active execution
-(Weeks 1-23 of 26 complete as of this update).** This plan operates under the already-approved
+Status: **Approved by the user; all Section 9 decisions resolved as of 2026-07-19; implemented
+(Weeks 1-26 of 26 complete).** *(Header corrected 2026-07-25: this header previously read "Weeks 1-23 of
+26 complete"; repository evidence shows weeks 24-26 are also complete. Status updated to reflect that
+completion, not a new approval event.)* This plan operates under the already-approved
 governing plan `docs/plans/lizbeth-spanish-course-platform.md` (approved by the user 2026-07-17),
 specifically its Phase 6 (full-scale, up-front curriculum content authoring, decision D5 answered). It
 adds no new scope beyond that governing plan's Phase 6, **provided the content-style template
