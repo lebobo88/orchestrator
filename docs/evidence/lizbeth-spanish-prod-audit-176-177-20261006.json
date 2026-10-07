@@ -1,0 +1,282 @@
+[
+ {
+  "sql": "with per_band as ( select e.band_id::text as band_id, count(*)::bigint",
+  "error": null,
+  "rows": [
+   {
+    "item": "(a) enrollments with null course_version_id (by band)",
+    "band_id": "7be70def-2b70-4989-a017-c493ef654d97",
+    "n": "2"
+   },
+   {
+    "item": "(a) enrollments with null course_version_id (by band)",
+    "band_id": "ALL",
+    "n": "2"
+   }
+  ]
+ },
+ {
+  "sql": "with per_band as ( select c.legacy_band_id::text as band_id, count(*)",
+  "error": null,
+  "rows": [
+   {
+    "item": "(b) bands with more than one published version",
+    "band_id": "ALL",
+    "n": 0,
+    "current_version_id": null
+   }
+  ]
+ },
+ {
+  "sql": "with counts as ( select e.id, e.course_version_id, (select count(*) fr",
+  "error": null,
+  "rows": [
+   {
+    "item": "(c) entitlement row counts per enrollment",
+    "enrollments": 2,
+    "with_zero_rows": 2,
+    "with_rows": 0,
+    "with_version_but_zero_rows": 0,
+    "min_rows": 0,
+    "max_rows": 0
+   }
+  ]
+ },
+ {
+  "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+  "error": null,
+  "rows": [
+   {
+    "item": "(d) slp completed but entitlement missing or incomplete",
+    "entitlement_missing": 1,
+    "entitlement_incomplete": 0
+   }
+  ]
+ },
+ {
+  "sql": "select '(d) entitlement completed but slp missing or incomplete' as it",
+  "error": null,
+  "rows": [
+   {
+    "item": "(d) entitlement completed but slp missing or incomplete",
+    "slp_missing": 0,
+    "slp_incomplete": 0
+   }
+  ]
+ },
+ {
+  "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+  "error": null,
+  "rows": [
+   {
+    "item": "(d) legacy lessons with no mapped revision in the enrollment version",
+    "enrollment_lesson_pairs": 0,
+    "distinct_lessons": 0
+   }
+  ]
+ },
+ {
+  "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+  "error": null,
+  "rows": [
+   {
+    "item": "(e) enrollments whose completed_at would change",
+    "auto_completed_from_progress": false,
+    "would_set": 0,
+    "would_clear": 0,
+    "manual_untouched": 0
+   }
+  ]
+ },
+ {
+  "sql": "select '(f) legacy lessons with no lesson_revisions row' as item, coun",
+  "error": null,
+  "rows": [
+   {
+    "item": "(f) legacy lessons with no lesson_revisions row",
+    "lessons": 0,
+    "bands": 0
+   }
+  ]
+ },
+ {
+  "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+  "error": null,
+  "rows": [
+   {
+    "item": "(g) completed mirror rows with no mapped revision in the enrollment version (by band)",
+    "band_id": "ALL",
+    "n": "0"
+   }
+  ]
+ },
+ {
+  "sql": "select count(*)::bigint as owner_settings_rows from public.owner_setti",
+  "error": null,
+  "rows": [
+   {
+    "owner_settings_rows": 1
+   }
+  ]
+ },
+ {
+  "sql": "select version, name from supabase_migrations.schema_migrations order ",
+  "error": null,
+  "rows": [
+   {
+    "version": "202607170001",
+    "name": "init_schema"
+   },
+   {
+    "version": "202607170002",
+    "name": "rls_policies"
+   },
+   {
+    "version": "202607170003",
+    "name": "storage_setup"
+   },
+   {
+    "version": "202607170004",
+    "name": "add_authenticated_grants"
+   },
+   {
+    "version": "202607170005",
+    "name": "storage_gating_policy"
+   },
+   {
+    "version": "202607170006",
+    "name": "resources_storage_path_unique"
+   },
+   {
+    "version": "202607170007",
+    "name": "owner_settings_authenticated_read"
+   },
+   {
+    "version": "202607170008",
+    "name": "owner_settings_service_role_grant"
+   },
+   {
+    "version": "202607170009",
+    "name": "service_role_grants"
+   },
+   {
+    "version": "202607200001",
+    "name": "admin_student_management_schema"
+   },
+   {
+    "version": "202607200002",
+    "name": "admin_student_rls_hardening"
+   },
+   {
+    "version": "202607200003",
+    "name": "admin_student_operations_service_role_grant"
+   },
+   {
+    "version": "202607250001",
+    "name": "seed_canonical_bands"
+   },
+   {
+    "version": "202607250002",
+    "name": "fix_bands_owner_settings_read_scoping"
+   },
+   {
+    "version": "202608070001",
+    "name": "force_password_change_rls_enforcement"
+   },
+   {
+    "version": "202608270001",
+    "name": "issue2_progress_dashboard"
+   },
+   {
+    "version": "202608270002",
+    "name": "issue2_dashboard_service_role_grant"
+   },
+   {
+    "version": "202608280001",
+    "name": "issue3_feedback_inbox"
+   },
+   {
+    "version": "202608280002",
+    "name": "issue3_feedback_inbox_hardening"
+   },
+   {
+    "version": "202608280003",
+    "name": "issue5_course_authoring"
+   },
+   {
+    "version": "202608290001",
+    "name": "issue5_phase1_entitlements"
+   },
+   {
+    "version": "202608300001",
+    "name": "issue5_phase2_cadence_sql_core"
+   },
+   {
+    "version": "202608300002",
+    "name": "issue5_phase3_enforcement_sql_core"
+   },
+   {
+    "version": "202608300003",
+    "name": "storage_lesson_assets_owner_write_policies"
+   },
+   {
+    "version": "202608300004",
+    "name": "request_version_enrollment"
+   },
+   {
+    "version": "202608300005",
+    "name": "cohort_invite_enrollment_grant"
+   },
+   {
+    "version": "202608310001",
+    "name": "issue5_phase4_revoked_roster_advisory"
+   },
+   {
+    "version": "202608310002",
+    "name": "issue5_phase5_student_learn_sql_core"
+   },
+   {
+    "version": "202608310003",
+    "name": "issue45_create_course_visibility"
+   },
+   {
+    "version": "202609140001",
+    "name": "issue164_course_archive"
+   },
+   {
+    "version": "202609140002",
+    "name": "issue164_course_archive_security_fix"
+   },
+   {
+    "version": "202609150001",
+    "name": "issue164_archive_public_preview"
+   },
+   {
+    "version": "202609150002",
+    "name": "revoke_backfill_legacy_courses_execute"
+   }
+  ]
+ },
+ {
+  "sql": "select to_regclass('public.owner_settings') is not null as owner_setti",
+  "error": null,
+  "rows": [
+   {
+    "owner_settings_exists": true,
+    "site_content": false,
+    "lesson_tasks": false,
+    "lesson_quizzes": false,
+    "student_course_assets": false
+   }
+  ]
+ },
+ {
+  "sql": "select p.proname from pg_proc p join pg_namespace n on n.oid=p.proname",
+  "error": null,
+  "rows": [
+   {
+    "proname": "get_student_learn_course"
+   }
+  ]
+ }
+]

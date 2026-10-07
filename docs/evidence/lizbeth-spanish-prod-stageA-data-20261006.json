@@ -1,0 +1,184 @@
+{
+ "postApplyAudit": [
+  {
+   "sql": "with per_band as ( select e.band_id::text as band_id, count(",
+   "rows": [
+    {
+     "item": "(a) enrollments with null course_version_id (by band)",
+     "band_id": "ALL",
+     "n": "0"
+    }
+   ]
+  },
+  {
+   "sql": "with per_band as ( select c.legacy_band_id::text as band_id,",
+   "rows": [
+    {
+     "item": "(b) bands with more than one published version",
+     "band_id": "ALL",
+     "n": 0,
+     "current_version_id": null
+    }
+   ]
+  },
+  {
+   "sql": "with counts as ( select e.id, e.course_version_id, (select c",
+   "rows": [
+    {
+     "item": "(c) entitlement row counts per enrollment",
+     "enrollments": 2,
+     "with_zero_rows": 0,
+     "with_rows": 2,
+     "with_version_but_zero_rows": 0,
+     "min_rows": 26,
+     "max_rows": 26
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(d) slp completed but entitlement missing or incomplete",
+     "entitlement_missing": 0,
+     "entitlement_incomplete": 0
+    }
+   ]
+  },
+  {
+   "sql": "select '(d) entitlement completed but slp missing or incompl",
+   "rows": [
+    {
+     "item": "(d) entitlement completed but slp missing or incomplete",
+     "slp_missing": 0,
+     "slp_incomplete": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(d) legacy lessons with no mapped revision in the enrollment version",
+     "enrollment_lesson_pairs": 0,
+     "distinct_lessons": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(e) enrollments whose completed_at would change",
+     "auto_completed_from_progress": false,
+     "would_set": 0,
+     "would_clear": 0,
+     "manual_untouched": 0
+    }
+   ]
+  },
+  {
+   "sql": "select '(f) legacy lessons with no lesson_revisions row' as ",
+   "rows": [
+    {
+     "item": "(f) legacy lessons with no lesson_revisions row",
+     "lessons": 0,
+     "bands": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(g) completed mirror rows with no mapped revision in the enrollment version (by band)",
+     "band_id": "ALL",
+     "n": "0"
+    }
+   ]
+  },
+  {
+   "sql": "select max(version) v, count(*)::int n from supabase_migrati",
+   "rows": [
+    {
+     "v": "202610030002",
+     "n": 35
+    }
+   ]
+  },
+  {
+   "sql": "select count(*)::int enrollments, count(*) filter (where cou",
+   "rows": [
+    {
+     "enrollments": 2,
+     "null_ver": 0
+    }
+   ]
+  },
+  {
+   "sql": "select count(*)::int ent_rows, count(*) filter (where comple",
+   "rows": [
+    {
+     "ent_rows": 52,
+     "completed": 1
+    }
+   ]
+  }
+ ],
+ "finalState": [
+  [
+   {
+    "version": "202610030001",
+    "name": "issue176_single_completion_record"
+   },
+   {
+    "version": "202610030002",
+    "name": "issue176_band_enrollment_backfill"
+   },
+   {
+    "version": "202610030003",
+    "name": "issue177_owner_settings_singleton"
+   },
+   {
+    "version": "202610040001",
+    "name": "issue177_site_content"
+   },
+   {
+    "version": "202610040002",
+    "name": "issue174_student_course_assets"
+   }
+  ],
+  [
+   {
+    "rows": 1
+   }
+  ],
+  [
+   {
+    "ent_rows": 52
+   }
+  ]
+ ],
+ "probes": [
+  "== edge functions, no JWT (expect 401), then anon-key JWT-less role (expect 401/403 from function)",
+  "admin-student-operations no-auth=401 anon-bearer=401 options=200",
+  "course-authoring no-auth=401 anon-bearer=401 options=200",
+  "owner-settings no-auth=401 anon-bearer=405 options=200",
+  "site-content no-auth=401 anon-bearer=405 options=200",
+  "== rpc existence as anon (404 => missing; 401/403 permission denied or 4xx validation => exists)",
+  "get_enrollment_lesson_completion 404 {\"code\":\"PGRST202\",\"details\":\"Searched for the function public.get_enrollment_lesson_completion without parame",
+  "get_student_lesson_assets 404 {\"code\":\"PGRST202\",\"details\":\"Searched for the function public.get_student_lesson_assets without parameters or",
+  "resolve_student_course_asset 404 {\"code\":\"PGRST202\",\"details\":\"Searched for the function public.resolve_student_course_asset without parameters",
+  "assign_band_enrollment 404 {\"code\":\"PGRST202\",\"details\":\"Searched for the function public.assign_band_enrollment without parameters or wi",
+  "== public_site_content anon read",
+  "[]",
+  "HTTP 200",
+  "== storage CORS preflight for Range",
+  "HTTP/1.1 200 OK",
+  "Access-Control-Allow-Origin: *",
+  "Access-Control-Allow-Headers: range",
+  "Access-Control-Allow-Methods: GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS,TRACE,CONNECT",
+  "Access-Control-Max-Age: 3600",
+  ""
+ ]
+}

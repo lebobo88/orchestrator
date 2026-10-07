@@ -1,0 +1,9 @@
+Target gvobtuhbpqvfhjljjcye; artifacts 156; to replace 156; mode APPLY
+Backed up 156 object(s) to H:\CommandCenter\backups\StageB-reprovision-20261006T162757Z
+post-write verification failed advanced/week-01/lesson-content.json (hash false, ct application/json, cc max-age=3600); aborting
+Target gvobtuhbpqvfhjljjcye; artifacts 156; to replace 155; mode APPLY
+Backed up 155 object(s) to H:\CommandCenter\backups\StageB-reprovision2-20261006T163047Z
+post-write verification failed advanced/week-05/lesson-content.json (hash false, ct application/json, cc max-age=3600); aborting
+Target gvobtuhbpqvfhjljjcye; artifacts 156; to replace 147; mode APPLY
+Backed up 147 object(s) to H:\CommandCenter\backups\StageB-reprovision3-20261006T163426Z
+APPLY complete: replaced 147; post-run check passed (156 artifacts equal seed, 321 other objects untouched).

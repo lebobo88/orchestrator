@@ -1,0 +1,135 @@
+[
+  {
+    "route": "/",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/courses",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/courses",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/course_catalog"
+      },
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH Field Journal SIGN IN THREE VOLUMES · 78 WEEKS · A1 TO C1 Explore courses Each volume is twenty-six weeks. Weeks open on your own schedule, counted from the day you enrol — not on a fixed class calendar. ALL LEVELS Beginner ALL LEVELS CEFR A1-A2 (Absolute Beginner to Elementary) Preview course ALL LEVELS Intermediate ALL LEVELS CEFR B1-B2 (Intermediate to Upper-In"
+  },
+  {
+    "route": "/learn",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/learn",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/roadmap",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/roadmap",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/feedback",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/feedback",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/week/1",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/week/1",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/admin/dashboard",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/admin/dashboard",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  },
+  {
+    "route": "/does-not-exist-smoke",
+    "status": 200,
+    "finalUrl": "https://lizbeth-spanish.netlify.app/does-not-exist-smoke",
+    "console": [],
+    "pageErrors": [],
+    "failed": [],
+    "backend": [
+      {
+        "method": "GET",
+        "status": 200,
+        "url": "<SUPABASE>/rest/v1/public_site_content"
+      }
+    ],
+    "text": "English Español L LIZBETH SPANISH FIELD JOURNAL Learn in the open Seventy-eight weeks of Spanish, one notebook page at a time. Your week opens when you reach it. BEGINNER · INTERMEDIATE · ADVANCED 78 WEEKS ACCESS Sign in EMAIL PASSWORD Open my journal"
+  }
+]

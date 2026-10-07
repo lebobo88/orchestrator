@@ -1,0 +1,3 @@
+Target gvobtuhbpqvfhjljjcye; artifacts 78; to replace 78; mode APPLY
+Backed up 78 object(s) to H:\CommandCenter\backups\StageD-decks-20261007T120057Z
+APPLY complete: replaced 78; post-run check passed (78 artifacts equal seed, 390 other objects untouched).

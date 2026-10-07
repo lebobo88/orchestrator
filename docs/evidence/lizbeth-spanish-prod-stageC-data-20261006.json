@@ -1,0 +1,264 @@
+{
+ "postGateAuditAndChecks": [
+  {
+   "sql": "with per_band as ( select e.band_id::text as band_id, count(*)::bigint",
+   "rows": [
+    {
+     "item": "(a) enrollments with null course_version_id (by band)",
+     "band_id": "ALL",
+     "n": "0"
+    }
+   ]
+  },
+  {
+   "sql": "with per_band as ( select c.legacy_band_id::text as band_id, count(*)",
+   "rows": [
+    {
+     "item": "(b) bands with more than one published version",
+     "band_id": "ALL",
+     "n": 0,
+     "current_version_id": null
+    }
+   ]
+  },
+  {
+   "sql": "with counts as ( select e.id, e.course_version_id, (select count(*) fr",
+   "rows": [
+    {
+     "item": "(c) entitlement row counts per enrollment",
+     "enrollments": 2,
+     "with_zero_rows": 0,
+     "with_rows": 2,
+     "with_version_but_zero_rows": 0,
+     "min_rows": 26,
+     "max_rows": 26
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(d) slp completed but entitlement missing or incomplete",
+     "entitlement_missing": 0,
+     "entitlement_incomplete": 0
+    }
+   ]
+  },
+  {
+   "sql": "select '(d) entitlement completed but slp missing or incomplete' as it",
+   "rows": [
+    {
+     "item": "(d) entitlement completed but slp missing or incomplete",
+     "slp_missing": 0,
+     "slp_incomplete": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(d) legacy lessons with no mapped revision in the enrollment version",
+     "enrollment_lesson_pairs": 0,
+     "distinct_lessons": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(e) enrollments whose completed_at would change",
+     "auto_completed_from_progress": false,
+     "would_set": 0,
+     "would_clear": 0,
+     "manual_untouched": 0
+    }
+   ]
+  },
+  {
+   "sql": "select '(f) legacy lessons with no lesson_revisions row' as item, coun",
+   "rows": [
+    {
+     "item": "(f) legacy lessons with no lesson_revisions row",
+     "lessons": 0,
+     "bands": 0
+    }
+   ]
+  },
+  {
+   "sql": "with sel as ( select c.legacy_band_id as band_id, coalesce( ",
+   "rows": [
+    {
+     "item": "(g) completed mirror rows with no mapped revision in the enrollment version (by band)",
+     "band_id": "ALL",
+     "n": "0"
+    }
+   ]
+  },
+  {
+   "sql": "select id, cutover_at is not null c1, quiz_cutover_at is not null c2, ",
+   "rows": [
+    {
+     "id": true,
+     "c1": true,
+     "c2": true,
+     "cutover_at": "2026-10-06 17:14:56.814726+00",
+     "quiz_cutover_at": "2026-10-06 17:14:58.039733+00",
+     "rows": 1
+    }
+   ]
+  },
+  {
+   "sql": "select has_table_privilege('anon','public.completion_gate_settings','s",
+   "rows": [
+    {
+     "a": false,
+     "u": false,
+     "s": true
+    }
+   ]
+  },
+  {
+   "sql": "select count(*) filter (where completed_at is not null)::int completed",
+   "rows": [
+    {
+     "completed": 1,
+     "total": 52
+    }
+   ]
+  },
+  {
+   "sql": "select count(*) filter (where completed_at is not null)::int slp_compl",
+   "rows": [
+    {
+     "slp_completed": 1
+    }
+   ]
+  },
+  {
+   "sql": "select qual from pg_policies where schemaname='storage' and tablename=",
+   "rows": [
+    {
+     "qual": "((NOT user_requires_password_change()) AND (bucket_id = 'lesson-assets'::text) AND (EXISTS ( SELECT 1\n   FROM ((resources r\n     JOIN lessons l ON ((l.id = r.lesson_id)))\n     JOIN student_enrollments se ON ((se.band_id = l.band_id)))\n  WHERE ((r.storage_bucket = objects.bucket_id) AND (r.storage_path = objects.name) AND (r.resource_type <> 'pptx'::text) AND (se.user_id = auth.uid()) AND (se.status = 'active'::text) AND is_account_active(auth.uid()) AND ((now() >= (se.enrollment_date + make_interval(days => l.unlock_offset_days))) OR ((se.completed_at IS NOT NULL) AND (se.completed_at <= now())))))))"
+    }
+   ]
+  },
+  {
+   "sql": "select qual from pg_policies where schemaname='storage' and tablename=",
+   "rows": [
+    {
+     "qual": "((bucket_id = 'lesson-assets'::text) AND (((auth.jwt() -> 'app_metadata'::text) ->> 'role'::text) = 'owner'::text) AND (EXISTS ( SELECT 1\n   FROM resources r\n  WHERE ((r.storage_bucket = objects.bucket_id) AND (r.storage_path = objects.name) AND (r.resource_type = 'pptx'::text)))))"
+    }
+   ]
+  },
+  {
+   "sql": "select count(*)::int submitted from public.lesson_task_submissions whe",
+   "rows": [
+    {
+     "submitted": 0
+    }
+   ]
+  },
+  {
+   "sql": "select count(*)::int pending from public.quiz_attempts where status='p",
+   "rows": [
+    {
+     "pending": 0
+    }
+   ]
+  },
+  {
+   "sql": "select md5(string_agg(p.proname||'/'||p.pronargs||':'||pg_get_function",
+   "rows": [
+    {
+     "h": "fad27115cf334e1e1a75f3cf3d0d7bf5",
+     "n": 94
+    }
+   ]
+  }
+ ],
+ "function_definition_comparison": {
+  "hosted": 94,
+  "local": 94,
+  "differing": 0,
+  "normalization": "whitespace"
+ },
+ "step10_checks": [
+  [
+   {
+    "k": "legacy_assets",
+    "n": 78
+   },
+   {
+    "k": "legacy_lesson_id",
+    "n": 78
+   }
+  ],
+  [
+   {
+    "course_assets": 390
+   }
+  ],
+  [
+   {
+    "rev": 78,
+    "legacy": 78,
+    "authored": 0
+   }
+  ],
+  [
+   {
+    "status": "published",
+    "count": 3
+   }
+  ],
+  [
+   {
+    "total": 390,
+    "lc": 78
+   }
+  ],
+  [
+   {
+    "max_len": 654
+   }
+  ],
+  [
+   {
+    "content_type": "flashcards",
+    "n": 78,
+    "paths": 78
+   },
+   {
+    "content_type": "lesson_content",
+    "n": 78,
+    "paths": 78
+   },
+   {
+    "content_type": "pdf",
+    "n": 78,
+    "paths": 78
+   },
+   {
+    "content_type": "pptx",
+    "n": 78,
+    "paths": 78
+   },
+   {
+    "content_type": "vocabulary_review",
+    "n": 78,
+    "paths": 78
+   }
+  ],
+  [
+   {
+    "lc_assets": 78,
+    "pointing_at_json": 78,
+    "revs": 78
+   }
+  ],
+  []
+ ]
+}

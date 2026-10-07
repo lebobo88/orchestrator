@@ -1,0 +1,9 @@
+(a) enrollments with null course_version_id (by band)|ALL|0
+(b) bands with more than one published version|ALL|0|
+(c) entitlement row counts per enrollment|11|1|10|1|26|26
+(d) slp completed but entitlement missing or incomplete|0|0
+(d) entitlement completed but slp missing or incomplete|0|0
+(d) legacy lessons with no mapped revision in the enrollment version|0|0
+(e) enrollments whose completed_at would change|f|0|0|2
+(f) legacy lessons with no lesson_revisions row|0|0
+(g) completed mirror rows with no mapped revision in the enrollment version (by band)|ALL|0

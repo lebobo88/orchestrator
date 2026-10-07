@@ -1,0 +1,12 @@
+{
+ "target": "gvobtuhbpqvfhjljjcye",
+ "checked": 156,
+ "missing": [],
+ "hashDiffersFromSeed": [],
+ "nonEmptyQuizAnswers": 0,
+ "recapAnswerMarkers": 0,
+ "hostedFingerprintHits": 627,
+ "seedFingerprintHits": 627,
+ "hitsOnlyInHosted": []
+}
+SIGNED-GATE: hosted == seed (all 156), 0 quiz answers, 0 recap markers, fingerprint hits identical to seed
