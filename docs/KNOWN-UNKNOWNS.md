@@ -11,6 +11,7 @@ The orchestrator is deliberately configured as a local, interactive Claude Code 
 
 | Capability | Decision still needed | Why it matters |
 | --- | --- | --- |
+| Nested dispatch hook coverage (H6) | Whether the orchestrator's `PreToolUse(Agent)` hook fires for a *nested* dispatch (e.g. Planner spawning a further sub-agent), or only for the orchestrator's own direct dispatches | If the hook does not fire on nested dispatch, then nested dispatch is entirely unguarded including for built-in agents, and the guard must move to settings scope. Status: **pending — deferred to a live test performed directly by the orchestrator session after Phase 1 hook-hardening lands**, because the test needs to hold the `Agent` tool at the parent level and needs the hardened dispatch hook (Phase 1 item 6) to be in place first for the result to be meaningful. |
 | In-process agent teams | Whether the installed provider permits live teammate messaging and task state for an explicitly approved extreme advisory task | The fleet can fall back to serial Engineering Lead/T3 checkpoints. The Orchestrator remains fixed team lead; source-file ownership is a protocol, not a lock. |
 | Fleet model availability | Whether the provider/org permits haiku, sonnet, and opus for the configured role definitions | Subagent model frontmatter falls back to the inherited model when an organization excludes a requested model. |
 | MCP | Exact service, OAuth/scopes, data classification, and project vs user scope | An MCP configuration changes external data/tool access. |
