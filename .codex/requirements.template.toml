@@ -1,0 +1,13 @@
+# Codex CLI Managed System Policy Requirements Template
+# Target Deployment: %ProgramData%\OpenAI\Codex\requirements.toml
+# Enforces enterprise and administrative constraints for Level 2 Hard-Fence Parity
+
+[policy]
+allowed_permission_profiles = [
+    ":read-only",
+    "orchestrator-governed"
+]
+
+[windows]
+sandbox = "elevated"
+sandbox_private_desktop = true

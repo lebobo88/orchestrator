@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codex-agent.schema.json",
+  "title": "CodexAgentDefinition",
+  "description": "Formal JSON Schema for Codex CLI agent role definitions (.codex/agents/*.toml).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "category",
+    "sandbox_mode",
+    "model",
+    "reasoning_effort",
+    "routing_edges",
+    "developer_instructions"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Root Lead",
+        "Planning Lead",
+        "Design Lead",
+        "Specialist",
+        "Engineering",
+        "Verification",
+        "Critic",
+        "Design Specialist"
+      ]
+    },
+    "sandbox_mode": {
+      "type": "string",
+      "enum": [
+        "read-only",
+        "workspace-write",
+        "danger-full-access"
+      ]
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reasoning_effort": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "routing_edges": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+      },
+      "uniqueItems": true
+    },
+    "developer_instructions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}

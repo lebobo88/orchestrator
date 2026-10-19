@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit|Bash|exec_command",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-control-plane-write.ps1",
+        "type": "command"
+      },
+      {
+        "matcher": "Agent|SubagentStart|dispatch",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-agent-dispatch.ps1",
+        "type": "command"
+      },
+      {
+        "matcher": "Bash|exec_command",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-researcher-bash.ps1",
+        "type": "command"
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-scribe-write.ps1",
+        "type": "command"
+      },
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-design-prototype-write.ps1",
+        "type": "command"
+      },
+      {
+        "matcher": "Bash|exec_command",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-judge-command.ps1",
+        "type": "command"
+      }
+    ],
+    "SessionStop": [
+      {
+        "matcher": ".*",
+        "command": "pwsh.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/validate-terminal-packet.ps1",
+        "type": "command"
+      }
+    ]
+  }
+}

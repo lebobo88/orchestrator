@@ -1,0 +1,24 @@
+# OpenAI Codex CLI Project Configuration
+# Root: H:\CommandCenter\orchestrator
+# Authoritative Level 1 Functional Readiness Configuration
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+web_search = "disabled"
+
+[features]
+hooks = true
+multi_agent = true
+unified_exec = true
+
+[windows]
+sandbox = "unelevated"
+
+[permissions.snapshot-isolated]
+description = "Snapshot-isolated profile for test execution and verification"
+extends = ":workspace"
+network.enabled = false
+
+[permissions.orchestrator-governed]
+description = "Orchestrator governed profile for role workflows"
+extends = ":workspace"
