@@ -19,3 +19,22 @@ runtime/*
 /world-data/
 /lizbeth_spanish/
 /.t2-scratch/
+
+# Design prototypes (workstream A) - disposable
+.design/
+
+# Local-only data and archives - never track
+/photo-genie.pgcat*
+/projects_archive/
+/supabase/
+/docs/security-policy-log.md
+
+# Local validation artifacts (DEC-3)
+/browser-validation-artifacts/
+/.atelier/screenshots/
+/.atelier/diffs/
+/.phase3-hold/
+
+# Nested target worktrees and clones (DEC-3)
+/lizbeth_spanish-*/
+/lizbeth_main_verify_*/
