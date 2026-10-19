@@ -1,0 +1,100 @@
+$ErrorActionPreference = 'Stop'
+
+
+function Deny([string]$Reason) {
+    [Console]::Error.WriteLine("Blocked: $Reason")
+    exit 2
+}
+
+# Control-plane paths that must not be writable during normal operation
+$controlPlanePaths = @(
+    '.claude/settings.json',
+    '.claude/settings.local.json',
+    '.claude/maintenance-mode.flag',
+    '.claude/agents/**',
+    '.claude/hooks/**',
+    '.claude/skills/**',
+    '.claude/scripts/**',
+    '.claude/schemas/**',
+    '.claude/judge-policy.json',
+    'CLAUDE.md',
+    '.mcp.json',
+    'docs/PLAN-CONTRACT.md',
+    'docs/DESIGN-CONTRACT.md',
+    'docs/JUDGE-CONTRACT.md',
+    'docs/BUILD-CONTRACT.md',
+    'docs/DOCUMENT-CONTRACT.md',
+    'docs/RESEARCH-HARNESS.md',
+    'docs/CAPABILITY-MAP.md',
+    'docs/ARCHITECTURE-ADAPTATION.md',
+    'docs/PROMPTING-AND-EVALUATION.md'
+)
+
+$rawInput = [Console]::In.ReadToEnd()
+if ([string]::IsNullOrWhiteSpace($rawInput)) { $rawInput = @($input) -join [Environment]::NewLine }
+if ([string]::IsNullOrWhiteSpace($rawInput)) { Write-Output 'Blocked: missing hook input.'; exit 2 }
+
+try {
+    $payload = $rawInput | ConvertFrom-Json
+}
+catch { Write-Output 'Blocked: invalid hook input.'; exit 2 }
+
+$toolName = [string]$payload.tool_name
+$toolInput = $payload.tool_input
+
+# Extract the file path from tool input based on tool type
+$filePath = $null
+if ($toolName -eq 'Write' -or $toolName -eq 'Edit' -or $toolName -eq 'NotebookEdit') {
+    $filePath = [string]$toolInput.file_path
+    if ([string]::IsNullOrWhiteSpace($filePath)) { $filePath = [string]$toolInput.path }
+}
+elseif ($toolName -eq 'Bash') {
+    # For Bash, we can only check if certain patterns are used
+    # This is best-effort; comprehensive Bash filtering requires command analysis
+    $command = [string]$toolInput.command
+
+    # Check for patterns that might write to control-plane paths
+    $patterns = @(
+        '\.claude[\/]settings',
+        '\.claude[\/]agents',
+        '\.claude[\/]hooks',
+        '\.claude[\/]skills',
+        'CLAUDE\.md',
+        '\.mcp\.json'
+    )
+
+    foreach ($pattern in $patterns) {
+        if ($command -match $pattern) {
+            Deny "Bash command attempts to write to control-plane path: $pattern"
+        }
+    }
+    exit 0
+}
+
+if ([string]::IsNullOrWhiteSpace($filePath)) {
+    exit 0
+}
+
+# Normalize the path to forward slashes for comparison
+$filePath = $filePath.Replace('\', '/')
+$repoRoot = $repositoryRoot.Replace('\', '/')
+
+# Make path relative to repository root if it's absolute
+if ([System.IO.Path]::IsPathRooted($filePath)) {
+    if ($filePath.StartsWith($repoRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
+        $filePath = $filePath.Substring($repoRoot.Length).TrimStart('/')
+    }
+}
+
+# Check against control-plane paths
+foreach ($controlPath in $controlPlanePaths) {
+    # Convert gitignore-style pattern to regex
+    $pattern = $controlPath -replace '\*\*', '.*' -replace '\*', '[^/]*'
+    $pattern = '^' + $pattern + '$'
+
+    if ($filePath -match $pattern) {
+        Deny "Cannot modify control-plane path: $controlPath (attempted: $filePath)"
+    }
+}
+
+exit 0

@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
+
 $rawInput = [Console]::In.ReadToEnd()
 if ([string]::IsNullOrWhiteSpace($rawInput)) { $rawInput = @($input) -join [Environment]::NewLine }
 if ([string]::IsNullOrWhiteSpace($rawInput)) { Write-Output 'Blocked: missing hook input.'; exit 2 }

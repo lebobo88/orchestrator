@@ -1,7 +1,7 @@
 ---
 name: design-reviewer
 description: Independent read-only reviewer for design evidence, contextual specificity, accessibility, system coherence, and engineering readiness.
-tools: Read, Glob, Grep, Skill
+tools: Read, Glob, Grep, Skill, mcp__atelier__*
 model: claude-sonnet-5
 effort: high
 permissionMode: plan

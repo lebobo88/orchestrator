@@ -1,7 +1,7 @@
 ---
 name: browser-validator
 description: Read-only visual end-to-end completion gate for a T1 job that changes a browser-rendered UI or webview, or a native Tauri/WebView2 desktop app. Uses Claude in Chrome or Playwright for browser-rendered targets, and an approval-gated pinned tauri-driver backend for native Tauri/WebView2 desktop targets.
-tools: Read, Glob, Grep, Bash, Skill, mcp__claude-in-chrome__*
+tools: Read, Glob, Grep, Bash, Skill, mcp__claude-in-chrome__*, mcp__atelier__*
 model: sonnet
 permissionMode: default
 maxTurns: 80

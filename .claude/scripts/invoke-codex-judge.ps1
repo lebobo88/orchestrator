@@ -17,8 +17,8 @@ if (-not (Test-Path -LiteralPath $resolvedJob)) { throw 'Judge job does not exis
 $job = Get-Content -Raw -LiteralPath $resolvedJob | ConvertFrom-Json
 
 $checkpoints = @('PLAN_DUCK', 'CODE_REVIEW', 'VERIFICATION_CHALLENGE', 'VISUAL_REVIEW')
-$models = @('gpt-5.6-luna', 'gpt-5.6-terra')
-$efforts = @('medium')
+$models = @('gpt-5.6-luna', 'gpt-5.6-terra', 'gpt-5.6-sol', 'gpt-6-astra')
+$efforts = @('medium', 'high')
 $risks = @('low', 'medium', 'high', 'critical')
 if ([string]$job.task_id -notmatch '^[a-z0-9][a-z0-9-]{2,79}$') { throw 'Invalid judge task_id.' }
 if ($checkpoints -notcontains [string]$job.checkpoint) { throw 'Invalid judge checkpoint.' }
@@ -28,7 +28,7 @@ if ($risks -notcontains [string]$job.risk) { throw 'Invalid judge risk.' }
 if ($null -eq $job.required -or $job.required -isnot [bool]) { throw 'Judge required must be boolean.' }
 if ([string]::IsNullOrWhiteSpace([string]$job.rubric)) { throw 'Judge rubric is required.' }
 
-if ($job.effort -ne 'medium') { throw 'Judge jobs must use medium effort.' }
+if ($job.effort -notin @('medium', 'high')) { throw 'Judge jobs must use medium or high effort.' }
 
 $targetRoot = if ([string]::IsNullOrWhiteSpace([string]$job.target)) { $repositoryRoot } else { [System.IO.Path]::GetFullPath([string]$job.target) }
 if (-not (Test-Path -LiteralPath (Join-Path $targetRoot '.git'))) { throw 'Judge target must be a Git repository.' }
@@ -108,6 +108,11 @@ if ($ResolveOnly) {
 $arguments = @(
     'exec', '--ephemeral', '--ignore-user-config', '--ignore-rules', '--sandbox', 'read-only',
     '-c', 'approval_policy="never"', '-c', 'web_search="disabled"', '-c', 'mcp_servers={}',
+    # --ignore-user-config also discards [windows].sandbox from the user config, and
+    # Codex on Windows then rejects every model-issued command ("blocked by policy"),
+    # so the judge reads nothing and always ABSTAINs. Restore only that one key; the
+    # read-only sandbox, disabled approvals, disabled web, and disabled MCP are unchanged.
+    '-c', 'windows.sandbox="unelevated"',
     '-c', ('model_reasoning_effort="{0}"' -f [string]$job.effort),
     '-C', ('"{0}"' -f $targetRoot), '-m', [string]$job.model,
     '--output-schema', ('"{0}"' -f $schemaPath), '--json', '-o', ('"{0}"' -f $resultPath)
@@ -122,7 +127,15 @@ if ($job.checkpoint -eq 'VISUAL_REVIEW' -and $job.image_paths) {
 }
 $arguments += '-'
 
-$timeoutSeconds = switch ([string]$job.model) { 'gpt-5.6-luna' { 120 } 'gpt-5.6-terra' { 300 } }
+$baseTimeoutSeconds = switch ([string]$job.model) {
+      'gpt-5.6-luna'  { 120 }
+      'gpt-5.6-terra' { 300 }
+      'gpt-5.6-sol'   { 400 }
+      'gpt-6-astra'   { 520 }
+      default         { 300 }
+  }
+$timeoutSeconds = if ([string]$job.effort -eq 'high') { [int]($baseTimeoutSeconds * 2) } else { $baseTimeoutSeconds }
+
 if ($env:CODEX_JUDGE_TIMEOUT_OVERRIDE_MS -match '^\d+$') { $timeoutMilliseconds = [int]$env:CODEX_JUDGE_TIMEOUT_OVERRIDE_MS } else { $timeoutMilliseconds = $timeoutSeconds * 1000 }
 $transientPattern = '(?i)rate.?limit|overload|temporar|timeout|timed out|connection reset|service unavailable|502|503|504'
 $attempt = 0

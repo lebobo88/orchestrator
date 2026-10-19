@@ -2,7 +2,7 @@
 name: engineering-lead
 description: Sonnet read-only technical coordinator for tier routing, extreme-team checkpoints, and safe writer handoffs. It never writes product code or replaces the interactive orchestrator as native team lead.
 tools: Read, Glob, Grep, Skill, SendMessage
-model: sonnet
+model: opus
 permissionMode: plan
 maxTurns: 80
 ---

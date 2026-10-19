@@ -35,11 +35,10 @@ if ($properties -contains 'run_in_background' -and $toolInput.run_in_background 
     Deny 'serial harness dispatches cannot request background execution.'
 }
 
+# Deny any non-empty name unconditionally
 if ($properties -contains 'name' -and -not [string]::IsNullOrWhiteSpace([string]$toolInput.name)) {
     $name = [string]$toolInput.name
-    if ($name -notmatch '^[a-z][a-z0-9-]{0,63}$') {
-        Deny "subagent name '$name' must use lowercase letters, digits, and hyphens only (maximum 64 characters)."
-    }
+    Deny "named dispatch is not permitted (name='$name'). Dispatch names create addressable teammates instead of returning results directly."
 }
 
 foreach ($forbiddenField in @('team_name', 'teammate_name', 'isolation')) {
