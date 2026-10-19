@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+trap { [Console]::Error.WriteLine("Blocked: hook error: $($_.Exception.Message)"); exit 2 }
 
 
 function Deny([string]$Reason) {
@@ -41,6 +42,7 @@ catch { Write-Output 'Blocked: invalid hook input.'; exit 2 }
 
 $toolName = [string]$payload.tool_name
 $toolInput = $payload.tool_input
+$repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 
 # Extract the file path from tool input based on tool type
 $filePath = $null
@@ -77,14 +79,14 @@ if ([string]::IsNullOrWhiteSpace($filePath)) {
 
 # Normalize the path to forward slashes for comparison
 $filePath = $filePath.Replace('\', '/')
-$repoRoot = $repositoryRoot.Replace('\', '/')
+$repoRoot = $repositoryRoot.Replace('\', '/').TrimEnd('/') + '/'
 
-# Make path relative to repository root if it's absolute
 if ([System.IO.Path]::IsPathRooted($filePath)) {
     if ($filePath.StartsWith($repoRoot, [System.StringComparison]::OrdinalIgnoreCase)) {
-        $filePath = $filePath.Substring($repoRoot.Length).TrimStart('/')
+        $filePath = $filePath.Substring($repoRoot.Length)
     }
 }
+$filePath = $filePath -replace '^\./', ''
 
 # Check against control-plane paths
 foreach ($controlPath in $controlPlanePaths) {
