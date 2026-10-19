@@ -1,0 +1,106 @@
+{
+  "controlPlaneWriteCases": [
+    {
+      "name": "allow-workspace-file-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": "scratch/test-output.txt" },
+      "expected_exit": 0
+    },
+    {
+      "name": "block-codex-config-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": ".codex/config.toml" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-claude-settings-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": ".claude/settings.json" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-agents-contract-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": "AGENTS.md" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-claude-contract-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": "CLAUDE.md" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-doc-contract-write",
+      "tool_name": "Write",
+      "tool_input": { "file_path": "docs/PLAN-CONTRACT.md" },
+      "expected_exit": 2
+    }
+  ],
+  "researcherBashCases": [
+    {
+      "name": "allow-git-status",
+      "tool_input": { "command": "git status" },
+      "expected_exit": 0
+    },
+    {
+      "name": "allow-ripgrep-search",
+      "tool_input": { "command": "rg \"search_pattern\" ." },
+      "expected_exit": 0
+    },
+    {
+      "name": "block-mutating-rm",
+      "tool_input": { "command": "rm -rf some_dir" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-piped-command",
+      "tool_input": { "command": "git status | grep modified" },
+      "expected_exit": 2
+    }
+  ],
+  "scribeWriteCases": [
+    {
+      "name": "allow-doc-plan-write",
+      "tool_input": { "file_path": "docs/plans/test-feature-plan.md" },
+      "expected_exit": 0
+    },
+    {
+      "name": "block-control-plane-write",
+      "tool_input": { "file_path": "AGENTS.md" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-code-file-write",
+      "tool_input": { "file_path": "src/app.ts" },
+      "expected_exit": 2
+    }
+  ],
+  "agentDispatchCases": [
+    {
+      "name": "allow-planner-dispatch",
+      "tool_input": { "subagent_type": "planner" },
+      "expected_exit": 0
+    },
+    {
+      "name": "allow-t1-dispatch",
+      "tool_input": { "subagent_type": "t1-engineer" },
+      "expected_exit": 0
+    },
+    {
+      "name": "block-unknown-subagent",
+      "tool_input": { "subagent_type": "rogue-agent" },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-background-dispatch",
+      "tool_input": { "subagent_type": "planner", "run_in_background": true },
+      "expected_exit": 2
+    },
+    {
+      "name": "block-named-dispatch",
+      "tool_input": { "subagent_type": "planner", "name": "teammate-1" },
+      "expected_exit": 2
+    }
+  ]
+}

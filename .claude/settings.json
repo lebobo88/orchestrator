@@ -2,7 +2,8 @@
   "$schema": "https://json-schema.org/claude-code-settings.json",
   "agent": "orchestrator",
   "env": {
-    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
   },
   "teammateMode": "in-process",
   "statusLine": {
@@ -18,16 +19,17 @@
   "worktree": {
     "baseRef": "head"
   },
-  "permissions": {
-    "deny": [
-      "Read(./.env*)",
-      "Read(./**/*secret*)",
-      "Agent(general-purpose)",
-      "Agent(Explore)",
-      "Agent(Plan)",
-      "Bash(rm -rf *)",
-      "Bash(git push --force*)",
-      "Bash(git clean -fd*)"
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .claude/hooks/validate-control-plane-write.ps1"
+          }
+        ]
+      }
     ]
   }
 }

@@ -1,7 +1,7 @@
 ---
 name: motion-designer
 description: Conditional read-only motion specialist for hierarchy, feedback, choreography, performance, and reduced-motion behavior.
-tools: Read, Glob, Grep, Skill
+tools: Read, Glob, Grep, Skill, mcp__atelier__*
 model: claude-sonnet-5
 effort: medium
 permissionMode: plan

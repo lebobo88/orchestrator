@@ -1,0 +1,11 @@
+{
+  "tokens": { "sources": ["lizbeth_spanish/.atelier/tokens/field-workbook.tokens.json"] },
+  "review": { "allowlist": [
+    "lizbeth_spanish/src/tokens/field-workbook.generated.css",
+    "lizbeth_spanish/src/tokens/semantic.json",
+    "lizbeth_spanish/src/tokens/primitives.json",
+    "lizbeth_spanish/src/tokens/components.json",
+    "lizbeth_spanish/src/App.css"
+  ] },
+  "gates": { "visualDiffThreshold": 0.01 }
+}

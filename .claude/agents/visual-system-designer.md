@@ -1,8 +1,8 @@
 ---
 name: visual-system-designer
 description: Read-only visual-system specialist for implementable hierarchy, typography, color, layout, components, states, and DTCG-aligned tokens.
-tools: Read, Glob, Grep, Skill
-model: claude-sonnet-5
+tools: Read, Glob, Grep, Skill, mcp__atelier__*
+model: opus
 effort: high
 permissionMode: plan
 maxTurns: 50

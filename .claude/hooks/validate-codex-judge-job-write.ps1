@@ -1,4 +1,6 @@
 $ErrorActionPreference = 'Stop'
+
+
 function Deny([string]$Reason) {
     [Console]::Error.WriteLine("Blocked: $Reason")
     exit 2

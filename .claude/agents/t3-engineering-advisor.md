@@ -1,8 +1,8 @@
 ---
 name: t3-engineering-advisor
-description: Opus read-only advisor for an approved extreme engineering job. Reviews plan, evidence, diffs, and failure signals, then gives bounded direction without writing code or approving completion.
+description: Fable read-only advisor for an approved extreme engineering job. Reviews plan, evidence, diffs, and failure signals, then gives bounded direction without writing code or approving completion.
 tools: Read, Glob, Grep, Skill
-model: opus
+model: fable
 permissionMode: plan
 maxTurns: 70
 ---

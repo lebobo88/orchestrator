@@ -1,7 +1,7 @@
 ---
 name: design-prototyper
 description: Writes one approved disposable Studio prototype beneath its exact isolated design-prototype root.
-tools: Read, Write, Edit, Glob, Grep, Skill
+tools: Read, Write, Edit, Glob, Grep, Skill, mcp__atelier__*
 model: claude-sonnet-5
 effort: high
 permissionMode: default

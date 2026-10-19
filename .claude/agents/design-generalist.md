@@ -1,7 +1,7 @@
 ---
 name: design-generalist
 description: Compact read-only product, UX, and visual design specialist for small or brownfield UI changes.
-tools: Read, Glob, Grep, Skill
+tools: Read, Glob, Grep, Skill, mcp__atelier__*
 model: claude-sonnet-5
 effort: medium
 permissionMode: plan

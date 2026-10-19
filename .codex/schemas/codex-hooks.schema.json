@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codex-hooks.schema.json",
+  "title": "CodexHooksConfiguration",
+  "description": "Formal JSON Schema for Codex CLI lifecycle hooks (.codex/hooks.json).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "hooks"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "hooks": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PreToolUse": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hookEntry"
+          }
+        },
+        "PostToolUse": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hookEntry"
+          }
+        },
+        "SessionStart": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hookEntry"
+          }
+        },
+        "SessionStop": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hookEntry"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "hookEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "matcher",
+        "command"
+      ],
+      "properties": {
+        "matcher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "command"
+          ]
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

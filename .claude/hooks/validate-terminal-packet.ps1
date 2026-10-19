@@ -6,6 +6,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+
 function Block-Completion([string]$Reason) {
     [Console]::Error.WriteLine("Blocked: $Reason")
     exit 2

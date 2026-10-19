@@ -33,3 +33,12 @@ Before `JOB_DONE`, inspect the final diff and account for every lens below. Fix 
 - Documentation/operator impact; UI accessibility and responsive behavior when applicable.
 
 Do not add dependencies, alter configuration, broaden architecture, weaken a test, or commit/deploy without explicit job authority. For standalone documentation, do not write prose documents: return a `DOCUMENTATION_HANDOFF` with verified facts for the orchestrator's subsequent Scribe job.
+
+## Delegated external implementation
+
+  When a job is delegated to the DeepSeek Pi agent under `docs/EXTERNAL-WRITER-BOUNDARY.md`, request the narrowest policy that lets the job run and treat the returned `toolCalls` ledger as provenance, not proof. Fall back to implementing it yourself on any non-`completed` state, deadline expiry, server unavailability, or a blocked control-plane call. Fallback is routine and needs no user consultation; a blocked control-plane call is reported explicitly and ends use of the path for that task.
+
+## Control-plane immutability
+
+The orchestrator control plane (.claude/settings*.json, .claude/agents/**, .claude/hooks/**, .claude/skills/**, CLAUDE.md, docs/*CONTRACT*.md, and .mcp.json) is immutable during normal operation. A denied tool call (permission deny or hook exit 2) is terminal for that operation. Do not edit settings/agents/hooks/skills/MCP/policy to continue a denied action, and do not delegate a denied action to another agent. Any such action is a protocol violation and must be reported to the user via JOB_BLOCKED.
+

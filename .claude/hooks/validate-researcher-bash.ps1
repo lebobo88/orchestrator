@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
+
 $rawInput = [Console]::In.ReadToEnd()
 if ([string]::IsNullOrWhiteSpace($rawInput)) {
     $rawInput = @($input) -join [Environment]::NewLine

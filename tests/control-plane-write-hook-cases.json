@@ -1,0 +1,80 @@
+[
+  {
+    "name": "deny write to settings.json (relative)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": ".claude/settings.json" },
+    "exit": 2
+  },
+  {
+    "name": "deny write to CLAUDE.md (relative)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "CLAUDE.md" },
+    "exit": 2
+  },
+  {
+    "name": "deny write to agent file under glob (relative)",
+    "tool_name": "Edit",
+    "tool_input": { "file_path": ".claude/agents/planner.md" },
+    "exit": 2
+  },
+  {
+    "name": "deny write to a plan contract doc (relative)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "docs/PLAN-CONTRACT.md" },
+    "exit": 2
+  },
+  {
+    "name": "allow write to an ordinary source file (relative)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "lizbeth_spanish/src/App.css" },
+    "exit": 0
+  },
+  {
+    "name": "allow write to a non-contract plans doc (relative, must not over-match docs/)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "docs/plans/some-plan.md" },
+    "exit": 0
+  },
+  {
+    "name": "deny write to settings.json (absolute)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "__ABS__/.claude/settings.json" },
+    "exit": 2
+  },
+  {
+    "name": "allow write to ordinary file (absolute)",
+    "tool_name": "Write",
+    "tool_input": { "file_path": "__ABS__/lizbeth_spanish/src/App.css" },
+    "exit": 0
+  },
+  {
+    "name": "allow bash read of CLAUDE.md via cat",
+    "tool_name": "Bash",
+    "tool_input": { "command": "cat CLAUDE.md" },
+    "exit": 0
+  },
+  {
+    "name": "allow bash grep mentioning CLAUDE.md",
+    "tool_name": "Bash",
+    "tool_input": { "command": "grep -r \"CLAUDE.md\" docs/" },
+    "exit": 0
+  },
+  {
+    "name": "allow bash ls of protected directory",
+    "tool_name": "Bash",
+    "tool_input": { "command": "ls .claude/agents" },
+    "exit": 0
+  },
+  {
+    "name": "deny bash redirection into settings.json",
+    "tool_name": "Bash",
+    "tool_input": { "command": "echo x > .claude/settings.json" },
+    "exit": 2
+  },
+  {
+    "name": "deny bash rm of a hook file",
+    "tool_name": "Bash",
+    "tool_input": { "command": "rm .claude/hooks/foo.ps1" },
+    "exit": 2
+  }
+]

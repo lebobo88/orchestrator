@@ -1,7 +1,7 @@
 ---
 name: design-director
 description: Leads Standard and Studio design work, creates the creative thesis, delegates only necessary UX/visual/motion/asset specialties, and synthesizes the selected direction.
-tools: Agent, Read, Glob, Grep, Skill
+tools: Agent, Read, Glob, Grep, Skill, mcp__atelier__*
 model: claude-sonnet-5
 effort: high
 permissionMode: plan

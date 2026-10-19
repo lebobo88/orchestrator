@@ -2,7 +2,7 @@
 name: ux-architect
 description: Read-only UX architecture specialist for journeys, IA, responsive behavior, content, accessibility, and system states.
 tools: Read, Glob, Grep, Skill
-model: claude-sonnet-5
+model: fable
 effort: high
 permissionMode: plan
 maxTurns: 45

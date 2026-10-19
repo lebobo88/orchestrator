@@ -85,6 +85,8 @@ The orchestrator may report `JOB_DONE` only after the engineer provides all of:
 
 Missing TDD or verification evidence causes a return to `T1_RUNNING`; it is not a successful terminal state. If no usable test harness can be established before implementation, the job is `JOB_BLOCKED` with evidence and the smallest user decision that can unblock it.
 
+the "Delegated external implementation" section, in scratchpad/orchestrator-patches.md (too long to repeat here — it defines the External implementation: line format and states that Verifier treats it as provenance only, never a substitute for re-running acceptance checks).
+
 ## Independent completion gates
 
 After a structurally complete `JOB_DONE`, the orchestrator sends this read-only packet to `verifier`:

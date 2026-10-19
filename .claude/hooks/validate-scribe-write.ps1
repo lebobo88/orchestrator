@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 
+
 $rawInput = [Console]::In.ReadToEnd()
 if ([string]::IsNullOrWhiteSpace($rawInput)) { $rawInput = @($input) -join [Environment]::NewLine }
 if ([string]::IsNullOrWhiteSpace($rawInput)) { Write-Output 'Blocked: missing hook input.'; exit 2 }
@@ -21,6 +22,34 @@ $candidatePath = if ([System.IO.Path]::IsPathRooted($filePath)) {
 }
 $rootPrefix = $repositoryRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
 if (-not $candidatePath.StartsWith($rootPrefix, [System.StringComparison]::OrdinalIgnoreCase)) { Write-Output 'Blocked: Scribe may write only inside the repository.'; exit 2 }
+
+# Control-plane path exclusions
+$relativePath = $candidatePath.Substring($rootPrefix.Length)
+$controlPlanePaths = @(
+    'CLAUDE.md',
+    '.mcp.json'
+)
+
+# Check exact matches
+foreach ($controlPath in $controlPlanePaths) {
+    if ($relativePath -eq $controlPath) {
+        Write-Output "Blocked: Scribe cannot modify control-plane path: $controlPath"
+        exit 2
+    }
+}
+
+# Check directory patterns
+$dirPatterns = @(
+    '\.claude',
+    'docs.*CONTRACT'
+)
+
+foreach ($pattern in $dirPatterns) {
+    if ($relativePath -match "^$pattern") {
+        Write-Output "Blocked: Scribe cannot modify control-plane path pattern: $pattern"
+        exit 2
+    }
+}
 
 $allowedExtensions = @('.md', '.mdx', '.rst', '.txt')
 if ($allowedExtensions -notcontains [System.IO.Path]::GetExtension($candidatePath).ToLowerInvariant()) {
