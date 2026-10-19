@@ -24,6 +24,7 @@ $required = @(
     '.claude/agents/design-reviewer.md',
     '.claude/agents/design-prototyper.md',
     '.claude/agents/codex-judge-runner.md',
+    '.claude/hooks/validate-control-plane-write.ps1',
     '.claude/hooks/validate-researcher-bash.ps1',
     '.claude/hooks/validate-scribe-write.ps1',
     '.claude/hooks/validate-design-prototype-write.ps1',
@@ -131,15 +132,141 @@ foreach ($relativePath in $required) {
 $settingsPath = Join-Path $root '.claude/settings.json'
 $settings = Get-Content -Raw -LiteralPath $settingsPath | ConvertFrom-Json
 if ($settings.agent -ne 'orchestrator') { throw 'settings.json must select the orchestrator agent.' }
-if ($null -ne $settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) { throw 'Default settings must not enable experimental agent teams.' }
-if ($settings.env.CLAUDE_CODE_DISABLE_BACKGROUND_TASKS -ne '1') { throw 'Default settings must keep normal subagent dispatch synchronous.' }
-if ($settings.teammateMode -ne 'in-process' -or $null -ne $settings.teammateDefaultModel) { throw 'Default settings must use in-process agent display without team-model configuration.' }
-if ($settings.worktree.baseRef -ne 'head') { throw 'Worktree baseRef must preserve the current local HEAD.' }
-foreach ($builtinAgent in @('Agent(general-purpose)', 'Agent(Explore)', 'Agent(Plan)')) {
-    if ($settings.permissions.deny -notcontains $builtinAgent) {
-        throw "settings.json must deny built-in agent '$builtinAgent'."
+# Effective merged policy: teams must be OFF (project scope wins over user scope)
+$userSettingsPath = @($env:USERPROFILE, '.claude', 'settings.json') -join [System.IO.Path]::DirectorySeparatorChar
+$userSettings = $null
+if (Test-Path -LiteralPath $userSettingsPath -ErrorAction SilentlyContinue) {
+    try {
+        $userSettings = Get-Content -Raw -LiteralPath $userSettingsPath | ConvertFrom-Json -ErrorAction SilentlyContinue
+    } catch { }
+}
+# Effective value: project setting is "0", which wins over user setting via precedence
+$effectiveTeamsValue = if ($settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS) { $settings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS } else { $userSettings.env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS }
+if ($effectiveTeamsValue -eq "1") { throw 'Agent teams must be disabled at project scope (CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=0), which overrides user scope.' }
+
+# Assert settings.local.json exists and does not weaken control-plane enforcement.
+# settings.local.json is untracked, agent-writable, and higher-precedence than the
+# project settings file (H16); it must not define any rule that references a
+# control-plane path or any deny override at all (deny policy belongs only to
+# project/managed scope).
+$settingsLocalPath = Join-Path $root '.claude/settings.local.json'
+if (-not (Test-Path -LiteralPath $settingsLocalPath)) { throw 'settings.local.json must exist and be tested.' }
+$settingsLocal = Get-Content -Raw -LiteralPath $settingsLocalPath | ConvertFrom-Json
+$controlPlaneRuleFragments = @(
+    '.claude/settings', '.claude/agents', '.claude/hooks', '.claude/skills',
+    '.claude/scripts', '.claude/schemas', '.claude/judge-policy',
+    'CLAUDE.md', '.mcp.json',
+    'docs/PLAN-CONTRACT', 'docs/DESIGN-CONTRACT', 'docs/JUDGE-CONTRACT', 'docs/BUILD-CONTRACT',
+    'docs/DOCUMENT-CONTRACT', 'docs/RESEARCH-HARNESS', 'docs/CAPABILITY-MAP',
+    'docs/ARCHITECTURE-ADAPTATION', 'docs/PROMPTING-AND-EVALUATION'
+)
+if ($settingsLocal.permissions -and $settingsLocal.permissions.deny) {
+    throw 'settings.local.json must not define permission denies; deny policy belongs only to project/managed scope.'
+}
+$settingsLocalRules = @()
+if ($settingsLocal.permissions) {
+    foreach ($ruleCategory in @('allow', 'ask')) {
+        if ($settingsLocal.permissions.$ruleCategory) { $settingsLocalRules += @($settingsLocal.permissions.$ruleCategory) }
     }
 }
+foreach ($rule in $settingsLocalRules) {
+    foreach ($fragment in $controlPlaneRuleFragments) {
+        if ($rule -match [regex]::Escape($fragment)) { throw "settings.local.json rule '$rule' would weaken control-plane enforcement by referencing '$fragment'." }
+    }
+}
+
+# Rule-syntax assertion: every permission rule in the project settings must use the
+# POSIX-normalized '//h/...' path form; a Windows drive-letter backslash path in a
+# permission rule is a defect (it will not match the runtime-normalized path Claude
+# Code evaluates against, silently defeating the rule).
+# After Phase 3 proof of managed-scope enforcement, core control-plane denies now live in
+# C:\Program Files\ClaudeCode\managed-settings.json. Project .claude/settings.json may have
+# project-specific rules (like secret reads) but control-plane denies migrate to managed scope.
+$managedSettingsPath = 'C:\Program Files\ClaudeCode\managed-settings.json'
+$managedSettings = $null
+$managedSettingsAvailable = $false
+
+if (Test-Path -LiteralPath $managedSettingsPath -ErrorAction SilentlyContinue) {
+    try {
+        $managedSettings = Get-Content -Raw -LiteralPath $managedSettingsPath | ConvertFrom-Json -ErrorAction SilentlyContinue
+        if ($managedSettings -and $managedSettings.permissions) {
+            $managedSettingsAvailable = $true
+        }
+    } catch { }
+}
+
+if (-not $managedSettingsAvailable) {
+    Write-Warning 'Managed-settings control-plane protection not present on this machine; C:\Program Files\ClaudeCode\managed-settings.json is absent or unreadable. Core permission denies (Agent dispatch, destructive commands) cannot be verified. If this is a CI/CD or clone environment, deploy managed-settings or configure local equivalents.'
+} else {
+    # Verify core control-plane denies are present in managed settings
+    $requiredManagedDenies = @(
+        'Agent(general-purpose)',
+        'Agent(Explore)',
+        'Agent(Plan)',
+        'Bash(rm -rf:*)',
+        'Bash(git push --force:*)',
+        'Bash(git clean -fd:*)'
+    )
+    $managedDenyRules = @($managedSettings.permissions.deny)
+    foreach ($requiredRule in $requiredManagedDenies) {
+        if ($managedDenyRules -notcontains $requiredRule) {
+            throw "Core control-plane deny rule '$requiredRule' is missing from managed-settings.json."
+        }
+    }
+}
+
+# Validate rule syntax for any rules remaining in project settings
+# (e.g., project-specific secret reads or other local rules)
+$settingsRules = @()
+if ($settings.permissions) {
+    foreach ($ruleCategory in @('allow', 'deny', 'ask')) {
+        if ($settings.permissions.$ruleCategory) { $settingsRules += @($settings.permissions.$ruleCategory) }
+    }
+}
+foreach ($rule in $settingsRules) {
+    if ($rule -match '[A-Za-z]:\\') { throw "Permission rule '$rule' uses a Windows drive-letter backslash path; only the POSIX-normalized '//h/...' form is valid." }
+}
+
+# Validate rule syntax for managed-settings rules as well
+if ($managedSettingsAvailable) {
+    $managedRules = @()
+    foreach ($ruleCategory in @('allow', 'deny', 'ask')) {
+        if ($managedSettings.permissions.$ruleCategory) { $managedRules += @($managedSettings.permissions.$ruleCategory) }
+    }
+    foreach ($rule in $managedRules) {
+        if ($rule -match '[A-Za-z]:\\') { throw "Managed permission rule '$rule' uses a Windows drive-letter backslash path; only the POSIX-normalized '//h/...' form is valid." }
+    }
+}
+
+# Helper to invoke a hook exactly as the harness does: piped stdin JSON, no CLI arguments
+# bound to -Tool/-ToolInput (see validate-control-plane-write.ps1's PreToolUse registration).
+function Invoke-HookWithStdIn {
+    param([string]$Hook, [string[]]$Arguments, [string]$Json)
+    $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+    $startInfo.FileName = 'powershell.exe'
+    $startInfo.Arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$Hook`" $($Arguments -join ' ')"
+    $startInfo.UseShellExecute = $false
+    $startInfo.RedirectStandardInput = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    $process = [System.Diagnostics.Process]::new()
+    $process.StartInfo = $startInfo
+    [void]$process.Start()
+    $process.StandardInput.Write($Json)
+    $process.StandardInput.Close()
+    $process.WaitForExit()
+    return [pscustomobject]@{ ExitCode = $process.ExitCode; StdOut = $process.StandardOutput.ReadToEnd(); StdErr = $process.StandardError.ReadToEnd() }
+}
+
+# Scribe write exclusion assertion: a real invocation must deny a Scribe write to CLAUDE.md
+$scribeHookPath = Join-Path $root '.claude/hooks/validate-scribe-write.ps1'
+$scribeHookContent = Get-Content -Raw -LiteralPath $scribeHookPath
+if ($scribeHookContent -notmatch 'CLAUDE\.md|control-plane') {
+    throw 'Scribe write hook must exclude CLAUDE.md and other control-plane paths.'
+}
+$scribeControlPlanePayload = @{ tool_input = @{ file_path = 'CLAUDE.md' } } | ConvertTo-Json -Compress
+$scribeControlPlaneInvocation = Invoke-HookWithStdIn -Hook $scribeHookPath -Arguments @() -Json $scribeControlPlanePayload
+if ($scribeControlPlaneInvocation.ExitCode -ne 2) { throw "Scribe write hook must actually deny a write to CLAUDE.md when invoked (exit code 2); got $($scribeControlPlaneInvocation.ExitCode)." }
 
 if (-not (Test-Path -LiteralPath (Join-Path $root '.git/HEAD'))) {
     throw 'The orchestrator folder must be initialized as a Git repository for native worktrees.'

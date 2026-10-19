@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
+
 $runtimeRoot = Join-Path $root 'runtime'
 $temp = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-judge-test-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force -Path $temp | Out-Null
